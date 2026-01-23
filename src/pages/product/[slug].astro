@@ -4,35 +4,29 @@ import Layout from "../../layouts/Layout.astro";
 import type { Product } from "../../types/woocommerce";
 
 export async function getStaticPaths() {
-    const url = import.meta.env.WOOCOMMERCE_URL;
-    const key = import.meta.env.WOOCOMMERCE_CONSUMER_KEY;
-    const secret = import.meta.env.WOOCOMMERCE_CONSUMER_SECRET;
+    const apiUrl = import.meta.env.WC_API_URL;
+    const consumerKey = import.meta.env.WC_CONSUMER_KEY;
+    const consumerSecret = import.meta.env.WC_CONSUMER_SECRET;
 
-    if (!url || !key || !secret) {
+    if (!apiUrl || !consumerKey || !consumerSecret) {
         console.warn(
-            "WooCommerce credentials missing. Skipping product fetch.",
+            "WooCommerce credentials missing (WC_API_URL, WC_CONSUMER_KEY, WC_CONSUMER_SECRET). Skipping product fetch.",
         );
         return [];
     }
 
-    // Basic Auth header
-    const auth = Buffer.from(`${key}:${secret}`).toString("base64");
+    const url = `${apiUrl}/wp-json/wc/v3/products?consumer_key=${consumerKey}&consumer_secret=${consumerSecret}&per_page=100`;
 
     try {
-        const response = await fetch(
-            `${url}/wp-json/wc/v3/products?per_page=100`,
-            {
-                headers: {
-                    Authorization: `Basic ${auth}`,
-                },
-            },
-        );
+        const res = await fetch(url);
 
-        if (!response.ok) {
-            throw new Error(`Failed to fetch products: ${response.statusText}`);
+        if (!res.ok) {
+            throw new Error(
+                `Failed to fetch products: ${res.status} ${res.statusText}`,
+            );
         }
 
-        const products: Product[] = await response.json();
+        const products: Product[] = await res.json();
 
         return products.map((product) => ({
             params: { slug: product.slug },
