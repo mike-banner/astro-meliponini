@@ -1,0 +1,189 @@
+---
+// file:///home/mike/projects/astro/melipone-astro/src/pages/product/[slug].astro
+import Layout from "../../layouts/Layout.astro";
+import type { Product } from "../../types/woocommerce";
+
+export async function getStaticPaths() {
+    const url = import.meta.env.WOOCOMMERCE_URL;
+    const key = import.meta.env.WOOCOMMERCE_CONSUMER_KEY;
+    const secret = import.meta.env.WOOCOMMERCE_CONSUMER_SECRET;
+
+    if (!url || !key || !secret) {
+        console.warn(
+            "WooCommerce credentials missing. Skipping product fetch.",
+        );
+        return [];
+    }
+
+    // Basic Auth header
+    const auth = Buffer.from(`${key}:${secret}`).toString("base64");
+
+    try {
+        const response = await fetch(
+            `${url}/wp-json/wc/v3/products?per_page=100`,
+            {
+                headers: {
+                    Authorization: `Basic ${auth}`,
+                },
+            },
+        );
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch products: ${response.statusText}`);
+        }
+
+        const products: Product[] = await response.json();
+
+        return products.map((product) => ({
+            params: { slug: product.slug },
+            props: { product },
+        }));
+    } catch (error) {
+        console.error("Error fetching WooCommerce products:", error);
+        return [];
+    }
+}
+
+interface Props {
+    product: Product;
+}
+
+const { product } = Astro.props;
+---
+
+<Layout
+    title={`${product.name} - Melipone`}
+    description={product.short_description
+        .replace(/<[^>]*>/g, "")
+        .slice(0, 160)}
+>
+    <main class="product-container">
+        <div class="product-image">
+            {
+                product.images[0] && (
+                    <img
+                        src={product.images[0].src}
+                        alt={product.images[0].alt || product.name}
+                    />
+                )
+            }
+        </div>
+
+        <div class="product-details">
+            <h1>{product.name}</h1>
+
+            <div class="price">
+                {
+                    product.sale_price ? (
+                        <>
+                            <span class="original-price">
+                                {product.regular_price}€
+                            </span>
+                            <span class="sale-price">
+                                {product.sale_price}€
+                            </span>
+                        </>
+                    ) : (
+                        <span>{product.price}€</span>
+                    )
+                }
+            </div>
+
+            <div class="description" set:html={product.short_description} />
+
+            <div class="actions">
+                <a
+                    href={product.permalink}
+                    class="btn-primary"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Acheter sur le site officiel
+                </a>
+            </div>
+
+            <div class="full-description">
+                <h2>Description détaillée</h2>
+                <div set:html={product.description} />
+            </div>
+        </div>
+    </main>
+</Layout>
+
+<style>
+    .product-container {
+        max-width: 1000px;
+        margin: 2rem auto;
+        padding: 1rem;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    @media (min-width: 768px) {
+        .product-container {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    .product-image img {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-details h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+
+    .price {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 1.5rem;
+        color: #333;
+    }
+
+    .original-price {
+        text-decoration: line-through;
+        color: #888;
+        margin-right: 1rem;
+    }
+
+    .sale-price {
+        color: #e53e3e;
+    }
+
+    .actions {
+        margin: 2rem 0;
+    }
+
+    .btn-primary {
+        display: inline-block;
+        background-color: #000;
+        color: #fff;
+        padding: 1rem 2rem;
+        text-decoration: none;
+        border-radius: 4px;
+        font-weight: 600;
+        transition: background-color 0.2s;
+    }
+
+    .btn-primary:hover {
+        background-color: #333;
+    }
+
+    .description,
+    .full-description {
+        line-height: 1.6;
+        color: #4a5568;
+    }
+
+    .full-description {
+        margin-top: 3rem;
+        border-top: 1px solid #e2e8f0;
+        padding-top: 2rem;
+    }
+</style>
