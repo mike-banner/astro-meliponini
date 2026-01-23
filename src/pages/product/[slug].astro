@@ -1,183 +1,213 @@
 ---
-// file:///home/mike/projects/astro/melipone-astro/src/pages/product/[slug].astro
+// src/pages/product/[slug].astro
 import Layout from "../../layouts/Layout.astro";
 import type { Product } from "../../types/woocommerce";
 
 export async function getStaticPaths() {
-    const apiUrl = import.meta.env.WC_API_URL;
-    const consumerKey = import.meta.env.WC_CONSUMER_KEY;
-    const consumerSecret = import.meta.env.WC_CONSUMER_SECRET;
+  const apiUrl = import.meta.env.WC_API_URL;
+  const consumerKey = import.meta.env.WC_CONSUMER_KEY;
+  const consumerSecret = import.meta.env.WC_CONSUMER_SECRET;
 
-    if (!apiUrl || !consumerKey || !consumerSecret) {
-        console.warn(
-            "WooCommerce credentials missing (WC_API_URL, WC_CONSUMER_KEY, WC_CONSUMER_SECRET). Skipping product fetch.",
-        );
-        return [];
-    }
+  if (!apiUrl || !consumerKey || !consumerSecret) {
+    console.warn("WooCommerce credentials missing. Skipping product fetch.");
+    return [];
+  }
 
-    const url = `${apiUrl}/wp-json/wc/v3/products?consumer_key=${consumerKey}&consumer_secret=${consumerSecret}&per_page=100`;
+  const url =
+    `${apiUrl}/wp-json/wc/v3/products` +
+    `?consumer_key=${consumerKey}` +
+    `&consumer_secret=${consumerSecret}` +
+    `&per_page=100`;
 
-    try {
-        const res = await fetch(url);
+  const res = await fetch(url);
 
-        if (!res.ok) {
-            throw new Error(
-                `Failed to fetch products: ${res.status} ${res.statusText}`,
-            );
-        }
+  if (!res.ok) {
+    throw new Error(`WooCommerce fetch failed: ${res.status}`);
+  }
 
-        const products: Product[] = await res.json();
+  const products: Product[] = await res.json();
 
-        return products.map((product) => ({
-            params: { slug: product.slug },
-            props: { product },
-        }));
-    } catch (error) {
-        console.error("Error fetching WooCommerce products:", error);
-        return [];
-    }
+  return products.map((product) => ({
+    params: { slug: product.slug },
+    props: { product },
+  }));
 }
 
 interface Props {
-    product: Product;
+  product: Product;
 }
 
 const { product } = Astro.props;
+
+const cleanDescription =
+  product.short_description
+    ?.replace(/<[^>]*>/g, "")
+    .trim()
+    .slice(0, 160) || "";
+
+const canonicalUrl = `https://ton-domaine.pages.dev/product/${product.slug}`;
 ---
 
 <Layout
-    title={`${product.name} - Melipone`}
-    description={product.short_description
-        .replace(/<[^>]*>/g, "")
-        .slice(0, 160)}
+  title={`${product.name} | Meliponini`}
+  description={cleanDescription}
 >
-    <main class="product-container">
-        <div class="product-image">
-            {
-                product.images[0] && (
-                    <img
-                        src={product.images[0].src}
-                        alt={product.images[0].alt || product.name}
-                    />
-                )
-            }
-        </div>
+  <!-- SEO META -->
+  <link rel="canonical" href={canonicalUrl} />
 
-        <div class="product-details">
-            <h1>{product.name}</h1>
+  <meta property="og:type" content="product" />
+  <meta property="og:title" content={product.name} />
+  <meta property="og:description" content={cleanDescription} />
+  <meta property="og:url" content={canonicalUrl} />
+  {
+    product.images?.[0]?.src && (
+      <meta property="og:image" content={product.images[0].src} />
+    )
+  }
 
-            <div class="price">
-                {
-                    product.sale_price ? (
-                        <>
-                            <span class="original-price">
-                                {product.regular_price}€
-                            </span>
-                            <span class="sale-price">
-                                {product.sale_price}€
-                            </span>
-                        </>
-                    ) : (
-                        <span>{product.price}€</span>
-                    )
-                }
-            </div>
+  <!-- Schema.org Product -->
+  <script type="application/ld+json">
+    {JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: product.name,
+      image: product.images?.[0]?.src,
+      description: cleanDescription,
+      sku: product.sku || product.id,
+      offers: {
+        "@type": "Offer",
+        priceCurrency: "EUR",
+        price: product.sale_price || product.price,
+        availability: "https://schema.org/InStock",
+        url: canonicalUrl,
+      },
+    })}
+  </script>
 
-            <div class="description" set:html={product.short_description} />
+  <main class="product-container">
+    <div class="product-image">
+      {
+        product.images?.[0] && (
+          <img
+            src={product.images[0].src}
+            alt={product.images[0].alt || product.name}
+            loading="eager"
+          />
+        )
+      }
+    </div>
 
-            <div class="actions">
-                <a
-                    href={product.permalink}
-                    class="btn-primary"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    Acheter sur le site officiel
-                </a>
-            </div>
+    <div class="product-details">
+      <h1>{product.name}</h1>
 
-            <div class="full-description">
-                <h2>Description détaillée</h2>
-                <div set:html={product.description} />
-            </div>
-        </div>
-    </main>
+      <div class="price">
+        {
+          product.sale_price ? (
+            <>
+              <span class="original-price">
+                {product.regular_price}€
+              </span>
+              <span class="sale-price">
+                {product.sale_price}€
+              </span>
+            </>
+          ) : (
+            <span>{product.price}€</span>
+          )
+        }
+      </div>
+
+      <div class="description" set:html={product.short_description} />
+
+      <div class="actions">
+        <a
+          href={product.permalink}
+          class="btn-primary"
+          rel="nofollow noopener"
+        >
+          Acheter
+        </a>
+      </div>
+
+      <div class="full-description">
+        <h2>Description détaillée</h2>
+        <div set:html={product.description} />
+      </div>
+    </div>
+  </main>
 </Layout>
 
 <style>
-    .product-container {
-        max-width: 1000px;
-        margin: 2rem auto;
-        padding: 1rem;
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 2rem;
-    }
+.product-container {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 1rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
 
-    @media (min-width: 768px) {
-        .product-container {
-            grid-template-columns: 1fr 1fr;
-        }
-    }
+@media (min-width: 768px) {
+  .product-container {
+    grid-template-columns: 1fr 1fr;
+  }
+}
 
-    .product-image img {
-        width: 100%;
-        height: auto;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
+.product-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 
-    .product-details h1 {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-        line-height: 1.2;
-    }
+.product-details h1 {
+  font-size: 2.4rem;
+  margin-bottom: 1rem;
+}
 
-    .price {
-        font-size: 1.5rem;
-        font-weight: bold;
-        margin-bottom: 1.5rem;
-        color: #333;
-    }
+.price {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+}
 
-    .original-price {
-        text-decoration: line-through;
-        color: #888;
-        margin-right: 1rem;
-    }
+.original-price {
+  text-decoration: line-through;
+  color: #888;
+  margin-right: 1rem;
+}
 
-    .sale-price {
-        color: #e53e3e;
-    }
+.sale-price {
+  color: #e53e3e;
+}
 
-    .actions {
-        margin: 2rem 0;
-    }
+.actions {
+  margin: 2rem 0;
+}
 
-    .btn-primary {
-        display: inline-block;
-        background-color: #000;
-        color: #fff;
-        padding: 1rem 2rem;
-        text-decoration: none;
-        border-radius: 4px;
-        font-weight: 600;
-        transition: background-color 0.2s;
-    }
+.btn-primary {
+  display: inline-block;
+  background-color: #000;
+  color: #fff;
+  padding: 1rem 2rem;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: 600;
+}
 
-    .btn-primary:hover {
-        background-color: #333;
-    }
+.btn-primary:hover {
+  background-color: #333;
+}
 
-    .description,
-    .full-description {
-        line-height: 1.6;
-        color: #4a5568;
-    }
+.description,
+.full-description {
+  line-height: 1.6;
+  color: #4a5568;
+}
 
-    .full-description {
-        margin-top: 3rem;
-        border-top: 1px solid #e2e8f0;
-        padding-top: 2rem;
-    }
+.full-description {
+  margin-top: 3rem;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 2rem;
+}
 </style>

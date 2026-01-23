@@ -1,5 +1,5 @@
 ---
-// file:///home/mike/projects/astro/melipone-astro/src/layouts/Layout.astro
+// src/layouts/Layout.astro
 interface Props {
   title: string;
   description?: string;
@@ -17,7 +17,11 @@ const { title, description = "A minimalist Astro site." } = Astro.props;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+
+    <!-- Slot SEO pages -->
+    <slot name="head" />
   </head>
+
   <body>
     <slot />
   </body>
@@ -32,6 +36,7 @@ const { title, description = "A minimalist Astro site." } = Astro.props;
     background-color: #f6f6f6;
     color: #111;
   }
+
   code {
     font-family:
       Menlo,
