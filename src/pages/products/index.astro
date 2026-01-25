@@ -1,0 +1,28 @@
+---
+/* ROUTE : /products */
+
+import Layout from "../../layouts/Layout.astro";
+import ProductsGrid from "../../components/ProductsGrid.astro";
+import ProductsFilters from "../../components/ProductsFilters.astro";
+import {
+    getProducts,
+    getProductCategoriesByParent,
+} from "../../lib/woocommerce.js";
+
+/* catégories racines */
+const ROOT_CATEGORIES = [
+    { label: "Tous", href: "/products", slug: "all" },
+    { label: "Miels", href: "/products/miel", slug: "miel" },
+    { label: "bougie", href: "/products/bougie", slug: "bougie" },
+];
+
+const products = await getProducts();
+---
+
+<Layout title="Tous les produits — Meliponini">
+    <main class="products-page">
+        <ProductsFilters filters={ROOT_CATEGORIES} active="all" />
+
+        <ProductsGrid products={products} title="Tous les produits" />
+    </main>
+</Layout>

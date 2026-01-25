@@ -1,0 +1,121 @@
+/* =========================
+   PAGE
+========================= */
+.products-page {
+    padding: 2rem 1.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* =========================
+   TOOLBAR
+========================= */
+.products-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    /* 👉 toujours à droite */
+    align-items: center;
+    margin-top: calc(40px + 2rem);
+    /* 80px = hauteur header */
+
+}
+
+/* SEO only */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+}
+
+/* =========================
+   TOGGLE
+========================= */
+.layout-toggle {
+    display: none;
+    /* ❗ caché PAR DÉFAUT */
+    width: 36px;
+    height: 36px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: relative;
+}
+
+.layout-toggle .icon {
+    position: absolute;
+    inset: 8px;
+}
+
+/* 1 colonne */
+.icon-one {
+    background:
+        linear-gradient(#000 0 0) center 30% / 100% 22% no-repeat,
+        linear-gradient(#000 0 0) center 70% / 100% 22% no-repeat;
+}
+
+/* 2 colonnes */
+.icon-two {
+    display: none;
+    background:
+        linear-gradient(#000 0 0) left top / 45% 45% no-repeat,
+        linear-gradient(#000 0 0) right top / 45% 45% no-repeat,
+        linear-gradient(#000 0 0) left bottom / 45% 45% no-repeat,
+        linear-gradient(#000 0 0) right bottom / 45% 45% no-repeat;
+}
+
+.layout-toggle.is-row .icon-one {
+    display: none;
+}
+
+.layout-toggle.is-row .icon-two {
+    display: block;
+}
+
+/* =========================
+   GRID — MOBILE DEFAULT
+========================= */
+.products-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    /* mobile 1 colonne */
+    gap: 6px;
+}
+
+/* mobile toggle → 2 colonnes */
+.products-grid.row-layout {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+}
+
+/* =========================
+   MOBILE ONLY
+========================= */
+@media (max-width: 768px) {
+    .layout-toggle {
+        display: inline-flex;
+        /* ✅ visible SEULEMENT mobile */
+    }
+}
+
+/* =========================
+   DESKTOP (LOCK)
+========================= */
+@media (min-width: 769px) {
+    .products-grid {
+        grid-template-columns: repeat(3, 1fr);
+        /* ✅ 3 COLONNES */
+        gap: 3rem;
+    }
+
+    .products-grid.row-layout {
+        grid-template-columns: repeat(3, 1fr);
+        /* ❗ ignore toggle */
+    }
+
+    .layout-toggle {
+        display: none !important;
+        /* ❗ INTERDIT desktop */
+    }
+}

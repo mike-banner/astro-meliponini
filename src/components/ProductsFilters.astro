@@ -1,0 +1,83 @@
+---
+/* COMPONENT : ProductsFilters
+   Rôle :
+   - navigation par catégories / sous-catégories
+   - aucun JS
+   - SEO + UX premium
+*/
+const { filters = [], active = "" } = Astro.props;
+---
+
+<nav class="products-filters" aria-label="Filtres produits">
+    {
+        filters.map((filter) => (
+            <a
+                href={filter.href}
+                class={`products-filter ${filter.slug === active ? "is-active" : ""}`}
+            >
+                {filter.label}
+            </a>
+        ))
+    }
+</nav>
+
+<style>
+    /* =========================
+   FILTRES PRODUITS
+========================= */
+    .products-filters {
+        display: flex;
+        justify-content: center;
+        gap: 1.4rem;
+        margin: 2.5rem 0 3rem;
+        flex-wrap: wrap;
+    }
+
+    /* lien filtre */
+    .products-filter {
+        position: relative;
+        font-size: 0.75rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        text-decoration: none;
+        color: #000;
+        opacity: 0.45;
+        transition: opacity 0.3s ease;
+    }
+
+    /* actif */
+    .products-filter.is-active {
+        opacity: 1;
+    }
+
+    /* underline discret (hover + actif) */
+    .products-filter::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -6px;
+        width: 0%;
+        height: 1px;
+        background: #000;
+        transition: width 0.35s ease;
+    }
+
+    .products-filter:hover::after,
+    .products-filter.is-active::after {
+        width: 100%;
+    }
+
+    /* =========================
+   MOBILE
+========================= */
+    @media (max-width: 768px) {
+        .products-filters {
+            gap: 1rem;
+            margin: 2rem 0 2.5rem;
+        }
+
+        .products-filter {
+            font-size: 0.7rem;
+        }
+    }
+</style>

@@ -1,0 +1,29 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import ProductsGrid from "../../../components/ProductsGrid.astro";
+import {
+    getProductsByCategory,
+    getProductCategoriesByParent,
+} from "../../../lib/woocommerce.js";
+
+export async function getStaticPaths() {
+    const bougie_CATEGORY_ID = 97;
+    const categories = await getProductCategoriesByParent(bougie_CATEGORY_ID);
+
+    return categories.map((cat) => ({
+        params: { slug: cat.slug },
+        props: {
+            category: cat,
+        },
+    }));
+}
+
+const { category } = Astro.props;
+const products = await getProductsByCategory(category.slug);
+---
+
+<Layout title={`bougie ${category.name} — Meliponini`}>
+    <main class="products-page">
+        <ProductsGrid products={products} title={`bougie ${category.name}`} />
+    </main>
+</Layout>

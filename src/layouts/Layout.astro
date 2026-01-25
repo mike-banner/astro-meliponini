@@ -1,5 +1,10 @@
 ---
 // src/layouts/Layout.astro
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+import "../styles/products-grid.css";
+
 interface Props {
   title: string;
   description?: string;
@@ -23,7 +28,9 @@ const { title, description = "A minimalist Astro site." } = Astro.props;
   </head>
 
   <body>
+    <Header />
     <slot />
+    <Footer />
   </body>
 </html>
 
@@ -47,5 +54,48 @@ const { title, description = "A minimalist Astro site." } = Astro.props;
       Bitstream Vera Sans Mono,
       Courier New,
       monospace;
+  }
+
+  @font-face {
+    font-family: "MyFont";
+    src: url("/fonts/ABChanelCorpo-Regular.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "MyFont";
+    src: url("/fonts/ABChanelCorpo-Medium.woff2") format("woff2");
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "MyFont";
+    src: url("/fonts/ABChanelCorpo-Bold.woff2") format("woff2");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  html,
+  body {
+    font-family: "MyFont", system-ui, sans-serif;
+  }
+
+  body {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  strong,
+  b {
+    font-weight: 400;
+    letter-spacing: 0.02em;
   }
 </style>

@@ -1,0 +1,191 @@
+<footer class="site-footer">
+    <!-- =========================
+         PARTIE HAUTE
+    ========================= -->
+    <div class="footer-top">
+        <!-- Liens légaux -->
+        <nav class="footer-links">
+            <a href="/conditions-de-vente">Conditions de vente</a>
+            <a href="/mentions-legales">Mentions légales</a>
+            <a href="/confidentialite">Confidentialité</a>
+            <a href="/livraison-retours">Livraison & retours</a>
+            <a href="/contact">Contact</a>
+        </nav>
+
+        <!-- Moyens de paiement -->
+        <div class="footer-payments">
+            <img src="/images/payments/visa.svg" alt="Visa" />
+            <img src="/images/payments/mastercard.svg" alt="Mastercard" />
+            <img src="/images/payments/stripe.svg" alt="Stripe" />
+            <img src="/images/payments/paypal.svg" alt="PayPal" />
+        </div>
+    </div>
+
+    <!-- =========================
+         PARTIE BASSE
+    ========================= -->
+    <div class="footer-bottom">
+        <p>
+            © <span id="year"></span> Meliponini — All rights reserved
+        </p>
+        <p>
+            <a href="mailto:contact@meliponini.com">contact@meliponini.com</a>
+        </p>
+    </div>
+</footer>
+
+<script>
+    // Année dynamique (SEO safe)
+    document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+
+<style>
+    /* =========================
+   FOOTER GLOBAL
+========================= */
+    .site-footer {
+        background: #000;
+        color: #fff;
+        padding: 3rem 2rem;
+        font-size: 0.85rem;
+    }
+
+    /* =========================
+   FOOTER TOP
+========================= */
+    .footer-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 2rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        padding-bottom: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    /* Liens */
+    .footer-links {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .footer-links a {
+        color: #fff;
+        text-decoration: none;
+        opacity: 0.7;
+        transition: opacity 0.2s ease;
+    }
+
+    .footer-links a:hover {
+        opacity: 1;
+    }
+
+    /* Paiements */
+    .footer-payments {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .footer-payments img {
+        height: 22px;
+        opacity: 0.75;
+
+        /* 🔑 rend les SVG noirs → blancs */
+        filter: invert(1);
+
+        transition: opacity 0.2s ease;
+    }
+
+    .footer-payments img:hover {
+        opacity: 1;
+    }
+
+    /* =========================
+   FOOTER BOTTOM
+========================= */
+    .footer-bottom {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+        opacity: 0.6;
+    }
+
+    .footer-bottom a {
+        color: #fff;
+        text-decoration: none;
+    }
+
+    /* =========================
+   MOBILE  768px max
+========================= */
+    @media (max-width: 768px) {
+        .footer-top {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 2rem;
+        }
+
+        .footer-links {
+            justify-content: center;
+            gap: 1.2rem;
+        }
+
+        .footer-payments {
+            justify-content: center;
+        }
+
+        .footer-bottom {
+            align-items: center;
+            text-align: center;
+        }
+
+        @media (max-width: 464px) {
+            .site-footer {
+                padding: 2.5rem 1.5rem;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 0.8rem;
+                align-items: center;
+            }
+
+            .footer-payments img {
+                height: 20px;
+            }
+
+            .footer-bottom {
+                font-size: 0.75rem;
+                gap: 0.5rem;
+            }
+        }
+    }
+
+    /* =========================
+   MOBILE  464px max 
+========================= */
+    @media (max-width: 464px) {
+        .site-footer {
+            padding: 2.5rem 1.5rem;
+        }
+
+        .footer-links {
+            flex-direction: column;
+            gap: 0.8rem;
+            align-items: center;
+        }
+
+        .footer-payments img {
+            height: 20px;
+        }
+
+        .footer-bottom {
+            font-size: 0.75rem;
+            gap: 0.5rem;
+        }
+    }
+</style>

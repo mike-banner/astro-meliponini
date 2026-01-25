@@ -1,0 +1,44 @@
+---
+/* COMPONENT : ProductsGrid */
+import ProductCard from "./ProductCard.astro";
+
+const { products, title } = Astro.props;
+---
+
+<!-- =========================
+     TOOLBAR (MOBILE)
+========================= -->
+<div class="products-toolbar">
+    <h1 class="visually-hidden">{title}</h1>
+
+    <button
+        type="button"
+        class="layout-toggle"
+        aria-label="Changer l’affichage"
+        data-layout-toggle
+    >
+        <span class="icon icon-one"></span>
+        <span class="icon icon-two"></span>
+    </button>
+</div>
+
+<!-- =========================
+     GRID
+========================= -->
+<section class="products-grid" data-products-grid>
+    {products.map((product) => <ProductCard product={product} />)}
+</section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const toggle = document.querySelector("[data-layout-toggle]");
+        const grid = document.querySelector("[data-products-grid]");
+
+        if (!toggle || !grid) return;
+
+        toggle.addEventListener("click", () => {
+            grid.classList.toggle("row-layout");
+            toggle.classList.toggle("is-row");
+        });
+    });
+</script>

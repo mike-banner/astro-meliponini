@@ -1,0 +1,39 @@
+---
+/* ROUTE : /products/miel/[slug] */
+
+import Layout from "../../../layouts/Layout.astro";
+import ProductsGrid from "../../../components/ProductsGrid.astro";
+import {
+    getProductsByCategory,
+    getProductCategoriesByParent,
+} from "../../../lib/woocommerce.js";
+
+/* =========================
+   ROUTES DYNAMIQUES
+========================= */
+export async function getStaticPaths() {
+    const MIEL_CATEGORY_ID = 96; // 👈 DÉCLARÉ ICI (OBLIGATOIRE)
+
+    const categories = await getProductCategoriesByParent(MIEL_CATEGORY_ID);
+
+    return categories.map((cat) => ({
+        params: { slug: cat.slug },
+        props: {
+            category: cat,
+        },
+    }));
+}
+
+/* =========================
+   DONNÉES PAGE
+========================= */
+const { category } = Astro.props;
+
+const products = await getProductsByCategory(category.slug);
+---
+
+<Layout title={`Miels ${category.name} — Meliponini`}>
+    <main class="products-page">
+        <ProductsGrid products={products} title={`Miels ${category.name}`} />
+    </main>
+</Layout>

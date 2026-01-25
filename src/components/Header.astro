@@ -1,0 +1,314 @@
+---
+/* src/components/Header.astro */
+const from = Astro.url.searchParams.get("from");
+---
+
+<!-- =========================
+     HEADER FIXE
+========================= -->
+<header class="header-fixe">
+    <div class="header-inner">
+        <button class="burger" aria-label="Menu">☰</button>
+        <a href="/" class="logo">MELIPONINI</a>
+    </div>
+</header>
+
+<!-- =========================
+     CTA COMMANDE (WOO)
+========================= -->
+<a href="/checkout" class="resume-order" id="resumeOrder" aria-hidden="true">
+    Commander
+</a>
+
+<!-- =========================
+     OFF-CANVAS MOBILE
+========================= -->
+<div class="offcanvas">
+    <nav>
+        <!-- ROUTES ASTRO CORRECTES -->
+        <a href="/products">Tous les produits</a>
+        <a href="/products/miel">Miels</a>
+        <a href="/products/Bougie">Bougie</a>
+
+        <a href="/familles">Familles</a>
+        <a href="/secrets">Le Secret des miels enzymatiques</a>
+
+        {
+            from === "shop" && (
+                <a
+                    href="https://meliponini.remyparis.com/commander/"
+                    class="shop-btn"
+                >
+                    Retourner à la boutique
+                </a>
+            )
+        }
+    </nav>
+</div>
+
+<div class="offcanvas-overlay"></div>
+
+<!-- =========================
+     MENU DESKTOP
+========================= -->
+<div class="menu-wrapper">
+    <div class="menu-sticky">
+        <nav>
+            <ul>
+                <!-- ROUTES ASTRO CORRECTES -->
+                <li><a href="/products">Tous les produits</a></li>
+                <li><a href="/products/miel">Miels</a></li>
+                <li><a href="/products/bougie">Bougie</a></li>
+
+                <li><a href="/familles">Familles</a></li>
+                <li><a href="/secrets">Le Secret des miels enzymatiques</a></li>
+            </ul>
+
+            {
+                from === "shop" && (
+                    <a
+                        href="https://meliponini.remyparis.com/commander/"
+                        class="shop-btn"
+                    >
+                        Retourner à la boutique
+                    </a>
+                )
+            }
+        </nav>
+    </div>
+</div>
+
+<!-- =========================
+     SCRIPT
+========================= -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        /* =========================
+     OFF-CANVAS MOBILE
+  ========================= */
+        if (window.matchMedia("(max-width: 600px)").matches) {
+            const burger = document.querySelector(".burger");
+            const offcanvas = document.querySelector(".offcanvas");
+            const overlay = document.querySelector(".offcanvas-overlay");
+
+            if (burger && offcanvas && overlay) {
+                const openMenu = () => {
+                    offcanvas.classList.add("open");
+                    overlay.classList.add("open");
+                    document.body.style.overflow = "hidden";
+                };
+
+                const closeMenu = () => {
+                    offcanvas.classList.remove("open");
+                    overlay.classList.remove("open");
+                    document.body.style.overflow = "";
+                };
+
+                burger.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    offcanvas.classList.contains("open")
+                        ? closeMenu()
+                        : openMenu();
+                });
+
+                overlay.addEventListener("click", closeMenu);
+
+                offcanvas.querySelectorAll("a").forEach((link) => {
+                    link.addEventListener("click", closeMenu);
+                });
+            }
+        }
+
+        /* =========================
+     CTA COMMANDE (COOKIE)
+  ========================= */
+        const btn = document.getElementById("resumeOrder");
+        if (btn && document.cookie.includes("has_active_cart=1")) {
+            window.addEventListener("scroll", () => {
+                if (window.scrollY > 120) {
+                    btn.classList.add("is-visible");
+                } else {
+                    btn.classList.remove("is-visible");
+                }
+            });
+        }
+    });
+</script>
+
+<!-- =========================
+     STYLES
+========================= -->
+<style>
+    /* =========================
+   HEADER
+========================= */
+    .header-fixe {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 80px;
+        background: white;
+        z-index: 1000;
+    }
+
+    .header-inner {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .logo {
+        font-size: 2.4rem;
+        letter-spacing: 0.2em;
+        text-decoration: none;
+        color: #000;
+    }
+
+    /* =========================
+   BURGER
+========================= */
+    .burger {
+        position: absolute;
+        left: 20px;
+        background: none;
+        border: none;
+        font-size: 1.6rem;
+        cursor: pointer;
+        display: none;
+    }
+
+    /* =========================
+   CTA COMMANDE
+========================= */
+    .resume-order {
+        position: sticky;
+        top: 96px;
+        margin-left: auto;
+        margin-right: 2rem;
+        font-size: 0.72rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #000;
+        text-decoration: none;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.4s ease;
+    }
+
+    .resume-order.is-visible {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    /* =========================
+   MENU DESKTOP
+========================= */
+    .menu-wrapper {
+        margin-top: 80px;
+    }
+
+    .menu-sticky {
+        position: fixed;
+        top: 80px;
+        left: 0;
+        right: 0;
+        background: white;
+        z-index: 900;
+    }
+
+    .menu-sticky nav {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 2.5rem;
+    }
+
+    .menu-sticky ul {
+        display: flex;
+        gap: 1.8rem;
+        list-style: none;
+        margin: 0;
+        padding: 1.4rem 0;
+    }
+
+    .menu-sticky ul li a {
+        text-decoration: none;
+        color: #000;
+        font-size: 0.85rem;
+    }
+
+    /* =========================
+   OFF-CANVAS
+========================= */
+    .offcanvas,
+    .offcanvas-overlay {
+        display: none;
+    }
+
+    /* =========================
+   MOBILE
+========================= */
+    @media (max-width: 600px) {
+        .burger {
+            display: block;
+        }
+
+        .menu-wrapper {
+            display: none;
+        }
+
+        .logo {
+            font-size: 1.6rem;
+        }
+
+        .offcanvas {
+            display: block;
+            position: fixed;
+            top: 80px;
+            left: 0;
+            width: 70vw;
+            max-width: 300px;
+            height: calc(100vh - 80px);
+            transform: translateX(-100%);
+            transition: transform 0.4s ease;
+            background: white;
+            padding: 2rem 1.5rem;
+            z-index: 3000;
+        }
+
+        .offcanvas.open {
+            transform: translateX(0);
+        }
+
+        .offcanvas nav {
+            display: flex;
+            flex-direction: column;
+            gap: 1.6rem;
+        }
+
+        .offcanvas nav a {
+            text-decoration: none;
+            color: #000;
+            font-size: 0.9rem;
+        }
+
+        .offcanvas-overlay {
+            display: block;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.25);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 2000;
+        }
+
+        .offcanvas-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+    }
+</style>
