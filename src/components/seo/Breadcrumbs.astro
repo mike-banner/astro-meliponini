@@ -1,0 +1,62 @@
+---
+const { items } = Astro.props;
+
+// Construction JSON-LD
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": items.map((item, index) => ({
+    "@type": "ListItem",
+    "position": index + 1,
+    "name": item.label,
+    "item": item.url,
+  })),
+};
+---
+
+<nav aria-label="Breadcrumb" class="breadcrumbs">
+  <ol>
+    {items.map((item, index) => (
+      <li>
+        {index < items.length - 1 ? (
+          <a href={item.url}>{item.label}</a>
+        ) : (
+          <span>{item.label}</span>
+        )}
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<script type="application/ld+json">
+  {JSON.stringify(jsonLd)}
+</script>
+
+<style>
+  .breadcrumbs {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    margin-bottom: 1rem;
+  }
+
+  .breadcrumbs ol {
+    display: flex;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .breadcrumbs li::after {
+    content: "/";
+    margin-left: 0.5rem;
+  }
+
+  .breadcrumbs li:last-child::after {
+    content: "";
+  }
+
+  .breadcrumbs a {
+    text-decoration: none;
+  }
+</style>

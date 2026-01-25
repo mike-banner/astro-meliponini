@@ -1,203 +1,217 @@
 ---
+/* ROUTE : / */
+
 import Layout from "../layouts/Layout.astro";
+import { Image } from "astro:assets";
 ---
 
 <Layout title="Meliponini — Miels rares">
-    <main>
-        <!-- HERO 1 -->
-        <section class="hero hero-1">
-            <div class="hero-content">
-                <h1>Les miels enzymatiques<br />des mélipones</h1>
-                <a href="/products" class="hero-btn">VOIR PLUS</a>
-            </div>
-        </section>
+  <main>
+    <!-- =========================
+         HERO 1 — LCP (OPTIMISÉ)
+    ========================= -->
+    <section class="hero hero-1">
+      <Image
+        src="/images/home-0.png"
+        alt="Miels enzymatiques des mélipones Meliponini"
+        width={1200}
+        height={1200}
+        sizes="(max-width: 768px) 90vw, 40vw"
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+        class="hero-image"
+      />
 
-        <!-- HERO 2 -->
-        <section class="hero hero-2">
-            <div class="hero-content">
-                <h2>L’univers<br />des mélipones</h2>
-                <a href="/univers" class="hero-btn">VOIR PLUS</a>
-            </div>
-        </section>
+      <div class="hero-content">
+        <h1>Les miels enzymatiques<br />des mélipones</h1>
+        <a href="/products" data-astro-prefetch class="hero-btn">VOIR PLUS</a>
+      </div>
+    </section>
 
-        <!-- HERO 3 -->
-        <section class="hero hero-3">
-            <div class="hero-content">
-                <h2>Les secrets<br />des miels enzymatiques</h2>
-                <a href="/secrets" class="hero-btn">VOIR PLUS</a>
-            </div>
-        </section>
+    <!-- =========================
+         HERO 2
+    ========================= -->
+    <section class="hero hero-2">
+      <div class="hero-content">
+        <h2>L’univers<br />des mélipones</h2>
+        <a href="/univers" data-astro-prefetch class="hero-btn">VOIR PLUS</a>
+      </div>
+    </section>
 
-        <!-- HERO 4 -->
-        <section class="hero hero-4">
-            <div class="hero-content">
-                <h2>Les bougies en bougie<br />des mélipones</h2>
-                <a href="/bougies" class="hero-btn">VOIR PLUS</a>
-            </div>
-        </section>
+    <!-- =========================
+         HERO 3
+    ========================= -->
+    <section class="hero hero-3">
+      <div class="hero-content">
+        <h2>Les secrets<br />des miels enzymatiques</h2>
+        <a href="/secrets" data-astro-prefetch class="hero-btn">VOIR PLUS</a>
+      </div>
+    </section>
 
-        <!-- HERO 5 -->
-        <section class="hero hero-5">
-            <div class="hero-content">
-                <h2>Suivez-nous</h2>
-                <a href="/contact" class="hero-btn">VOIR PLUS</a>
-            </div>
-        </section>
+    <!-- =========================
+         HERO 4
+    ========================= -->
+    <section class="hero hero-4">
+      <div class="hero-content">
+        <h2>Les bougies<br />des mélipones</h2>
+        <a href="/products/bougie" data-astro-prefetch class="hero-btn">VOIR PLUS</a>
+      </div>
+    </section>
 
-        <!-- HERO 6 -->
-        <section class="hero hero-6">
-            <div class="hero-content">
-                <h2>Meliponini</h2>
-            </div>
-        </section>
-    </main>
+    <!-- =========================
+         HERO 5
+    ========================= -->
+    <section class="hero hero-5">
+      <div class="hero-content">
+        <h2>Suivez-nous</h2>
+        <a href="/contact" data-astro-prefetch class="hero-btn">VOIR PLUS</a>
+      </div>
+    </section>
+
+    <!-- =========================
+         HERO 6
+    ========================= -->
+    <section class="hero hero-6">
+      <div class="hero-content">
+        <h2>Meliponini</h2>
+      </div>
+    </section>
+  </main>
 </Layout>
 
 <style>
-    /* =========================
+/* =========================
    STRUCTURE GÉNÉRALE
 ========================= */
-    .hero {
-        width: 100%;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-end;
-        padding-bottom: 5vh;
-        background-size: cover;
-        background-position: center;
-    }
+.hero {
+  width: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 5vh;
+  background-size: cover;
+  background-position: center;
+}
 
-    .hero::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.3);
-    }
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+}
 
-    .hero-content {
-        position: relative;
-        text-align: center;
-        max-width: 90%;
-        padding: 20px;
-        color: #fff;
-    }
+.hero-content {
+  position: relative;
+  text-align: center;
+  max-width: 90%;
+  padding: 20px;
+  color: #fff;
+}
 
-    /* =========================
-   HERO 1
+/* =========================
+   HERO 1 — LCP
 ========================= */
-    .hero-1 {
-        min-height: 90vh;
-        background-color: #fff;
-        background-image: url("/images/home-0.png");
-        background-repeat: no-repeat;
-        background-size: 40%;
-        background-position: center calc(40% - 6vh);
-    }
+.hero-1 {
+  min-height: 90vh;
+  background: #fff;
+}
 
-    .hero-1::before {
-        display: none;
-    }
+.hero-1::before {
+  display: none;
+}
 
-    .hero-1 .hero-content {
-        color: #000;
-    }
+.hero-1 .hero-content {
+  color: #000;
+}
 
-    /* =========================
+.hero-image {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 40%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* =========================
    AUTRES HEROS
 ========================= */
-    .hero-2,
-    .hero-3,
-    .hero-4,
-    .hero-5,
-    .hero-6 {
-        min-height: 80vh;
-    }
+.hero-2,
+.hero-3,
+.hero-4,
+.hero-5,
+.hero-6 {
+  min-height: 80vh;
+}
 
-    .hero-2 {
-        background-image: url("/images/home-1.jpg");
-    }
-    .hero-4 {
-        background-image: url("/images/home-2.jpg");
-    }
-    .hero-5 {
-        background-image: url("/images/home-3.jpg");
-    }
+.hero-2 {
+  background-image: url("/images/home-1.jpg");
+}
+.hero-4 {
+  background-image: url("/images/home-2.jpg");
+}
+.hero-5 {
+  background-image: url("/images/home-3.jpg");
+}
 
-    /* =========================
+/* =========================
    TYPO
 ========================= */
-    .hero-content h1 {
-        font-size: clamp(1.2rem, 4vw, 2.2rem);
-        font-weight: 400;
-        margin-bottom: 1.5rem;
-    }
+.hero-content h1 {
+  font-size: clamp(1.2rem, 4vw, 2.2rem);
+  font-weight: 400;
+  margin-bottom: 1.5rem;
+}
 
-    .hero-content h2 {
-        font-size: clamp(1.1rem, 3.5vw, 2rem);
-        font-weight: 400;
-        margin-bottom: 1.5rem;
-    }
+.hero-content h2 {
+  font-size: clamp(1.1rem, 3.5vw, 2rem);
+  font-weight: 400;
+  margin-bottom: 1.5rem;
+}
 
-    /* =========================
+/* =========================
    BOUTON
 ========================= */
-    .hero-btn {
-        display: inline-block;
-        background: #fff;
-        color: #000;
-        padding: 16px 22px;
-        text-decoration: none;
-        font-weight: 400;
-        font-size: 0.95rem;
-        border: 1px solid #000;
-        transition:
-            transform 160ms ease,
-            box-shadow 160ms ease;
-    }
+.hero-btn {
+  display: inline-block;
+  background: #fff;
+  color: #000;
+  padding: 16px 22px;
+  text-decoration: none;
+  font-weight: 400;
+  font-size: 0.95rem;
+  border: 1px solid #000;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
 
-    .hero-btn:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
-    }
+.hero-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
 
-    /* =========================
-   TABLETTE PORTRAIT
-   465px → 768px
+/* =========================
+   TABLETTE
 ========================= */
-    @media (max-width: 768px) {
-        .hero-1 {
-            min-height: 80vh;
-        }
+@media (max-width: 768px) {
+  .hero-1 {
+    min-height: 80vh;
+  }
 
-        .hero-1 .hero-content {
-            padding-top: 50vh;
-        }
+  .hero-1 .hero-content {
+    padding-top: 50vh;
+  }
 
-        .hero-btn {
-            font-size: 0.85rem;
-            padding: 14px 18px;
-        }
-    }
+  .hero-image {
+    width: 70%;
+  }
 
-    /* =========================
-   MOBILE STRICT
-   < 465px
-========================= */
-    @media (max-width: 464px) {
-        /* HERO 1 plus compact */
-        .hero-1 .hero-content {
-            padding-top: 40vh;
-        }
+  .hero-btn {
+    font-size: 0.85rem;
+    padding: 14px 18px;
+  }
+}
 
-        /* AUTRES HEROS */
-        .hero-2 .hero-content,
-        .hero-3 .hero-content,
-        .hero-4 .hero-content,
-        .hero-5 .hero-content,
-        .hero-6 .hero-content {
-            padding-top: 20vh;
-        }
-    }
-</style>
+/* ===============*

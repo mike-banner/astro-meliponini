@@ -1,5 +1,6 @@
 ---
-// src/pages/product/[slug].astro
+// ROUTE : /product/[slug] (PAGE TECHNIQUE — NON INDEXÉE)
+
 import Layout from "../../layouts/Layout.astro";
 import type { Product } from "../../types/woocommerce";
 import { Image } from "astro:assets";
@@ -47,11 +48,13 @@ const cleanDescription =
         .trim()
         .slice(0, 160) || "";
 
-const canonicalUrl = `https://ton-domaine.pages.dev/product/${product.slug}`;
+const canonicalUrl = product.permalink;
 ---
 
 <Layout title={`${product.name} | Meliponini`} description={cleanDescription}>
     <Fragment slot="head">
+        <meta name="robots" content="noindex, nofollow" />
+
         <link rel="canonical" href={canonicalUrl} />
 
         <meta property="og:type" content="product" />

@@ -17,13 +17,42 @@ const { title, description = "A minimalist Astro site." } = Astro.props;
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
 
-    <!-- Slot SEO pages -->
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <!-- Preload font (accélération) -->
+    <link
+      rel="preload"
+      href="/fonts/abchannel-regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <!-- CSS fonts (application réelle) -->
+    <link rel="stylesheet" href="/src/styles/fonts.css" />
+
+    <!-- Canonical -->
+    <link rel="canonical" href={Astro.url.href} />
+
+    <!-- OpenGraph global -->
+    <meta property="og:site_name" content="Meliponini" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={Astro.url.href} />
+    <meta
+      property="og:image"
+      content="https://ton-domaine.pages.dev/og-default.jpg"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
     <slot name="head" />
   </head>
 

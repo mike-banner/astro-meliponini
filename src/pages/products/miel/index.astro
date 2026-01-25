@@ -4,6 +4,7 @@
 import Layout from "../../../layouts/Layout.astro";
 import ProductsGrid from "../../../components/ProductsGrid.astro";
 import ProductsFilters from "../../../components/ProductsFilters.astro";
+import Breadcrumbs from "../../../components/seo/Breadcrumbs.astro";
 import {
     getProductsByCategory,
     getProductCategoriesByParent,
@@ -29,13 +30,24 @@ const filters = [
 ];
 ---
 
-<Layout title="Les miels — Meliponini">
+<Layout
+    title="Miel artisanal — Meliponini"
+    description="Découvrez nos miels artisanaux d’exception, issus de différentes espèces et terroirs sélectionnés."
+>
     <main class="products-page">
+        <Breadcrumbs
+            items={[
+                { label: "Accueil", url: "/" },
+                { label: "Produits", url: "/products" },
+                { label: "Miel", url: "/products/miel" },
+            ]}
+        />
+
         <ProductsFilters filters={filters} active="all" />
 
         {
             products.length > 0 ? (
-                <ProductsGrid products={products} title="Les miels" />
+                <ProductsGrid products={products} title="Miel" />
             ) : (
                 <section class="products-empty">
                     <p>Nos miels seront bientôt disponibles.</p>
@@ -46,9 +58,6 @@ const filters = [
 </Layout>
 
 <style>
-    /* =========================
-   ÉTAT VIDE — PREMIUM
-========================= */
     .products-empty {
         min-height: 40vh;
         display: flex;

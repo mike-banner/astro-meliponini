@@ -3,6 +3,7 @@
 
 import Layout from "../../../layouts/Layout.astro";
 import ProductsGrid from "../../../components/ProductsGrid.astro";
+import Breadcrumbs from "../../../components/seo/Breadcrumbs.astro";
 import {
     getProductsByCategory,
     getProductCategoriesByParent,
@@ -12,7 +13,7 @@ import {
    ROUTES DYNAMIQUES
 ========================= */
 export async function getStaticPaths() {
-    const MIEL_CATEGORY_ID = 96; // 👈 DÉCLARÉ ICI (OBLIGATOIRE)
+    const MIEL_CATEGORY_ID = 96; // ID Woo — MIEL
 
     const categories = await getProductCategoriesByParent(MIEL_CATEGORY_ID);
 
@@ -28,12 +29,26 @@ export async function getStaticPaths() {
    DONNÉES PAGE
 ========================= */
 const { category } = Astro.props;
-
 const products = await getProductsByCategory(category.slug);
 ---
 
-<Layout title={`Miels ${category.name} — Meliponini`}>
+<Layout
+    title={`Miel ${category.name} — Meliponini`}
+    description={`Explorez nos miels ${category.name}, sélection artisanale Meliponini aux arômes uniques.`}
+>
     <main class="products-page">
-        <ProductsGrid products={products} title={`Miels ${category.name}`} />
+        <Breadcrumbs
+            items={[
+                { label: "Accueil", url: "/" },
+                { label: "Produits", url: "/products" },
+                { label: "Miel", url: "/products/miel" },
+                {
+                    label: category.name,
+                    url: `/products/miel/${category.slug}`,
+                },
+            ]}
+        />
+
+        <ProductsGrid products={products} title={`Miel ${category.name}`} />
     </main>
 </Layout>
