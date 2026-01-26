@@ -50,6 +50,12 @@ function mapProduct(product) {
         image:
             product.images?.[0]?.src ||
             "/images/placeholder.png",
+
+        /* Excerpt WooCommerce */
+        excerpt: product.short_description || "",
+
+        /* Catégorie principale */
+        category: product.categories?.[0]?.slug || "",
     };
 }
 

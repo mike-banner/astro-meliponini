@@ -3,128 +3,56 @@
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 
-import "../styles/products-grid.css";
-
 interface Props {
   title: string;
   description?: string;
 }
 
-const { title, description = "A minimalist Astro site." } = Astro.props;
+const { title, description = "Meliponini — miels rares" } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>{title}</title>
     <meta name="description" content={description} />
 
-    <!-- Preload font (accélération) -->
+    <!-- Fonts -->
     <link
       rel="preload"
-      href="/fonts/abchannel-regular.woff2"
+      href="/fonts/abchanelcorpo-regular.woff2"
       as="font"
       type="font/woff2"
       crossorigin
     />
-
-    <!-- CSS fonts (application réelle) -->
     <link rel="stylesheet" href="/src/styles/fonts.css" />
 
-    <!-- Canonical -->
-    <link rel="canonical" href={Astro.url.href} />
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="/src/styles/global.css" />
+    <link rel="stylesheet" href="/src/styles/products-grid.css" />
+    <link rel="stylesheet" href="/src/styles/product-card.css" />
 
-    <!-- OpenGraph global -->
+    <!-- SEO global -->
+    <link rel="canonical" href={Astro.url.href} />
     <meta property="og:site_name" content="Meliponini" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={Astro.url.href} />
-    <meta
-      property="og:image"
-      content="https://ton-domaine.pages.dev/og-default.jpg"
-    />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
 
-    <meta name="generator" content={Astro.generator} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.svg" />
 
     <slot name="head" />
   </head>
 
   <body>
     <Header />
-    <slot />
+    <div id="page-root">
+      <slot />
+    </div>
     <Footer />
   </body>
 </html>
-
-<style is:global>
-  html,
-  body {
-    font-family: system-ui, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f6f6f6;
-    color: #111;
-  }
-
-  code {
-    font-family:
-      Menlo,
-      Monaco,
-      Lucida Console,
-      Liberation Mono,
-      DejaVu Sans Mono,
-      Bitstream Vera Sans Mono,
-      Courier New,
-      monospace;
-  }
-
-  @font-face {
-    font-family: "MyFont";
-    src: url("/fonts/ABChanelCorpo-Regular.woff2") format("woff2");
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-  }
-
-  @font-face {
-    font-family: "MyFont";
-    src: url("/fonts/ABChanelCorpo-Medium.woff2") format("woff2");
-    font-weight: 500;
-    font-style: normal;
-    font-display: swap;
-  }
-
-  @font-face {
-    font-family: "MyFont";
-    src: url("/fonts/ABChanelCorpo-Bold.woff2") format("woff2");
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
-  }
-
-  html,
-  body {
-    font-family: "MyFont", system-ui, sans-serif;
-  }
-
-  body {
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-  }
-
-  h1,
-  h2,
-  h3,
-  strong,
-  b {
-    font-weight: 400;
-    letter-spacing: 0.02em;
-  }
-</style>

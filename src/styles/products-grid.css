@@ -2,9 +2,10 @@
    PAGE
 ========================= */
 .products-page {
-    padding: 2rem 1.5rem;
+    padding-inline: 1.5rem;
     max-width: 1400px;
     margin: 0 auto;
+    padding-top: calc(var(--header-height) + var(--subnav-height));
 }
 
 /* =========================
@@ -15,10 +16,14 @@
     justify-content: flex-end;
     /* 👉 toujours à droite */
     align-items: center;
-    margin-top: calc(40px + 2rem);
-    /* 80px = hauteur header */
-
 }
+
+.products-toolbar,
+.breadcrumbs {
+    position: relative;
+    z-index: 1;
+}
+
 
 /* SEO only */
 .visually-hidden {
@@ -81,6 +86,8 @@
     grid-template-columns: 1fr;
     /* mobile 1 colonne */
     gap: 6px;
+    margin-bottom: 4rem;
+    /* ✅ Espace avec le footer */
 }
 
 /* mobile toggle → 2 colonnes */
@@ -96,6 +103,11 @@
     .layout-toggle {
         display: inline-flex;
         /* ✅ visible SEULEMENT mobile */
+    }
+
+    /* ✅ CORRECTION : padding réduit car menu-sticky caché */
+    .products-page {
+        padding-top: var(--header-height);
     }
 }
 

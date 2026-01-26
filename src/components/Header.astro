@@ -1,5 +1,5 @@
 ---
-/* src/components/Header.astro */
+/* COMPONENT : Header */
 const from = Astro.url.searchParams.get("from");
 ---
 
@@ -9,7 +9,7 @@ const from = Astro.url.searchParams.get("from");
 <header class="header-fixe">
     <div class="header-inner">
         <button class="burger" aria-label="Menu">☰</button>
-        <a href="/" class="logo">MELIPONINI</a>
+        <a href="/" class="logo" data-astro-prefetch>MELIPONINI</a>
     </div>
 </header>
 
@@ -25,13 +25,14 @@ const from = Astro.url.searchParams.get("from");
 ========================= -->
 <div class="offcanvas">
     <nav>
-        <!-- ROUTES ASTRO CORRECTES -->
-        <a href="/products">Tous les produits</a>
-        <a href="/products/miel">Miels</a>
-        <a href="/products/Bougie">Bougie</a>
+        <a href="/products" data-astro-prefetch>Tous les produits</a>
+        <a href="/products/miel" data-astro-prefetch>Miel</a>
+        <a href="/products/bougie" data-astro-prefetch>Bougie</a>
 
-        <a href="/familles">Familles</a>
-        <a href="/secrets">Le Secret des miels enzymatiques</a>
+        <a href="/familles" data-astro-prefetch>Familles</a>
+        <a href="/secrets" data-astro-prefetch
+            >Le Secret des miels enzymatiques</a
+        >
 
         {
             from === "shop" && (
@@ -51,31 +52,29 @@ const from = Astro.url.searchParams.get("from");
 <!-- =========================
      MENU DESKTOP
 ========================= -->
-<div class="menu-wrapper">
-    <div class="menu-sticky">
-        <nav>
-            <ul>
-                <!-- ROUTES ASTRO CORRECTES -->
-                <li><a href="/products">Tous les produits</a></li>
-                <li><a href="/products/miel">Miels</a></li>
-                <li><a href="/products/bougie">Bougies</a></li>
 
-                <li><a href="/familles">Familles</a></li>
-                <li><a href="/secrets">Le Secret des miels enzymatiques</a></li>
-            </ul>
+<div class="menu-sticky">
+    <nav>
+        <ul>
+            <li><a href="/products">Tous les produits</a></li>
+            <li><a href="/products/miel">Miel</a></li>
+            <li><a href="/products/bougie">Bougie</a></li>
 
-            {
-                from === "shop" && (
-                    <a
-                        href="https://meliponini.remyparis.com/commander/"
-                        class="shop-btn"
-                    >
-                        Retourner à la boutique
-                    </a>
-                )
-            }
-        </nav>
-    </div>
+            <li><a href="/familles">Familles</a></li>
+            <li><a href="/secrets">Le Secret des miels enzymatiques</a></li>
+        </ul>
+
+        {
+            from === "shop" && (
+                <a
+                    href="https://meliponini.remyparis.com/commander/"
+                    class="shop-btn"
+                >
+                    Retourner à la boutique
+                </a>
+            )
+        }
+    </nav>
 </div>
 
 <!-- =========================
@@ -83,73 +82,66 @@ const from = Astro.url.searchParams.get("from");
 ========================= -->
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        /* =========================
-     OFF-CANVAS MOBILE
-  ========================= */
-        if (window.matchMedia("(max-width: 600px)").matches) {
-            const burger = document.querySelector(".burger");
-            const offcanvas = document.querySelector(".offcanvas");
-            const overlay = document.querySelector(".offcanvas-overlay");
+        const burger = document.querySelector(".burger");
+        const offcanvas = document.querySelector(".offcanvas");
+        const overlay = document.querySelector(".offcanvas-overlay");
 
-            if (burger && offcanvas && overlay) {
-                const openMenu = () => {
-                    offcanvas.classList.add("open");
-                    overlay.classList.add("open");
-                    document.body.style.overflow = "hidden";
-                };
+        if (!burger || !offcanvas || !overlay) return;
 
-                const closeMenu = () => {
-                    offcanvas.classList.remove("open");
-                    overlay.classList.remove("open");
-                    document.body.style.overflow = "";
-                };
+        const openMenu = () => {
+            offcanvas.classList.add("open");
+            overlay.classList.add("open");
+            document.body.style.overflow = "hidden";
+        };
 
-                burger.addEventListener("click", (e) => {
-                    e.preventDefault();
-                    offcanvas.classList.contains("open")
-                        ? closeMenu()
-                        : openMenu();
-                });
+        const closeMenu = () => {
+            offcanvas.classList.remove("open");
+            overlay.classList.remove("open");
+            document.body.style.overflow = "";
+        };
 
-                overlay.addEventListener("click", closeMenu);
+        burger.addEventListener("click", (e) => {
+            e.preventDefault();
+            offcanvas.classList.contains("open") ? closeMenu() : openMenu();
+        });
 
-                offcanvas.querySelectorAll("a").forEach((link) => {
-                    link.addEventListener("click", closeMenu);
-                });
-            }
-        }
+        overlay.addEventListener("click", closeMenu);
 
-        /* =========================
-     CTA COMMANDE (COOKIE)
-  ========================= */
+        offcanvas.querySelectorAll("a").forEach((link) => {
+            link.addEventListener("click", closeMenu);
+        });
+
+        /* CTA COMMANDE (COOKIE) */
         const btn = document.getElementById("resumeOrder");
         if (btn && document.cookie.includes("has_active_cart=1")) {
             window.addEventListener("scroll", () => {
-                if (window.scrollY > 120) {
-                    btn.classList.add("is-visible");
-                } else {
-                    btn.classList.remove("is-visible");
-                }
+                btn.classList.toggle("is-visible", window.scrollY > 120);
             });
         }
     });
 </script>
 
-<!-- =========================
-     STYLES
-========================= -->
 <style>
     /* =========================
-   HEADER
+   HEADER FIXE (LOGO UNIFORME)
 ========================= */
     .header-fixe {
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
-        height: 80px;
-        background: white;
+
+        /* 👇 hauteur pilotée par variable */
+        height: var(--header-height);
+
+        /* 👇 taille de police fixe pour éviter l'héritage */
+        font-size: 16px;
+
+        background: #fff;
         z-index: 1000;
+
+        /* desktop : PAS d’ombre ici */
+        box-shadow: none;
     }
 
     .header-inner {
@@ -160,13 +152,6 @@ const from = Astro.url.searchParams.get("from");
         position: relative;
     }
 
-    .logo {
-        font-size: 2.4rem;
-        letter-spacing: 0.2em;
-        text-decoration: none;
-        color: #000;
-    }
-
     /* =========================
    BURGER
 ========================= */
@@ -175,48 +160,24 @@ const from = Astro.url.searchParams.get("from");
         left: 20px;
         background: none;
         border: none;
-        font-size: 1.6rem;
+        font-size: 22px;
         cursor: pointer;
         display: none;
     }
 
     /* =========================
-   CTA COMMANDE
+   SUB HEADER (MENU DESKTOP)
 ========================= */
-    .resume-order {
-        position: sticky;
-        top: 96px;
-        margin-left: auto;
-        margin-right: 2rem;
-        font-size: 0.72rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: #000;
-        text-decoration: none;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.4s ease;
-    }
-
-    .resume-order.is-visible {
-        opacity: 1;
-        pointer-events: auto;
-    }
-
-    /* =========================
-   MENU DESKTOP
-========================= */
-    .menu-wrapper {
-        margin-top: 80px;
-    }
-
     .menu-sticky {
         position: fixed;
-        top: 80px;
+        top: var(--header-height);
         left: 0;
         right: 0;
-        background: white;
+        background: #fff;
         z-index: 900;
+
+        /* 👇 ombre desktop */
+        box-shadow: var(--shadow-subheader);
     }
 
     .menu-sticky nav {
@@ -235,23 +196,121 @@ const from = Astro.url.searchParams.get("from");
     }
 
     .menu-sticky ul li a {
+        position: relative;
         text-decoration: none;
         color: #000;
         font-size: 0.85rem;
     }
 
     /* =========================
-   OFF-CANVAS
+   SOULIGNEMENT LIENS
+========================= */
+    .menu-sticky ul li a::after,
+    .offcanvas nav a::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -4px;
+        width: 100%;
+        height: 1px;
+        background: currentColor;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.25s ease;
+    }
+
+    .menu-sticky ul li a:hover::after,
+    .offcanvas nav a:hover::after {
+        transform: scaleX(1);
+    }
+
+    /* =========================
+   OFF-CANVAS MOBILE (GAUCHE)
 ========================= */
     .offcanvas,
     .offcanvas-overlay {
         display: none;
     }
 
+    .offcanvas {
+        position: fixed;
+        top: var(--header-height);
+        left: 0;
+        width: 70vw;
+        max-width: 320px;
+        height: calc(100vh - var(--header-height));
+        background: #fff;
+        padding: 2rem 1.5rem;
+        transform: translateX(-100%);
+        transition: transform 0.4s ease;
+        z-index: 3000;
+
+        border-top-right-radius: 10%;
+        box-shadow: var(--shadow-subheader);
+    }
+
+    .offcanvas.open {
+        transform: translateX(0);
+    }
+
+    .offcanvas nav {
+        display: flex;
+        flex-direction: column;
+        gap: 1.6rem;
+    }
+
+    .offcanvas nav a {
+        position: relative;
+        text-decoration: none;
+        color: #000;
+        font-size: 0.9rem;
+    }
+
     /* =========================
-   MOBILE
+   OVERLAY
+========================= */
+    .offcanvas-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+        z-index: 2000;
+    }
+
+    .offcanvas-overlay.open {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    /* =========================
+   MOBILE LARGE + TABLETTE PORTRAIT
+========================= */
+    @media (max-width: 768px) {
+        .menu-sticky nav {
+            gap: 1.5rem; /* Réduit l'espace entre les éléments */
+        }
+
+        .menu-sticky ul {
+            gap: 1.2rem; /* Réduit l'espace entre les liens */
+            padding: 1.2rem 1rem; /* Ajoute du padding latéral */
+        }
+
+        .menu-sticky ul li a {
+            font-size: 0.6rem; /* Légèrement plus petit */
+        }
+    }
+
+    /* =========================
+   MOBILE — CORRECTIONS CIBLÉES
 ========================= */
     @media (max-width: 600px) {
+        /* ❌ SUB MENU DESKTOP */
+        .menu-sticky {
+            display: none !important;
+        }
+
         .burger {
             display: block;
         }
@@ -260,55 +319,14 @@ const from = Astro.url.searchParams.get("from");
             display: none;
         }
 
-        .logo {
-            font-size: 1.6rem;
+        /* ✅ OMBRE SOUS LE HEADER EN MOBILE */
+        .header-fixe {
+            box-shadow: var(--shadow-subheader);
         }
 
-        .offcanvas {
-            display: block;
-            position: fixed;
-            top: 80px;
-            left: 0;
-            width: 70vw;
-            max-width: 300px;
-            height: calc(100vh - 80px);
-            transform: translateX(-100%);
-            transition: transform 0.4s ease;
-            background: white;
-            padding: 2rem 1.5rem;
-            z-index: 3000;
-        }
-
-        .offcanvas.open {
-            transform: translateX(0);
-        }
-
-        .offcanvas nav {
-            display: flex;
-            flex-direction: column;
-            gap: 1.6rem;
-        }
-
-        .offcanvas nav a {
-            text-decoration: none;
-            color: #000;
-            font-size: 0.9rem;
-        }
-
+        .offcanvas,
         .offcanvas-overlay {
             display: block;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.25);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-            z-index: 2000;
-        }
-
-        .offcanvas-overlay.open {
-            opacity: 1;
-            pointer-events: auto;
         }
     }
 </style>

@@ -7,14 +7,21 @@ const { product } = Astro.props;
     <!-- Image -->
     <img src={product.image} alt={product.name} loading="lazy" />
 
-    <!-- Numéro -->
-    <p class="product-number">N° {product.number}</p>
-
-    <!-- Nom -->
+    <!-- Numéro (N° 27) -->
     <h2 class="product-name">{product.name}</h2>
 
-    <!-- Nom latin -->
-    <em class="product-latin">{product.latin}</em>
+    <!-- Nom du miel (miel de tubuna) -->
+    <p class="product-display-name">{product.displayName}</p>
+
+    <!-- Nom latin scientifique (dans excerpt) -->
+    {
+        product.excerpt && (
+            <div class="product-excerpt" set:html={product.excerpt} />
+        )
+    }
+
+    <!-- Prix -->
+    {product.available && <p class="product-price">{product.price} €</p>}
 
     <!-- Statut stock -->
     {
@@ -23,10 +30,7 @@ const { product } = Astro.props;
         )
     }
 
-    <!-- Prix -->
-    {product.available && <p class="product-price">{product.price} €</p>}
-
-    <!-- Action UNIQUE -->
+    <!-- Bouton -->
     <div class="product-actions">
         <a
             href={`/products/${product.category}`}
