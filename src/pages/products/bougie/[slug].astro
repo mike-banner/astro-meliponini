@@ -1,36 +1,87 @@
 ---
-/* ROUTE : /products */
+/* ROUTE : /products/bougie/[slug] */
 
-import Layout from "../../layouts/Layout.astro";
-import ProductsGrid from "../../components/ProductsGrid.astro";
-import ProductsFilters from "../../components/ProductsFilters.astro";
-import Breadcrumbs from "../../components/seo/Breadcrumbs.astro";
-import { getProducts } from "../../lib/woocommerce.js";
+import Layout from "../../../layouts/Layout.astro";
+import ProductsGrid from "../../../components/ProductsGrid.astro";
+import ProductsFilters from "../../../components/ProductsFilters.astro";
+import Breadcrumbs from "../../../components/seo/Breadcrumbs.astro";
+import {
+    getProductsByCategory,
+    getProductCategoriesByParent,
+} from "../../../lib/woocommerce.js";
 
-/* catégories racines */
-const ROOT_CATEGORIES = [
-    { label: "Tous", href: "/products", slug: "all" },
-    { label: "Miel", href: "/products/miel", slug: "miel" },
-    { label: "Bougie", href: "/products/bougie", slug: "bougie" },
+export async function getStaticPaths() {
+    const BOUGIE_CATEGORY_ID = 97;
+    const categories = await getProductCategoriesByParent(BOUGIE_CATEGORY_ID);
+
+    return categories.map((cat) => ({
+        params: { slug: cat.slug },
+        props: { category: cat },
+    }));
+}
+
+const { category } = Astro.props;
+const products = await getProductsByCategory(category.slug);
+
+/* Récupération des filtres pour la nav (idem index) */
+const BOUGIE_CATEGORY_ID = 97;
+const subCategories = await getProductCategoriesByParent(BOUGIE_CATEGORY_ID);
+const filters = [
+    { label: "Tous", href: "/products/bougie", slug: "all" },
+    ...subCategories.map((cat) => ({
+        label: cat.name,
+        href: `/products/bougie/${cat.slug}`,
+        slug: cat.slug,
+    })),
 ];
-
-const products = await getProducts();
 ---
 
 <Layout
-    title="Produits artisanaux — Meliponini"
-    description="Découvrez l’ensemble des miels et bougies artisanales Meliponini. Sélection premium, fabrication soignée."
+    title={`${category.name} — Bougie Meliponini`}
+    description={`Découvrez nos bougies artisanales ${category.name}.`}
 >
     <main class="products-page">
         <Breadcrumbs
             items={[
                 { label: "Accueil", url: "/" },
                 { label: "Produits", url: "/products" },
+                { label: "Bougie", url: "/products/bougie" },
+                {
+                    label: category.name,
+                    url: `/products/bougie/${category.slug}`,
+                },
             ]}
         />
 
-        <ProductsFilters filters={ROOT_CATEGORIES} active="all" />
+        <ProductsFilters filters={filters} active={category.slug} />
 
-        <ProductsGrid products={products} title="Produits" />
+        {
+            products.length > 0 ? (
+                <ProductsGrid products={products} title={category.name} />
+            ) : (
+                <section class="products-empty">
+                    <p>
+                        Nos créations en {category.name.toLowerCase()} seront
+                        bientôt disponibles.
+                    </p>
+                </section>
+            )
+        }
     </main>
 </Layout>
+
+<style>
+    .products-empty {
+        min-height: 40vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .products-empty p {
+        font-size: 0.85rem;
+        letter-spacing: 0.06em;
+        opacity: 0.7;
+    }
+</style>
