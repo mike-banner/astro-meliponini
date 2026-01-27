@@ -118,6 +118,22 @@ const from = Astro.url.searchParams.get("from");
                 btn.classList.toggle("is-visible", window.scrollY > 120);
             });
         }
+
+        /* GESTION OMBRE HEADER AU SCROLL (REPLI MENU) */
+        const header = document.querySelector(".header-fixe");
+        /* On prend une valeur proche de la hauteur du menu sticky (~56px) */
+        const SCROLL_THRESHOLD = 60;
+
+        if (header) {
+            window.addEventListener("scroll", () => {
+                const shouldHaveShadow = window.scrollY > SCROLL_THRESHOLD;
+                header.classList.toggle("is-scrolled", shouldHaveShadow);
+            });
+            /* Init au chargement si on est déjà scrollé */
+            if (window.scrollY > SCROLL_THRESHOLD) {
+                header.classList.add("is-scrolled");
+            }
+        }
     });
 </script>
 
@@ -130,6 +146,7 @@ const from = Astro.url.searchParams.get("from");
         top: 0;
         left: 0;
         right: 0;
+        border-top: 8px solid #000;
 
         /* 👇 hauteur pilotée par variable */
         height: var(--header-height);
@@ -142,6 +159,14 @@ const from = Astro.url.searchParams.get("from");
 
         /* desktop : PAS d’ombre ici */
         box-shadow: none;
+
+        /* Transition pour l'ombre */
+        transition: box-shadow 0.3s ease;
+    }
+
+    /* Classe ajoutée en JS au scroll */
+    .header-fixe.is-scrolled {
+        box-shadow: var(--shadow-subheader);
     }
 
     .header-inner {
@@ -150,6 +175,24 @@ const from = Astro.url.searchParams.get("from");
         align-items: center;
         justify-content: center;
         position: relative;
+    }
+
+    /* =========================
+   LOGO — VERROUILLAGE ABSOLU
+========================= */
+    .header-fixe .logo {
+        font-family: "abchannel", system-ui, sans-serif;
+
+        /* fluide mais contrôlé */
+        font-size: 28px;
+        /* stable partout */
+
+        line-height: 1;
+        letter-spacing: 0.2em;
+        font-weight: 600;
+
+        display: inline-block;
+        white-space: nowrap;
     }
 
     /* =========================
@@ -163,13 +206,14 @@ const from = Astro.url.searchParams.get("from");
         font-size: 22px;
         cursor: pointer;
         display: none;
+        color: #000;
     }
 
     /* =========================
    SUB HEADER (MENU DESKTOP)
 ========================= */
     .menu-sticky {
-        position: fixed;
+        position: absolute;
         top: var(--header-height);
         left: 0;
         right: 0;
@@ -313,6 +357,8 @@ const from = Astro.url.searchParams.get("from");
 
         .burger {
             display: block;
+            top: 50%;
+            transform: translateY(-50%);
         }
 
         .menu-wrapper {
@@ -322,6 +368,10 @@ const from = Astro.url.searchParams.get("from");
         /* ✅ OMBRE SOUS LE HEADER EN MOBILE */
         .header-fixe {
             box-shadow: var(--shadow-subheader);
+        }
+
+        .header-fixe .logo {
+            font-size: 20px;
         }
 
         .offcanvas,
