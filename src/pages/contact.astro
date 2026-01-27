@@ -2,27 +2,174 @@
 import Layout from "../layouts/Layout.astro";
 ---
 
-<Layout title="Contact — Meliponini">
-    <main class="page-empty">
-        <section class="content-empty">
-            <p>La page contact sera bientôt disponible.</p>
-        </section>
+<Layout title="Contact - Meliponini">
+    <main class="page-contact">
+        <div class="container-luxe">
+            <h1 class="page-title">Contact & Commandes Privées</h1>
+            <p class="intro-text">
+                Pour toute demande particulière, commande de Miels Rares ou
+                simple désir d'échange, nous sommes à votre écoute.
+            </p>
+
+            <form class="luxury-form" action="#" method="POST">
+                <!-- Honeypot -->
+                <input type="text" name="_honey" style="display:none" />
+
+                <div class="form-group">
+                    <label for="name">Votre Nom</label>
+                    <input type="text" id="name" name="name" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Votre Email</label>
+                    <input type="email" id="email" name="email" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="desiderata">Vos Desiderata</label>
+                    <textarea
+                        id="desiderata"
+                        name="desiderata"
+                        rows="5"
+                        required></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-luxe">
+                        Adresser ma demande
+                    </button>
+                </div>
+            </form>
+        </div>
     </main>
 </Layout>
 
 <style>
-    .page-empty {
-        padding-top: var(--header-height);
-        min-height: 60vh;
+    /* =========================
+       PAGE LAYOUT
+    ========================= */
+    .page-contact {
+        padding-top: calc(var(--header-height) + 4rem);
+        padding-bottom: 4rem;
+        min-height: 80vh;
         display: flex;
         align-items: center;
-        justify-content: center;
-        text-align: center;
+        justify-content: flex-start; /* Alignement gauche */
+        background: #fff;
     }
 
-    .content-empty p {
-        font-size: 0.95rem;
-        letter-spacing: 0.06em;
-        opacity: 0.7;
+    .container-luxe {
+        width: 100%;
+        max-width: 900px;
+        padding: 0 1.5rem;
+        /* Décalage élégant depuis la gauche */
+        margin-left: max(2rem, 5vw);
+        text-align: left;
+    }
+
+    /* =========================
+       TYPOGRAPHY
+    ========================= */
+    .page-title {
+        font-family: "abchannel", serif;
+        font-size: clamp(2rem, 5vw, 3rem);
+        margin-bottom: 1.5rem;
+        font-weight: 400;
+        letter-spacing: -0.02em;
+        color: #000;
+    }
+
+    .intro-text {
+        font-family: system-ui, sans-serif;
+        font-size: 1rem;
+        color: #666;
+        margin-bottom: 4rem;
+        line-height: 1.6;
+        max-width: 480px;
+        margin-left: 0;
+        margin-right: auto;
+    }
+
+    /* =========================
+       FORMULAIRE LUXE
+    ========================= */
+    .luxury-form {
+        display: flex;
+        flex-direction: column;
+        gap: 3rem; /* Espace généreux entre les champs */
+        text-align: left;
+    }
+
+    .form-group {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    /* LABELS */
+    .luxury-form label {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #999;
+        transition: color 0.3s ease;
+    }
+
+    /* INPUTS & TEXTAREA */
+    .luxury-form input,
+    .luxury-form textarea {
+        width: 100%;
+        background: transparent;
+        border: none;
+        border-bottom: 1px solid #e5e5e5;
+        padding: 0.8rem 0;
+        font-family: system-ui, sans-serif;
+        font-size: 1.1rem;
+        color: #000;
+        border-radius: 0; /* Important pour reset mobile */
+        outline: none;
+        transition: border-color 0.3s ease;
+        resize: none;
+    }
+
+    /* FOCUS STATES */
+    .luxury-form input:focus,
+    .luxury-form textarea:focus {
+        border-bottom-color: #000;
+    }
+
+    .luxury-form input:focus + label,
+    .luxury-form textarea:focus + label,
+    .form-group:focus-within label {
+        color: #000;
+    }
+
+    /* =========================
+       BUTTON
+    ========================= */
+    .form-actions {
+        margin-top: 2rem;
+        display: flex;
+        justify-content: flex-end; /* Bouton à droite */
+    }
+
+    .btn-luxe {
+        background-color: #000;
+        color: #fff;
+        border: none;
+        padding: 1rem 3rem;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        cursor: pointer;
+        transition:
+            background-color 0.3s ease,
+            transform 0.2s ease;
+    }
+
+    .btn-luxe:hover {
+        background-color: #333;
+        transform: translateY(-2px);
     }
 </style>
