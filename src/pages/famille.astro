@@ -2,27 +2,876 @@
 import Layout from "../layouts/Layout.astro";
 ---
 
-<Layout title="La Famille — Meliponini">
-    <main class="page-empty">
-        <section class="content-empty">
-            <p>La page famille sera bientôt disponible.</p>
-        </section>
+<Layout title="Classification Scientifique — Meliponini">
+    <main class="page-family">
+        <div class="container-text">
+            <h1 class="page-title">Classification scientifique</h1>
+
+            <div class="content-block">
+                <p>
+                    Dans la classification entomologique des abeilles, la
+                    famille
+                    <strong>APIDAE</strong> est très vaste.
+                </p>
+                <p>
+                    À l’intérieur de cette famille, la sous-famille
+                    <strong>APINAE</strong> regroupe plusieurs tribus, mais quatre
+                    sont particulièrement reconnues et représentatives, dont
+                    <strong>APINI</strong> et <strong>MELIPONINI</strong> les seules
+                    capables de produire du miel :
+                </p>
+
+                <ul class="classification-list">
+                    <li>
+                        <span class="tribe">APINI</span>
+                        <span class="separator">→</span>
+                        <span class="desc"
+                            >les abeilles mellifères, Apis mellifera.</span
+                        >
+                    </li>
+                    <li>
+                        <span class="tribe">MELIPONINI</span>
+                        <span class="separator">→</span>
+                        <span class="desc"
+                            >les abeilles sans aiguillon du genre Melipona,
+                            Scaptotrigona, Plebeia..</span
+                        >
+                    </li>
+                    <li>
+                        <span class="tribe">BOMBINI</span>
+                        <span class="separator">→</span>
+                        <span class="desc">les bourdons, Bombus.</span>
+                    </li>
+                    <li>
+                        <span class="tribe">EUGLOSSINI</span>
+                        <span class="separator">→</span>
+                        <span class="desc"
+                            >les abeilles à longues langues, dites « abeilles
+                            des orchidées » des abeilles de couleurs brillantes,
+                            souvent métalliques, du genre Euglossa, Eulaema,
+                            Exaerete..</span
+                        >
+                    </li>
+                </ul>
+
+                <!-- ARBORESCENCE (Tree) -->
+                <div class="taxonomy-wrapper">
+                    <div class="taxonomy">
+                        <div class="levels">
+                            <div class="level">Famille</div>
+                            <div class="level">Sous-famille</div>
+                            <div class="level">Tribu</div>
+                            <div class="level">Genre</div>
+                        </div>
+
+                        <div class="tree">
+                            <div class="node-text root">APIDAE</div>
+                            <div class="line-vertical"></div>
+                            <div class="node-text">APINAE</div>
+
+                            <div class="branch">
+                                <div class="subtree">
+                                    <div class="node-text tribe">APINI</div>
+                                    <div class="line-vertical-small"></div>
+                                    <button class="node-btn box">Apis</button>
+                                </div>
+
+                                <div class="subtree">
+                                    <div class="node-text tribe">
+                                        MELIPONINI
+                                    </div>
+                                    <div class="line-vertical-small"></div>
+                                    <div class="stack">
+                                        <button class="node-btn box"
+                                            >Melipona</button
+                                        >
+                                        <button class="node-btn box"
+                                            >Tetragonisca</button
+                                        >
+                                        <button class="node-btn box"
+                                            >Scaptotrigona</button
+                                        >
+                                        <button class="node-btn box"
+                                            >Plebeia</button
+                                        >
+                                        <button class="node-btn box"
+                                            >Cephalotrigona</button
+                                        >
+                                        <button class="node-btn box"
+                                            >Friesomelitta</button
+                                        >
+                                        <button class="node-btn box"
+                                            >Tetragona</button
+                                        >
+                                        <button class="node-btn box"
+                                            >Trigona</button
+                                        >
+                                        <button class="node-btn box"
+                                            >Leurotrigona</button
+                                        >
+                                        <button class="node-btn box"
+                                            >Nannotrigona</button
+                                        >
+                                        <button class="node-btn box"
+                                            >Duckeola</button
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GRAPHIQUE CHART.JS -->
+                <div class="chart-container" style="margin-top: 4rem;">
+                    <div style="max-width: 100%; overflow-x: auto;">
+                        <canvas
+                            id="beeChart"
+                            style="width: 100%; height: 400px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
+
+    <!-- SCRIPTS CHART.JS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" is:inline></script>
+    <script is:inline>
+        document.addEventListener("DOMContentLoaded", () => {
+            const ctx = document.getElementById("beeChart").getContext("2d");
+            if (!ctx) return;
+
+            new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: [
+                        "melipona",
+                        "scaptotrigona",
+                        "plebeia",
+                        "trigona",
+                        "paratrigona",
+                        "partamona",
+                        "trigonisca",
+                        "lestrimelitta",
+                        "geotrigona",
+                        "tetragona",
+                        "frieseomelitta",
+                        "nannotrigona",
+                        "oxytrigona",
+                        "dolichotrigona",
+                        "scaura",
+                        "nanoplebia",
+                        "nogueirapis",
+                        "cephalotrigona",
+                        "celetrigona",
+                        "schwarziana",
+                        "leurotrigona",
+                        "tetragonisca",
+                        "duckeola",
+                        "schwarzula",
+                        "trichotrigona",
+                        "aparatrigona",
+                        "friesella",
+                        "mourella",
+                    ],
+                    datasets: [
+                        {
+                            label: "Espèces d'Amérique",
+                            data: [
+                                75, 47, 39, 34, 32, 31, 26, 22, 21, 20, 14, 14,
+                                11, 10, 7, 7, 6, 5, 4, 4, 4, 4, 2, 2, 2, 2, 2,
+                                1,
+                            ],
+                            backgroundColor: "#363748",
+                            borderRadius: 2,
+                        },
+                        {
+                            label: "Espèces du Brésil",
+                            data: [
+                                40, 16, 17, 22, 18, 21, 16, 13, 10, 15, 11, 8,
+                                4, 6, 5, 2, 4, 2, 4, 4, 3, 3, 2, 2, 2, 1, 1, 1,
+                            ],
+                            backgroundColor: "#9D9EAF",
+                            borderRadius: 2,
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: "top",
+                            align: "start" /* Alignement légende gauche */,
+                            labels: {
+                                usePointStyle: true,
+                                pointStyle: "circle",
+                                padding: 20,
+                                font: {
+                                    family: "system-ui",
+                                    size: 11,
+                                },
+                            },
+                        },
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 80,
+                            ticks: {
+                                stepSize: 10,
+                                font: {
+                                    size: 11,
+                                    family: "system-ui",
+                                },
+                            },
+                            title: {
+                                display: true,
+                                text: "Nombre d'espèces",
+                                color: "#D74E4E",
+                                font: {
+                                    family: "system-ui",
+                                    weight: "bold",
+                                },
+                            },
+                            grid: {
+                                color: "#e5e5e5",
+                            },
+                            border: {
+                                display: false,
+                            },
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: "28 Genres d'abeilles",
+                                color: "#D74E4E",
+                                font: {
+                                    family: "system-ui",
+                                    weight: "bold",
+                                },
+                            },
+                            ticks: {
+                                rotation: -45,
+                                font: {
+                                    size: 10,
+                                    family: "system-ui",
+                                },
+                                autoSkip: false,
+                            },
+                            grid: {
+                                display: false,
+                            },
+                            border: {
+                                display: false,
+                            },
+                        },
+                    },
+                },
+            });
+        });
+    </script>
 </Layout>
 
 <style>
-    .page-empty {
-        padding-top: var(--header-height);
-        min-height: 60vh;
+    .page-family {
+        padding-top: calc(var(--header-height) + 4rem);
+        padding-bottom: 4rem;
+        min-height: 80vh;
+        background: #fff;
+        display: flex;
+        justify-content: flex-start; /* Alignement global à gauche */
+    }
+
+    .container-text {
+        width: 100%;
+        max-width: 90vw; /* Élargissement du container */
+        padding: 0 1rem;
+        margin-left: 5vw; /* 5 unités du bord gauche */
+        text-align: left;
+    }
+
+    /* TYPOGRAPHIE */
+    .page-title {
+        font-family: "abchannel", serif;
+        font-size: clamp(1.8rem, 3vw, 2rem);
+        margin-bottom: 3rem;
+        font-weight: 500;
+        letter-spacing: -0.02em;
+        color: #000;
+        text-align: center; /* Titre centré */
+    }
+
+    .content-block {
+        font-family: system-ui, sans-serif;
+        font-size: 1rem;
+        line-height: 1.8;
+        color: #333;
+    }
+
+    .content-block p {
+        margin-bottom: 1.5rem;
+    }
+
+    .content-block strong {
+        font-weight: 600;
+        color: #000;
+    }
+
+    /* LISTE CLASSIFICATION */
+    .classification-list {
+        list-style: none;
+        padding: 0;
+        margin: 2rem 0;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .classification-list li {
+        display: grid;
+        grid-template-columns: 140px 30px 1fr;
+        align-items: baseline;
+    }
+
+    .tribe {
+        font-weight: 700;
+        color: #000;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+    }
+
+    .separator {
+        color: #999;
+        font-weight: 300;
+    }
+
+    .desc {
+        color: #555;
+    }
+
+    /* TABLETTE (max-width: 1024px) */
+    @media (max-width: 1024px) {
+        .page-family {
+            padding-top: calc(var(--header-height) + 2rem);
+        }
+
+        .taxonomy-wrapper {
+            width: 100%;
+            padding: 0;
+            margin-left: 0;
+            text-align: center;
+        }
+
+        .taxonomy {
+            justify-content: center;
+            min-width: 0 !important; /* Force l'écrasement */
+            margin: 0 auto;
+        }
+
+        /* Réduction des textes Tablette */
+        .node-btn {
+            font-size: 0.8rem;
+            padding: 8px 14px;
+            min-width: 100px;
+        }
+        .node-text {
+            font-size: 0.85rem;
+        }
+        .level {
+            font-size: 0.75rem;
+            width: 120px;
+        }
+
+        /* Réduction de l'écart tablette */
+        .branch {
+            gap: 20px;
+            justify-content: center;
+        }
+
+        /* Barre courte sur tablette */
+        .branch::before {
+            width: calc(100% - 100px);
+            border-top: 1px solid #000;
+        }
+
+        /* ALIGNEMENT PRÉCIS TABLETTE (I et O) */
+
+        /* 1. APINI (I) */
+        .subtree:nth-child(1) .node-text.tribe {
+            display: inline-block;
+            transform: translateX(
+                -11px
+            ); /* Estimation initiale pour centrer le I */
+        }
+        .subtree:nth-child(1) .line-vertical-small {
+            transform: translateX(-8px);
+        }
+        .subtree:nth-child(1) .node-btn {
+            transform: translateX(-8px);
+        }
+
+        /* 2. MELIPONINI (O) */
+        .subtree:nth-child(2) .node-text.tribe {
+            display: inline-block;
+            transform: translateX(
+                17px
+            ); /* Estimation initiale pour centrer le O */
+        }
+        .subtree:nth-child(2) .line-vertical-small {
+            transform: translateX(22px);
+        }
+        .subtree:nth-child(2) .stack {
+            margin-top: 0 !important;
+            transform: translateX(22px);
+        }
+    }
+
+    /* MOBILE (max-width: 768px) */
+    @media (max-width: 768px) {
+        .classification-list li {
+            grid-template-columns: 1fr;
+            gap: 0.2rem;
+        }
+
+        .separator {
+            display: none;
+        }
+
+        /* Correction : Flèche uniqument dans la liste, PAS dans l'arbre */
+        .classification-list .tribe::after {
+            content: " →";
+            color: #999;
+            font-weight: 300;
+        }
+
+        /* Container ajustement */
+        .container-text {
+            margin-left: 0;
+            max-width: 100%;
+            padding: 0 0.5rem; /* Encore moins de padding container */
+        }
+
+        /* Taxonomy Ultra Compact */
+        .taxonomy-wrapper {
+            margin-left: 0;
+            width: 100%;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .taxonomy {
+            justify-content: center;
+            padding-left: 0;
+            width: 100%;
+            box-sizing: border-box;
+            min-width: 0 !important; /* CRITIQUE : Overrides default 600px */
+        }
+
+        .levels {
+            display: flex;
+            margin-right: 0;
+            padding-top: 0;
+            flex-shrink: 0;
+            width: 50px; /* Plus petit */
+        }
+
+        .level {
+            width: 100%;
+            font-size: 0.5rem; /* Minuscule */
+            padding-left: 0;
+            letter-spacing: -0.02em;
+            text-align: right;
+            justify-content: flex-end;
+            padding-right: 4px;
+        }
+
+        /* ARBRE */
+        .tree {
+            flex: 1;
+            padding-left: 0;
+            max-width: calc(100% - 50px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .branch {
+            gap: 6px;
+            justify-content: center;
+            width: auto;
+        }
+
+        .subtree {
+            width: 80px; /* Réduit 85 -> 80 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        /* BARRE HORIZONTALE FIXE 
+           Subtree center = 40px
+           Gap = 6px
+           Total center-center = 86px
+        */
+        .branch::before {
+            width: 86px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 1px solid #000;
+            border-right: 1px solid #000;
+            border-top: 1px solid #000;
+            height: 12px;
+            top: -12px;
+        }
+
+        /* Connecteur central (APINAE vers Barre) */
+        .branch::after {
+            top: -32px;
+            height: 20px;
+        }
+
+        /* Réduction des tailles de polices et boites */
+        .node-btn {
+            min-width: unset;
+            max-width: 76px; /* Suit la subtree */
+            width: 95%;
+            padding: 3px 2px; /* Micro padding */
+            font-size: 0.6rem; /* Texte très petit */
+            margin: 5px auto;
+            white-space: normal;
+            line-height: 1.05;
+            text-align: center;
+            border-radius: 4px !important;
+        }
+
+        .node-text {
+            font-size: 0.65rem;
+            margin: 4px auto;
+            height: 25px; /* Moins haut */
+        }
+
+        /* Ajustements hauteurs */
+        .line-vertical {
+            height: 12px;
+        }
+        .line-vertical-small {
+            height: 8px;
+        }
+
+        .level:nth-child(1) {
+            height: 25px;
+            margin-bottom: 12px;
+        }
+        .level:nth-child(2) {
+            height: 25px;
+            margin-bottom: 15px;
+        }
+        .level:nth-child(3) {
+            height: 25px;
+            margin-bottom: 12px;
+        }
+        .level:nth-child(4) {
+            height: auto;
+            padding-top: 5px;
+        }
+    }
+
+    /* =========================
+       ARBORESCENCE (TAXONOMY)
+    ========================= */
+    .taxonomy-wrapper {
+        width: 100%;
+        overflow-x: auto; /* Scroll horizontal sur mobile */
+        padding-bottom: 2rem;
+        margin-bottom: 2rem;
+        /* Scrollbar discrète */
+        scrollbar-width: thin;
+        scrollbar-color: #000 #f1f1f1;
+    }
+
+    .taxonomy {
+        display: flex;
+        font-family: system-ui, sans-serif;
+        min-width: 600px; /* Force la largeur pour le scroll */
+        align-items: flex-start;
+        padding: 1rem 0;
+    }
+
+    .levels {
+        margin-right: 20px;
+        display: flex;
+        flex-direction: column;
+        padding-top: 0;
+    }
+
+    .level {
+        background: transparent;
+        color: #7d7c7c;
+        padding-left: 0;
+        font-weight: 700;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        text-align: left; /* Aligné gauche page */
+        width: 140px;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start; /* Aligné gauche page */
+        height: 40px;
+    }
+
+    /* ALIGNEMENT PRÉCIS (Pixel Perfect) */
+    /*
+       Structure Arbre :
+       - APIDAE (Hauteur ~40px)
+       - Line (30px)
+       - APINAE (Hauteur ~40px)
+       - Branch margin (20px)
+       - APINI (Hauteur ~40px)
+       - Line Small (20px)
+       - Apis (Hauteur ~40px)
+    */
+
+    .level:nth-child(1) {
+        height: 40px;
+        margin-top: 10px; /* Aligne avec APIDAE */
+        margin-bottom: 30px; /* Espace correpondant à la ligne verticale (30px) */
+    }
+    .level:nth-child(2) {
+        height: 40px;
+        margin-bottom: 20px; /* Espace branche */
+    }
+    .level:nth-child(3) {
+        height: 40px;
+        margin-bottom: 20px; /* Espace ligne small */
+    }
+    .level:nth-child(4) {
+        height: 40px;
+        /* Aligne avec Apis/Melipona */
+    }
+
+    .tree {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1;
+    }
+
+    /* ALIGNEMENT PRÉCIS DESKTOP (>1024px) */
+    /* 1. APINI */
+    .subtree:nth-child(1) .node-text.tribe {
+        display: inline-block;
+        transform: translateX(-12px); /* Ajuster ici pour Desktop */
+    }
+    .subtree:nth-child(1) .line-vertical-small {
+        transform: translateX(-9px);
+    }
+    .subtree:nth-child(1) .node-btn {
+        transform: translateX(-8px);
+    }
+
+    /* 2. MELIPONINI */
+    .subtree:nth-child(2) .node-text.tribe {
+        display: inline-block;
+        transform: translateX(18px); /* Ajuster ici pour Desktop */
+    }
+    .subtree:nth-child(2) .line-vertical-small {
+        transform: translateX(22px);
+    }
+    .subtree:nth-child(2) .stack {
+        transform: translateX(24px);
+    }
+
+    .node-text {
+        color: #111;
+        font-weight: 700;
+        font-size: 1rem;
+        text-transform: uppercase;
         display: flex;
         align-items: center;
         justify-content: center;
-        text-align: center;
+        height: 40px; /* Hauteur fixe pour alignement */
+        margin: 0 auto;
+        letter-spacing: 0.05em;
     }
 
-    .content-empty p {
-        font-size: 0.95rem;
-        letter-spacing: 0.06em;
-        opacity: 0.7;
+    .node-btn {
+        display: inline-block;
+        background: #fff;
+        color: #000;
+        padding: 10px 18px;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.9rem;
+        font-style: italic;
+        border: 1px solid #000;
+        border-radius: 5% !important;
+        box-shadow: 1px 2px 6px 0px rgba(0, 0, 0, 0.5); /* Ombre demandée */
+        transition:
+            transform 160ms ease,
+            box-shadow 160ms ease;
+        cursor: pointer;
+        margin: 10px auto;
+
+        /* ADAPTATION CONTENU */
+        min-width: 120px;
+        max-width: 100%; /* Ne jamais dépasser le parent */
+        height: auto; /* S'adapte à la hauteur du texte */
+        white-space: normal; /* Autorise le retour à la ligne */
+        overflow-wrap: break-word; /* Coupe les mots si trop longs */
+        word-wrap: break-word;
+    }
+
+    .node-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Couleurs spécifiques ou styles pour Root/Tribe si besoin */
+    .node-btn.root {
+        border-width: 2px;
+    }
+
+    /* Lignes de connexion (sommaire) */
+    /* Lignes de connexion (sommaire) */
+    .line-vertical {
+        width: 1px;
+        min-width: 1px; /* Sécurité rendu */
+        height: 30px;
+        background: #000;
+        margin: 0 auto;
+    }
+
+    .line-vertical-small {
+        width: 1px;
+        min-width: 1px; /* Sécurité rendu */
+        height: 20px;
+        background: #000;
+        margin: 0 auto;
+    }
+
+    .branch {
+        display: flex;
+        gap: 140px; /* Ecart augmenté (60px -> 140px) */
+        margin-top: 20px;
+        position: relative;
+    }
+
+    /* Ligne horizontale + verticales (Forme de U inversé) */
+    .branch::before {
+        content: "";
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: calc(100% - 100px); /* Largeur dynamique basée sur le gap */
+        height: 20px;
+        border-top: 1px solid #000;
+        border-left: 1px solid #000;
+        border-right: 1px solid #000;
+    }
+
+    /* Petite ligne verticale centrale du haut (Connecteur APINAE) */
+    .branch::after {
+        content: "";
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-0.5px); /* Centrage parfait du trait 1px */
+        height: 20px; /* Descend vers la barre horizontale */
+        width: 1px;
+        background: #000;
+        display: none; /* Inutile car border-top passe déjà par là ? Non, il faut relier APINAE à la barre H */
+    }
+
+    /* Correction : Le trait vertical central doit être GÉRÉ PAR LE PARENT ou un pseudo-element distinct */
+    .branch::after {
+        content: "";
+        position: absolute;
+        top: -35px; /* Ajustement visuel pour toucher APINAE */
+        height: 15px;
+        left: 50%;
+        width: 1px;
+        background: #000;
+    }
+
+    .subtree {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .stack {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 10px;
+        align-items: flex-start; /* Alignement gauche des boutons */
+    }
+
+    /* Override pour les boutons dans la pile (gauche) */
+    .stack .node-btn {
+        margin-left: 0;
+        margin-right: 0;
+        text-align: left;
+    }
+
+    /* OVERRIDES MOBILE POUR ALIGNEMENT PARFAIT */
+    @media (max-width: 768px) {
+        .stack {
+            margin-top: 0 !important; /* Force l'alignement avec Apis */
+            gap: 6px;
+            width: 100%;
+            align-items: center; /* Reste centré sur mobile */
+        }
+
+        .subtree {
+            overflow: visible; /* Laisse le texte dépasser si besoin pour l'alignement */
+        }
+
+        .node-text.tribe {
+            white-space: nowrap !important; /* Empêche tout retour à la ligne */
+        }
+
+        /* Décalage optique pour CENTRER le O de MELIPONINI sous la barre */
+        .subtree:nth-child(2) .node-text.tribe {
+            padding-right: 0;
+            /* Décalage plus prononcé pour aligner le O */
+            transform: translateX(-28px);
+            display: inline-block;
+        }
+
+        /* ALIGNEMENT VERTICAL COMPLET (Barre bas + Boutons) sur le O */
+        .subtree:nth-child(2) .line-vertical-small {
+            transform: translateX(-12px);
+        }
+
+        .subtree:nth-child(2) .stack {
+            transform: translateX(-28px);
+            margin-top: 0 !important; /* On garde le reset de marge */
+        }
+
+        /* --- ALIGNEMENT APINI (MEME LOGIQUE) --- */
+        /* Ajuster le X pour aligner le I sous la barre */
+        .subtree:nth-child(1) .node-text.tribe {
+            display: inline-block;
+            transform: translateX(
+                9px
+            ); /* I est déjà au centre ? Modifier si besoin */
+        }
+
+        .subtree:nth-child(1) .line-vertical-small {
+            transform: translateX(10px);
+        }
+
+        .subtree:nth-child(1) .node-btn {
+            transform: translateX(0px);
+        }
     }
 </style>
