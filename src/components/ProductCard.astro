@@ -1,4 +1,5 @@
 ---
+/* src/components/ProductCard.astro */
 /* COMPONENT : ProductCard */
 const { product } = Astro.props;
 ---
@@ -33,8 +34,9 @@ const { product } = Astro.props;
     <!-- Bouton -->
     <div class="product-actions">
         <a
-            href={`/products/${product.category}`}
-            data-astro-prefetch
+            href={product.permalink}
+            target="_blank"
+            rel="noopener noreferrer"
             class="btn-discover"
         >
             Découvrir

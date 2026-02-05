@@ -56,6 +56,9 @@ function mapProduct(product) {
 
         /* Catégorie principale */
         category: product.categories?.[0]?.slug || "",
+
+        /* Lien direct WordPress */
+        permalink: product.permalink || "",
     };
 }
 
