@@ -1,0 +1,319 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+// Content variables
+const title = "Les enzymes dans";
+const subtitle = "le miel des Melipones";
+const image = "/images/secrets/IMG_5958-1-1536x1152.jpg";
+---
+
+<Layout title="Les enzymes dans le miel des Melipones – Meliponini">
+    <main class="article-page">
+        <div class="content-container">
+            <!-- HEADER SECTION -->
+            <header class="article-header">
+                <h1 class="main-title" set:html={title} />
+                <h2 class="subtitle" set:html={subtitle} />
+            </header>
+
+            <div class="article-image-wrapper">
+                <img src={image} alt="Miel des Melipones" />
+            </div>
+
+            <!-- CONTENT BLOCK -->
+            <div class="article-content rich-text">
+                <p>
+                    <strong
+                        >L’activité enzymatique varie selon les espèces, les
+                        types de fleurs butinées, les saisons et les méthodes de
+                        conditionnements et stockages du miel.</strong
+                    >
+                </p>
+
+                <h6 class="titreh6">
+                    Principales enzymes identifiées dans le miel des Mélipones :
+                </h6>
+
+                <div class="table-responsive">
+                    <table class="trehalulose-table">
+                        <thead>
+                            <tr>
+                                <th>Enzyme</th>
+                                <th>Fonctions principales</th>
+                                <th>Particularités observées</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Glucose oxydase</td>
+                                <td
+                                    >Oxydation du glucose en acide gluconique et
+                                    peroxyde d’hydrogène (antibactérien)</td
+                                >
+                                <td
+                                    >Présente, mais activité parfois plus basse
+                                    ; la forte acidité naturelle du miel de
+                                    Mélipones compense l’effet antibactérien.</td
+                                >
+                            </tr>
+                            <tr>
+                                <td>Invertase (β-fructofuranosidase)</td>
+                                <td
+                                    >Transforme le saccharose en glucose et
+                                    fructose</td
+                                >
+                                <td
+                                    >Activité souvent plus faible que dans le
+                                    miel d’Apis mellifera, car le nectar
+                                    contient déjà peu de saccharose.</td
+                                >
+                            </tr>
+                            <tr>
+                                <td>Diastase (α- et β-amylases)</td>
+                                <td
+                                    >Transforme l’amidon et les dextrines en
+                                    sucres simples</td
+                                >
+                                <td
+                                    >Activité très faible dans le miel de
+                                    Mélipones — souvent en dessous des standards
+                                    de mesure appliqués au miel d’Apis.</td
+                                >
+                            </tr>
+                            <tr>
+                                <td>Catalase</td>
+                                <td>Décompose le peroxyde d’hydrogène</td>
+                                <td
+                                    >Activité variable selon les espèces ;
+                                    pourrait moduler l’effet antiseptique.</td
+                                >
+                            </tr>
+                            <tr>
+                                <td>Peroxydases</td>
+                                <td
+                                    >Impliquées dans la production/régulation de
+                                    composés oxydants</td
+                                >
+                                <td
+                                    >Potentielles contributions à l’effet
+                                    antimicrobien.</td
+                                >
+                            </tr>
+                            <tr>
+                                <td>Lipases</td>
+                                <td>Transforme des lipides</td>
+                                <td>Présentes à faible concentration.</td>
+                            </tr>
+                            <tr>
+                                <td>Protéases</td>
+                                <td
+                                    >Dégradent certaines protéines du nectar ou
+                                    de l’abeille</td
+                                >
+                                <td
+                                    >Contribuent aux peptides bioactifs du miel.</td
+                                >
+                            </tr>
+                            <tr>
+                                <td>Lysozyme</td>
+                                <td></td>
+                                <td>Activité antimicrobienne supplementaire.</td
+                                >
+                            </tr>
+                            <tr>
+                                <td
+                                    >Enzymes associées aux sucres rares (ex.
+                                    tréhalulase, isomaltase)</td
+                                >
+                                <td
+                                    >Conversion de disaccharides atypiques comme
+                                    le tréhalulose</td
+                                >
+                                <td
+                                    >Très caractéristiques des miels de
+                                    Mélipones, absentes ou rares dans le miel
+                                    d’Apis mellifera.</td
+                                >
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h6 class="legende">
+                    Tableau pédagogique : valeurs d’activité variables selon
+                    l’espèce d’abeille, la flore et les méthodes de
+                    conditionnements.
+                </h6>
+            </div>
+        </div>
+    </main>
+</Layout>
+
+<style>
+    .article-page {
+        padding-top: calc(var(--header-height) + var(--subnav-height) + 4rem);
+        padding-bottom: 6rem;
+        background: #fff;
+    }
+
+    .content-container {
+        max-width: 1260px; /* Increased by 40% from 900px */
+        margin: 0 auto;
+        padding: 0 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .article-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        width: 100%;
+    }
+
+    .main-title {
+        font-family: "abchannel", serif;
+        font-size: clamp(2rem, 4vw, 3.5rem);
+        line-height: 1.1;
+        margin-bottom: 0px;
+        font-weight: 400; /* Regular weight often looks bolder in this font */
+    }
+
+    .subtitle {
+        font-family: "abchannel", serif;
+        font-size: clamp(2rem, 4vw, 3.5rem);
+        font-weight: 400;
+        margin-top: 0;
+        line-height: 1.1;
+        margin-bottom: 2rem;
+    }
+
+    .article-image-wrapper {
+        width: 100%;
+        margin-bottom: 4rem;
+        display: flex;
+        justify-content: center;
+    }
+
+    .article-image-wrapper img {
+        width: 100%;
+        height: auto;
+        display: block;
+        max-height: 70vh; /* Don't let it get huge vertically */
+        object-fit: contain;
+    }
+
+    .rich-text {
+        font-family: "abchannel", serif;
+        font-size: 1.25rem;
+        line-height: 1.6;
+        color: #000;
+        text-align: left; /* Justified often cleaner for blocks, but staying left to be safe */
+        font-weight: 400;
+        width: 100%;
+    }
+
+    .rich-text p {
+        margin-bottom: 2rem;
+    }
+
+    .rich-text strong {
+        font-weight: 600;
+    }
+
+    .titreh6 {
+        font-family: "abchannel", serif;
+        font-size: 1.1rem; /* ~18px */
+        font-weight: 600;
+        margin-top: 3rem;
+        margin-bottom: 1.5rem;
+        /* text-transform: uppercase; */
+    }
+
+    .legende {
+        font-family: "abchannel", serif;
+        font-size: 0.9rem; /* ~14px */
+        font-weight: 400;
+        margin-top: 1rem;
+        font-style: italic;
+        color: #333;
+        text-align: center; /* Legend often centered */
+    }
+
+    /* TABLE STYLES matching source CSS logic */
+    .table-responsive {
+        overflow-x: auto;
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+
+    .trehalulose-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-family:
+            "Helvetica", "Arial", sans-serif; /* Distinct font for data table */
+        font-size: 0.9rem; /* Slightly smaller for density */
+    }
+
+    .trehalulose-table th,
+    .trehalulose-table td {
+        border: 1px solid #ddd;
+        padding: 12px 15px; /* More padding */
+        text-align: left;
+        vertical-align: top;
+        line-height: 1.4;
+    }
+
+    .trehalulose-table th {
+        background-color: #f8f8f8;
+        font-weight: bold;
+        color: #333;
+        text-transform: uppercase;
+        font-size: 0.8em;
+        letter-spacing: 0.05em;
+    }
+
+    /* Zebra striping - clean like source */
+    .trehalulose-table tr:nth-child(even) {
+        background-color: #fcfcfc;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+        .article-page {
+            padding-top: var(--header-height);
+            padding-bottom: 4rem;
+        }
+
+        .main-title,
+        .subtitle {
+            font-size: 2rem;
+        }
+
+        .rich-text {
+            font-size: 1.1rem;
+        }
+
+        /* Force table scroll on mobile */
+        .table-responsive {
+            display: block;
+            width: 100%;
+            overflow-x: visible; /* Pas de scroll */
+        }
+
+        .trehalulose-table {
+            width: 100%;
+            table-layout: fixed; /* Force le tableau a rester dans les clous */
+            font-size: 0.75rem; /* Réduire la police pour tout faire rentrer */
+        }
+
+        .trehalulose-table th,
+        .trehalulose-table td {
+            min-width: auto; /* Laisser les colonnes se réduire */
+            padding: 4px; /* Réduire le padding */
+            word-wrap: break-word; /* Casser les mots longs si besoin */
+            hyphens: auto;
+        }
+    }
+</style>

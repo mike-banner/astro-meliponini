@@ -73,7 +73,10 @@ import Layout from "../layouts/Layout.astro";
                                 <div class="subtree">
                                     <div class="node-text tribe">APINI</div>
                                     <div class="line-vertical-small"></div>
-                                    <button class="node-btn box">Apis</button>
+                                    <button
+                                        class="node-btn box open-modal-famille"
+                                        data-famille-id="apis">Apis</button
+                                    >
                                 </div>
 
                                 <div class="subtree">
@@ -82,37 +85,65 @@ import Layout from "../layouts/Layout.astro";
                                     </div>
                                     <div class="line-vertical-small"></div>
                                     <div class="stack">
-                                        <button class="node-btn box"
+                                        <button
+                                            class="node-btn box open-modal-famille"
+                                            data-famille-id="melipona"
                                             >Melipona</button
                                         >
-                                        <button class="node-btn box"
+                                        <button
+                                            class="node-btn box open-modal-famille"
+                                            data-famille-id="tetragonisca"
                                             >Tetragonisca</button
                                         >
-                                        <button class="node-btn box"
+                                        <button
+                                            class="node-btn box open-modal-famille"
+                                            data-famille-id="scaptotrigona"
                                             >Scaptotrigona</button
                                         >
-                                        <button class="node-btn box"
+                                        <button
+                                            class="node-btn box open-modal-famille"
+                                            data-famille-id="plebeia"
                                             >Plebeia</button
                                         >
-                                        <button class="node-btn box"
+                                        <button
+                                            class="node-btn box open-modal-famille"
+                                            data-famille-id="cephalotrigona"
                                             >Cephalotrigona</button
                                         >
-                                        <button class="node-btn box"
+                                        <button
+                                            class="node-btn box"
+                                            disabled
+                                            style="opacity: 0.5;"
                                             >Friesomelitta</button
                                         >
-                                        <button class="node-btn box"
+                                        <button
+                                            class="node-btn box"
+                                            disabled
+                                            style="opacity: 0.5;"
                                             >Tetragona</button
                                         >
-                                        <button class="node-btn box"
+                                        <button
+                                            class="node-btn box"
+                                            disabled
+                                            style="opacity: 0.5;"
                                             >Trigona</button
                                         >
-                                        <button class="node-btn box"
+                                        <button
+                                            class="node-btn box"
+                                            disabled
+                                            style="opacity: 0.5;"
                                             >Leurotrigona</button
                                         >
-                                        <button class="node-btn box"
+                                        <button
+                                            class="node-btn box"
+                                            disabled
+                                            style="opacity: 0.5;"
                                             >Nannotrigona</button
                                         >
-                                        <button class="node-btn box"
+                                        <button
+                                            class="node-btn box"
+                                            disabled
+                                            style="opacity: 0.5;"
                                             >Duckeola</button
                                         >
                                     </div>
@@ -133,6 +164,87 @@ import Layout from "../layouts/Layout.astro";
             </div>
         </div>
     </main>
+
+    <!-- Off-Canvas Modal (Elementor-style) -->
+    <div
+        id="family-canvas"
+        class="e-off-canvas hidden"
+        role="dialog"
+        aria-hidden="true"
+        aria-label="Famille Details"
+        aria-modal="true"
+    >
+        <!-- Overlay -->
+        <div id="canvas-overlay" class="e-off-canvas__overlay"></div>
+
+        <!-- Main Container -->
+        <div class="e-off-canvas__main">
+            <!-- Content Wrapper -->
+            <div class="e-off-canvas__content">
+                <!-- Close Button (Top Right) -->
+                <div class="absolute top-4 right-4 z-50">
+                    <button
+                        id="close-canvas"
+                        class="bg-white/90 hover:bg-white text-gray-800 rounded-full p-2 shadow-lg transition-all"
+                    >
+                        <svg
+                            class="h-6 w-6"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Header with Image -->
+                <div class="relative h-64 bg-gray-100 flex-shrink-0">
+                    <img
+                        id="canvas-image"
+                        src=""
+                        alt=""
+                        class="w-full h-full object-cover"
+                    />
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"
+                    >
+                    </div>
+                    <div class="absolute bottom-6 left-6 right-6">
+                        <h2
+                            id="canvas-title"
+                            class="text-3xl font-bold text-white font-serif drop-shadow-lg"
+                        >
+                        </h2>
+                    </div>
+                </div>
+
+                <!-- Content Body -->
+                <div class="relative flex-1 px-6 py-6 sm:px-8 overflow-y-auto">
+                    <div
+                        id="canvas-content"
+                        class="prose prose-lg text-gray-600 max-w-none prose-headings:font-serif prose-headings:text-gray-900 prose-strong:text-amber-800 prose-ul:list-disc prose-ul:pl-5"
+                    >
+                        <!-- Injected Content -->
+                    </div>
+
+                    <div class="mt-12 mb-8 pt-6 border-t border-gray-100">
+                        <a
+                            id="canvas-link"
+                            href="#"
+                            class="block w-full text-center px-6 py-4 border border-transparent rounded-xl shadow-sm text-base font-medium text-white bg-[#111] hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-all transform hover:scale-[1.02]"
+                        >
+                            Voir tous les produits
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- SCRIPTS CHART.JS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js" is:inline></script>
@@ -272,6 +384,131 @@ import Layout from "../layouts/Layout.astro";
             });
         });
     </script>
+
+    <!-- CANVAS INITIALIZATION -->
+    <script is:inline>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Données des familles
+            const familiesData = {
+                apis: {
+                    id: "apis",
+                    name: "Apis",
+                    link: "/categorie/apini/apis",
+                    image: "/images/familles/apis.jpg",
+                    content: `<h5>Le genre <strong>Apis mellifera</strong></h5>
+                    <p>Comporte vingt-huit sous-espèces (toutes fécondables entre elles) réparties en cinq groupes majeurs...</p>`,
+                },
+                melipona: {
+                    id: "melipona",
+                    name: "Melipona",
+                    link: "/categorie/meliponini/melipona",
+                    image: "/images/familles/melipona.jpg",
+                    content: `<p>Les <strong>Melipona</strong> sont un genre fascinant d'abeilles sans aiguillon...</p>`,
+                },
+                tetragonisca: {
+                    id: "tetragonisca",
+                    name: "Tetragonisca",
+                    link: "/categorie/meliponini/tetragonisca",
+                    image: "/images/familles/tetragonisca.jpg",
+                    content: `<p>Genre : <strong>Tetragonisca</strong></p><p>Les Tetragonisca sont des abeilles mélipones...</p>`,
+                },
+                scaptotrigona: {
+                    id: "scaptotrigona",
+                    name: "Scaptotrigona",
+                    link: "/categorie/meliponini/scaptotrigona",
+                    image: "/images/familles/scaptotrigona.jpg",
+                    content: `<p>Genre : <strong>Scaptotrigona</strong></p><p>Ce genre regroupe des abeilles robustes...</p>`,
+                },
+                plebeia: {
+                    id: "plebeia",
+                    name: "Plebeia",
+                    link: "/categorie/meliponini/plebeia",
+                    image: "/images/familles/plebeia.jpg",
+                    content: `<p>Genre : <strong>Plebeia</strong></p><p>Les abeilles du genre Plebeia sont généralement de très petite taille...</p>`,
+                },
+                cephalotrigona: {
+                    id: "cephalotrigona",
+                    name: "Cephalotrigona",
+                    link: "/categorie/meliponini/cephalotrigona",
+                    image: "/images/familles/cephalotrigona.jpg",
+                    content: `<p>Genre : <strong>Cephalotrigona</strong></p><p>Les Cephalotrigona, comme la "Mombucão"...</p>`,
+                },
+            };
+
+            const canvas = document.getElementById("family-canvas");
+            const overlay = document.getElementById("canvas-overlay");
+            const closeBtn = document.getElementById("close-canvas");
+            const openBtns = document.querySelectorAll(".open-modal-famille");
+
+            const canvasTitle = document.getElementById("canvas-title");
+            const canvasImage = document.getElementById("canvas-image");
+            const canvasContent = document.getElementById("canvas-content");
+            const canvasLink = document.getElementById("canvas-link");
+
+            if (!canvas || !overlay) return;
+
+            function openCanvas(familyId) {
+                const family = familiesData[familyId];
+
+                if (!family) {
+                    console.error("Famille non trouvée:", familyId);
+                    return;
+                }
+
+                if (canvasTitle) canvasTitle.textContent = family.name;
+                if (canvasImage) {
+                    canvasImage.src = family.image;
+                    canvasImage.onerror = function () {
+                        this.src = "https://placehold.co/600x400?text=Famille";
+                    };
+                }
+                if (canvasContent) canvasContent.innerHTML = family.content;
+                if (canvasLink) {
+                    canvasLink.href = family.link;
+                    canvasLink.textContent = `Explorer ${family.name}`;
+                }
+
+                canvas.classList.remove("hidden");
+                canvas.setAttribute("aria-hidden", "false");
+                canvas.classList.add("elementor-active");
+                document.body.classList.add("elementor-offcanvas-active");
+                document.body.style.overflow = "hidden";
+            }
+
+            function closeCanvasFunc() {
+                canvas.classList.remove("elementor-active");
+                canvas.setAttribute("aria-hidden", "true");
+                document.body.classList.remove("elementor-offcanvas-active");
+
+                setTimeout(() => {
+                    canvas.classList.add("hidden");
+                    document.body.style.overflow = "";
+                }, 300);
+            }
+
+            openBtns.forEach((btn) => {
+                btn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    const familyId = btn.getAttribute("data-famille-id");
+                    if (familyId) {
+                        openCanvas(familyId);
+                    }
+                });
+            });
+
+            closeBtn?.addEventListener("click", closeCanvasFunc);
+            overlay?.addEventListener("click", closeCanvasFunc);
+
+            document.addEventListener("keydown", (e) => {
+                if (
+                    e.key === "Escape" &&
+                    !canvas.classList.contains("hidden")
+                ) {
+                    closeCanvasFunc();
+                }
+            });
+        });
+    </script>
 </Layout>
 
 <style>
@@ -330,9 +567,7 @@ import Layout from "../layouts/Layout.astro";
     }
 
     .classification-list li {
-        display: grid;
-        grid-template-columns: 140px 30px 1fr;
-        align-items: baseline;
+        line-height: 1.8;
     }
 
     .tribe {
@@ -346,6 +581,7 @@ import Layout from "../layouts/Layout.astro";
     .separator {
         color: #999;
         font-weight: 300;
+        margin: 0 0.5rem;
     }
 
     .desc {
@@ -705,10 +941,10 @@ import Layout from "../layouts/Layout.astro";
         display: inline-block;
         background: #fff;
         color: #000;
-        padding: 10px 18px;
+        padding: 8px 12px;
         text-decoration: none;
         font-weight: 500;
-        font-size: 0.9rem;
+        font-size: 0.75rem;
         font-style: italic;
         border: 1px solid #000;
         border-radius: 5% !important;
@@ -723,9 +959,10 @@ import Layout from "../layouts/Layout.astro";
         min-width: 120px;
         max-width: 100%; /* Ne jamais dépasser le parent */
         height: auto; /* S'adapte à la hauteur du texte */
-        white-space: normal; /* Autorise le retour à la ligne */
-        overflow-wrap: break-word; /* Coupe les mots si trop longs */
-        word-wrap: break-word;
+        white-space: nowrap; /* Force le texte sur une ligne */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: center; /* Centre le texte */
     }
 
     .node-btn:hover {
@@ -815,11 +1052,11 @@ import Layout from "../layouts/Layout.astro";
         align-items: flex-start; /* Alignement gauche des boutons */
     }
 
-    /* Override pour les boutons dans la pile (gauche) */
+    /* Override pour les boutons dans la pile (centré) */
     .stack .node-btn {
         margin-left: 0;
         margin-right: 0;
-        text-align: left;
+        text-align: center;
     }
 
     /* OVERRIDES MOBILE POUR ALIGNEMENT PARFAIT */

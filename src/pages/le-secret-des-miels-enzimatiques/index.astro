@@ -1,0 +1,221 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const sections = [
+    {
+        title: "Le miel enzymatique <br> des Melipones,",
+        subtitle: "un elixir bioactif unique",
+        image: "/images/secrets/IMG_5955-1-scaled.jpg",
+        link: "/le-secret-des-miels-enzimatiques/miel-enzymatique",
+        alt: "Miel enzymatique des mélipones",
+        reverse: false,
+    },
+    {
+        title: "Les enzymes dans<br> le miel des Melipones",
+        subtitle: "",
+        image: "/images/secrets/IMG_5958-1-scaled.jpg",
+        link: "/le-secret-des-miels-enzimatiques/les-enzymes",
+        alt: "Enzymes du miel",
+        reverse: true,
+    },
+    {
+        title: "Le tréhalulose",
+        subtitle: "",
+        image: "/images/secrets/IMG_5950-scaled.jpg",
+        link: "/le-secret-des-miels-enzimatiques/le-trehalulose",
+        alt: "Le tréhalulose",
+        reverse: false,
+    },
+];
+---
+
+<Layout title="Le Secret des miels enzimatiques – Meliponini">
+    <main class="secrets-page">
+        {
+            sections.map((section) => (
+                <section
+                    class={`secret-section ${section.reverse ? "reverse" : ""}`}
+                >
+                    <a href={section.link} class="section-link">
+                        <div class="content-wrapper">
+                            <div class="text-content">
+                                <h2
+                                    class="main-title"
+                                    set:html={section.title}
+                                />
+                                {section.subtitle && (
+                                    <h3 class="subtitle">{section.subtitle}</h3>
+                                )}
+                                <span class="discover-btn">decouvrir</span>
+                            </div>
+                            <div class="image-content">
+                                <img
+                                    src={section.image}
+                                    alt={section.alt}
+                                    loading="lazy"
+                                />
+                            </div>
+                        </div>
+                    </a>
+                </section>
+            ))
+        }
+    </main>
+</Layout>
+
+<style>
+    .secrets-page {
+        width: 100%;
+        margin: 0 auto;
+        padding-top: calc(var(--header-height) + var(--subnav-height) + 2rem);
+    }
+
+    .section-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        width: 100%;
+    }
+
+    .secret-section {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4rem 1rem; /* Moins de padding latéral pour élargir visuellement */
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .content-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        max-width: 1400px; /* Élargi selon demande */
+        width: 95%; /* Utilise plus d'espace */
+        margin: 0 auto;
+        gap: 3rem;
+    }
+
+    .reverse .content-wrapper {
+        flex-direction: row-reverse;
+    }
+
+    .text-content {
+        flex: 1;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        /* Centrage demandé */
+        text-align: center;
+        align-items: center;
+    }
+
+    .image-content {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .image-content img {
+        max-width: 100%;
+        height: auto;
+        max-height: 70vh;
+        object-fit: cover;
+    }
+
+    /* TYPO CONFORME A L'ORIGINAL (Beaucoup plus petit) */
+    .main-title {
+        font-family: "abchannel", serif;
+        /* Desktop: ~30px -> 1.9rem */
+        font-size: clamp(1.8rem, 2.5vw, 2.2rem);
+        line-height: 1.1;
+        margin-bottom: 0.5rem;
+        font-weight: 400;
+        /* margin-left: -50px; ? Non, restons centrés pour l'instant */
+    }
+
+    .subtitle {
+        font-family: "abchannel", serif;
+        /* Desktop: ~29px -> 1.8rem */
+        font-size: clamp(1.6rem, 2.5vw, 2rem);
+        margin-bottom: 2rem;
+        font-weight: 400;
+        color: #000;
+        /* Rapprochement du titre comme sur l'original */
+        margin-top: 0rem;
+    }
+
+    .discover-btn {
+        display: inline-block;
+        font-family: sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-size: 0.7rem; /* ~11px */
+        border-bottom: 1px solid currentColor;
+        font-weight: 600;
+        padding-bottom: 2px;
+        width: fit-content;
+        margin-top: 1rem;
+        transition: opacity 0.3s ease;
+    }
+
+    .section-link:hover .discover-btn {
+        opacity: 0.7;
+    }
+
+    /* =========================
+       RESPONSIVE MOBILE
+    ========================= */
+    @media (max-width: 768px) {
+        .secrets-page {
+            padding-top: var(--header-height);
+            padding-bottom: 4rem;
+        }
+
+        .secret-section {
+            padding: 2rem 1rem;
+            min-height: auto;
+            border-bottom: none; /* Souvent pas de bordure en mobile sur ce type de design */
+        }
+
+        .content-wrapper {
+            /* Image en HAUT (item 2), Texte en BAS (item 1) */
+            flex-direction: column-reverse !important;
+            gap: 1.5rem;
+            width: 100%;
+        }
+
+        .image-content {
+            width: 100%;
+            padding: 0;
+        }
+
+        .image-content img {
+            width: 100%;
+            height: auto;
+            max-height: none; /* Laisse l'image prendre sa place */
+            object-fit: contain;
+        }
+
+        .text-content {
+            padding: 0;
+            text-align: center;
+            width: 100%;
+        }
+
+        .main-title {
+            /* Mobile: ~1.9rem */
+            font-size: 1.9rem;
+            margin-bottom: 0.2rem;
+            line-height: 1.1;
+        }
+
+        .subtitle {
+            /* Mobile: ~1.8rem */
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+    }
+</style>

@@ -98,22 +98,9 @@ input[type="button"] {
 }
 
 /* ==================================================
-   LOGO — VERROUILLAGE ABSOLU
+   LOGO — Styles définis dans Header.astro
 ================================================== */
-.header-fixe .logo {
-    font-family: "abchannel", system-ui, sans-serif;
-
-    /* fluide mais contrôlé */
-    font-size: 28px;
-    /* stable partout */
-
-    line-height: 1;
-    letter-spacing: 0.2em;
-    font-weight: 400;
-
-    display: inline-block;
-    white-space: nowrap;
-}
+/* Styles déplacés vers src/components/Header.astro pour éviter les conflits */
 
 
 /* ==================================================

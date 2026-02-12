@@ -1,6 +1,31 @@
 ---
 /* COMPONENT : Header */
 const from = Astro.url.searchParams.get("from");
+const currentPath = Astro.url.pathname;
+const isActive = (path: string) => {
+    // Exact match or match for products sub-pages if generic products link?
+    // Let's stick to simple strict or startsWith logic depending on needs.
+    // For specific pages like /secretsVS/le-secret... allow multiple variants if needed.
+
+    // Normalize trailing slash
+    const normCurrent =
+        currentPath.endsWith("/") && currentPath.length > 1
+            ? currentPath.slice(0, -1)
+            : currentPath;
+    const normPath =
+        path.endsWith("/") && path.length > 1 ? path.slice(0, -1) : path;
+
+    if (normCurrent === normPath) return true;
+
+    // Handle the secrets alias
+    if (
+        normPath === "/secrets" &&
+        normCurrent === "/le-secret-des-miels-enzimatiques"
+    )
+        return true;
+
+    return false;
+};
 ---
 
 <!-- =========================
@@ -25,13 +50,31 @@ const from = Astro.url.searchParams.get("from");
 ========================= -->
 <div class="offcanvas">
     <nav>
-        <a href="/products" data-astro-prefetch>Tous les produits</a>
-        <a href="/products/miel" data-astro-prefetch>Miel</a>
-        <a href="/products/bougie" data-astro-prefetch>Bougie</a>
+        <a
+            href="/products"
+            class={isActive("/products") ? "active" : ""}
+            data-astro-prefetch>Tous les produits</a
+        >
+        <a
+            href="/products/miel"
+            class={isActive("/products/miel") ? "active" : ""}
+            data-astro-prefetch>Miel</a
+        >
+        <a
+            href="/products/bougie"
+            class={isActive("/products/bougie") ? "active" : ""}
+            data-astro-prefetch>Bougie</a
+        >
 
-        <a href="/famille" data-astro-prefetch>Familles</a>
-        <a href="/secrets" data-astro-prefetch
-            >Le Secret des miels enzymatiques</a
+        <a
+            href="/famille"
+            class={isActive("/famille") ? "active" : ""}
+            data-astro-prefetch>Familles</a
+        >
+        <a
+            href="/secrets"
+            class={isActive("/secrets") ? "active" : ""}
+            data-astro-prefetch>Le Secret des miels enzymatiques</a
         >
 
         {
@@ -56,12 +99,37 @@ const from = Astro.url.searchParams.get("from");
 <div class="menu-sticky">
     <nav>
         <ul>
-            <li><a href="/products">Tous les produits</a></li>
-            <li><a href="/products/miel">Miel</a></li>
-            <li><a href="/products/bougie">Bougie</a></li>
+            <li>
+                <a
+                    href="/products"
+                    class={isActive("/products") ? "active" : ""}
+                    >Tous les produits</a
+                >
+            </li>
+            <li>
+                <a
+                    href="/products/miel"
+                    class={isActive("/products/miel") ? "active" : ""}>Miel</a
+                >
+            </li>
+            <li>
+                <a
+                    href="/products/bougie"
+                    class={isActive("/products/bougie") ? "active" : ""}
+                    >Bougie</a
+                >
+            </li>
 
-            <li><a href="/famille">Familles</a></li>
-            <li><a href="/secrets">Le Secret des miels enzymatiques</a></li>
+            <li>
+                <a href="/famille" class={isActive("/famille") ? "active" : ""}
+                    >Familles</a
+                >
+            </li>
+            <li>
+                <a href="/secrets" class={isActive("/secrets") ? "active" : ""}
+                    >Le Secret des miels enzymatiques</a
+                >
+            </li>
         </ul>
 
         {
@@ -180,19 +248,37 @@ const from = Astro.url.searchParams.get("from");
     /* =========================
    LOGO — VERROUILLAGE ABSOLU
 ========================= */
-    .header-fixe .logo {
-        font-family: "abchannel", system-ui, sans-serif;
+    .header-fixe .logo,
+    header.header-fixe a.logo {
+        font-family: "abchannel", system-ui, sans-serif !important;
 
         /* fluide mais contrôlé */
-        font-size: 28px;
+        font-size: 24px !important;
         /* stable partout */
 
-        line-height: 1;
-        letter-spacing: 0.2em;
-        font-weight: 600;
+        line-height: 1 !important;
+        letter-spacing: 0.2em !important;
+        font-weight: 600 !important;
 
-        display: inline-block;
-        white-space: nowrap;
+        display: inline-block !important;
+        white-space: nowrap !important;
+        text-decoration: none !important;
+        color: #000 !important;
+        transform: translate(-50%, -50%) !important;
+        -webkit-transform: translate(-50%, -50%) !important;
+        -moz-transform: translate(-50%, -50%) !important;
+        -ms-transform: translate(-50%, -50%) !important;
+        font-style: normal !important;
+        writing-mode: horizontal-tb !important;
+        text-orientation: mixed !important;
+
+        /* Centrage absolu parfait */
+        position: absolute !important;
+        left: 50% !important;
+        top: 50% !important;
+        z-index: 10000 !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 
     /* =========================
@@ -263,8 +349,16 @@ const from = Astro.url.searchParams.get("from");
         transition: transform 0.25s ease;
     }
 
+    .menu-sticky ul li a.active,
+    .offcanvas nav a.active {
+        color: #999; /* Gris clair demandé pour l'état actif */
+        /* font-weight: 500; Maybe? User asked for color */
+    }
+
     .menu-sticky ul li a:hover::after,
-    .offcanvas nav a:hover::after {
+    .offcanvas nav a:hover::after,
+    .menu-sticky ul li a.active::after,
+    .offcanvas nav a.active::after {
         transform: scaleX(1);
     }
 

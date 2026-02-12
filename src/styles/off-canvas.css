@@ -1,0 +1,106 @@
+/* src/styles/off-canvas.css */
+
+/* Off-Canvas Base Styles (Elementor-compatible) */
+.e-off-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  pointer-events: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+.e-off-canvas.elementor-active {
+  pointer-events: auto;
+}
+
+/* Overlay */
+.e-off-canvas__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.e-off-canvas.elementor-active .e-off-canvas__overlay {
+  opacity: 1;
+}
+
+/* Main Container */
+.e-off-canvas__main {
+  position: fixed;
+  top: var(--header-height);
+  right: 0;
+  height: calc(100vh - var(--header-height));
+  width: 70vw;
+  max-width: 320px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transform: translateX(100%);
+  transition: transform 0.4s ease;
+  overflow: hidden;
+  border-top-left-radius: 10%;
+  z-index: 1000;
+}
+
+.e-off-canvas.elementor-active .e-off-canvas__main {
+  transform: translateX(0);
+}
+
+/* Content Wrapper */
+.e-off-canvas__content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 2rem 1.5rem;
+}
+
+/* Scrollbar Styling */
+.e-off-canvas__content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.e-off-canvas__content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.e-off-canvas__content::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+.e-off-canvas__content::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Body Lock */
+body.elementor-offcanvas-active {
+  overflow: hidden;
+}
+
+/* Mobile Specific */
+@media (max-width: 768px) {
+  .e-off-canvas__main {
+    width: 70vw;
+    max-width: 320px;
+  }
+}
+
+/* Mobile-Only Canvas (for menu) */
+.e-off-canvas.mobile-only {
+  display: block;
+}
+
+@media (min-width: 769px) {
+  .e-off-canvas.mobile-only {
+    display: none !important;
+  }
+}

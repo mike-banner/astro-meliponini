@@ -1,0 +1,207 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+// Content variables
+const title = "un elixir";
+const subtitle = "bioactif unique";
+const image = "/images/secrets/IMG_6143-1536x1152.jpg";
+---
+
+<Layout title="Le miel enzymatique – Meliponini">
+    <main class="article-page">
+        <div class="content-container">
+            <!-- HEADER SECTION : Title + Image -->
+            <header class="article-header">
+                <h1 class="main-title">{title}</h1>
+                <h2 class="subtitle">{subtitle}</h2>
+            </header>
+
+            <div class="article-image-wrapper">
+                <img src={image} alt="Miel de Mélipones" />
+            </div>
+
+            <!-- CONTENT BLOCK -->
+            <div class="article-content rich-text">
+                <p>
+                    Au cœur des forêts tropicales, de petites abeilles sans dard
+                    appartenant à la tribu des <strong>MELIPONINI</strong>,
+                    appelées Mélipones, élaborent un nectar d’exception.
+                </p>
+                <p>
+                    Leur miel, rare et précieux, ne ressemble à aucun autre; il
+                    est vivant, enzymatique et profondément bioactif.
+                </p>
+                <p>
+                    Ces enzymes provenant principalement à la fois des
+                    sécrétions des glandes hypopharyngiennes des abeilles et des
+                    plantes butinées, jouent un rôle clé dans ses propriétés
+                    médicinales et nutritionnelles exceptionnelles, participent
+                    ainsi à la transformation du nectar en miel.
+                </p>
+                <p>
+                    Stocké et conservé dans de délicates loges de cérumen en
+                    forme d’amphores, une matière constituée par un savant
+                    mélange de cire, résines végétal et pollens; le miel de
+                    Mélipones récolté est un miel façonné par des éléments de la
+                    nature et le fruit d’un travail millénaire.
+                </p>
+                <p>
+                    Sa texture fluide, son goût acidulé et ses arômes floraux en
+                    font une expérience sensorielle et organoleptique unique.
+                    Mais sa véritable richesse se cache dans sa composition.
+                </p>
+
+                <p>
+                    Contrairement aux miels traditionnels, celui des Mélipones
+                    concentre une activité enzymatique exceptionnelle :
+                </p>
+
+                <p>
+                    Des enzymes rares qui transforment les sucres en molécules
+                    bienfaisantes.<br />
+                    La production naturelle de tréhalulose, un sucre rare au plus
+                    faible index glycémique.<br />
+                    Une synergie enzymatique qui lui confère des vertus antibactériennes,
+                    antioxydantes et régénératrices.
+                </p>
+
+                <p>
+                    Chaque goutte devient ainsi un élixir vivant, capable de
+                    protéger, de nourrir et de restaurer l’équilibre du corps et
+                    de la peau.
+                </p>
+                <p>
+                    Prisé depuis des siècles par les peuples précolombiens et
+                    amazoniens, le miel de Mélipones n’était pas seulement un
+                    aliment, il était utilisé en médecine traditionnelle et pour
+                    les rituels sacrés.
+                </p>
+
+                <p>
+                    Ce miel aujourd’hui est réputé encore par les descendants de
+                    ces peuples pour : <br />
+                    Cicatriser les plaies et les brûlures <br />
+                    Traiter les infections oculaires et cutanées <br />
+                    Renforcer le système immunitaire <br />
+                    Améliorer la digestion et lutter contre les ulcères gastriques
+                </p>
+
+                <p>
+                    Aujourd’hui, la science redécouvre ses bienfaits, en
+                    particulier pour : <br />
+                    La peau : cicatrisation, hydratation, éclat naturel. <br />
+                    Le métabolisme : énergie douce, régulation glycémique. <br
+                    />
+                    Le bien-être : défense naturelle et vitalité.
+                </p>
+
+                <p>
+                    Produit en très petites quantités, chaque colonie produit
+                    seulement 200 ml à 1 litre de miel par an, contre 20 à 50 kg
+                    pour une ruche d’abeilles domestiques, ce miel rare et
+                    précieux incarne un luxe authentique, celui de la nature à
+                    l’état pur.
+                </p>
+                <p>
+                    Préserver les Mélipones, c’est aussi protéger la
+                    biodiversité tropicale et un héritage écologique unique.
+                </p>
+            </div>
+        </div>
+    </main>
+</Layout>
+
+<style>
+    .article-page {
+        padding-top: calc(var(--header-height) + var(--subnav-height) + 4rem);
+        padding-bottom: 6rem;
+        background: #fff;
+    }
+
+    .content-container {
+        max-width: 800px; /* Article width often narrow for readability */
+        margin: 0 auto;
+        padding: 0 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .article-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        width: 100%;
+    }
+
+    .main-title {
+        font-family: "abchannel", serif;
+        /* Matches "un elixir" which looked smaller but bold? */
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        line-height: 1.1;
+        margin-bottom: 0px;
+        font-weight: 600;
+        text-transform: lowercase; /* "un elixir" often lowercase in design? */
+    }
+
+    .subtitle {
+        font-family: "abchannel", serif;
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        font-weight: 600;
+        margin-top: 0;
+        line-height: 1.1;
+        text-transform: lowercase; /* "bioactif unique" */
+        margin-bottom: 2rem;
+    }
+
+    .article-image-wrapper {
+        width: 100%;
+        margin-bottom: 4rem;
+        display: flex;
+        justify-content: center;
+    }
+
+    .article-image-wrapper img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    .rich-text {
+        font-family: "abchannel", serif;
+        font-size: 1.25rem; /* ~20px often used for luxury readable text */
+        line-height: 1.5;
+        color: #000;
+        text-align: left; /* Or justify? Source likely left/justify mix */
+        font-weight: 400;
+    }
+
+    .rich-text p {
+        margin-bottom: 2rem; /* Airy paragraphs */
+    }
+
+    .rich-text strong {
+        font-weight: 600;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+        .article-page {
+            padding-top: var(--header-height);
+            padding-bottom: 4rem;
+        }
+
+        .main-title,
+        .subtitle {
+            font-size: 2.5rem;
+        }
+
+        .rich-text {
+            font-size: 1.1rem;
+            text-align: left;
+        }
+
+        .article-image-wrapper {
+            margin-bottom: 2rem;
+        }
+    }
+</style>

@@ -1,0 +1,315 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { families } from "../data/families";
+---
+
+<Layout title="Familles et Espèces">
+  <div class="relative bg-white pt-20 pb-20 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center">
+        <h1 class="text-4xl font-extrabold text-[#111] sm:text-5xl md:text-6xl font-serif">
+          Familles & Espèces
+        </h1>
+        <p class="mt-4 max-w-2xl mx-auto text-xl text-gray-500 font-light">
+          Découvrez la diversité fascinante des abeilles mélipones et du genre Apis.
+        </p>
+      </div>
+
+      <!-- Grid Familles -->
+      <div class="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {
+          families.map((family) => (
+            <div
+              class="relative group bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+              id={`family-card-${family.id}`}
+            >
+              <div class="aspect-w-3 aspect-h-2 bg-gray-200 relative overflow-hidden h-64">
+                <img
+                  src={family.image}
+                  alt={family.name}
+                  class="object-cover w-full h-full transform group-hover:scale-105 transition-transform duration-500"
+                  onerror="this.src='https://placehold.co/600x400?text=Photo+Manquante'; this.style.opacity=0.5;"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-6">
+                  <span class="text-white font-medium tracking-wide uppercas">Explorer</span>
+                </div>
+              </div>
+              
+              <div class="p-6 text-center">
+                <span class="inline-block px-3 py-1 text-xs font-semibold tracking-wider text-amber-600 uppercase bg-amber-50 rounded-full mb-3">
+                  {family.category}
+                </span>
+                <h3 class="text-2xl font-bold text-gray-900 font-serif mb-4">
+                  {family.name}
+                </h3>
+                
+                <!-- Desktop Link -->
+                <a
+                  href={family.link}
+                  class="hidden md:inline-flex items-center justify-center px-6 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-[#111] hover:bg-gray-800 transition-colors"
+                >
+                  Voir la famille
+                </a>
+                
+                <!-- Mobile Button (Trigger Canvas) -->
+                <button
+                  type="button"
+                  class="md:hidden inline-flex items-center justify-center px-6 py-2 border border-[#111] text-sm font-medium rounded-full text-[#111] bg-white hover:bg-gray-50 transition-colors open-canvas-btn w-full"
+                  data-family={JSON.stringify(family)}
+                >
+                  Découvrir
+                </button>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+
+      <!-- Chart Section -->
+      <div class="mt-32 pt-10 border-t border-gray-100">
+        <h2 class="text-3xl font-bold text-center text-[#111] font-serif mb-12">
+            Distribution des Espèces
+        </h2>
+        <div class="relative h-[500px] w-full max-w-5xl mx-auto p-4 bg-gray-50 rounded-2xl shadow-inner mb-6">
+            <canvas id="beeChart"></canvas>
+        </div>
+        <p class="text-center text-sm text-gray-400 italic">
+            Données de répartition approximatives entre Amérique et Brésil.
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Off-Canvas Modal (Elementor-style) -->
+  <div id="family-canvas" class="e-off-canvas hidden" role="dialog" aria-hidden="true" aria-label="Famille Details" aria-modal="true">
+    <!-- Overlay -->
+    <div id="canvas-overlay" class="e-off-canvas__overlay"></div>
+    
+    <!-- Main Container -->
+    <div class="e-off-canvas__main">
+      <!-- Content Wrapper -->
+      <div class="e-off-canvas__content">
+        
+        <!-- Close Button (Top Right) -->
+        <div class="absolute top-4 right-4 z-50">
+          <button 
+            id="close-canvas" 
+            class="bg-white/90 hover:bg-white text-gray-800 rounded-full p-2 shadow-lg transition-all"
+          >
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Header with Image -->
+        <div class="relative h-64 bg-gray-100 flex-shrink-0">
+          <img 
+            id="canvas-image" 
+            src="" 
+            alt="" 
+            class="w-full h-full object-cover"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+          <div class="absolute bottom-6 left-6 right-6">
+            <h2 id="canvas-title" class="text-3xl font-bold text-white font-serif drop-shadow-lg"></h2>
+          </div>
+        </div>
+
+        <!-- Content Body -->
+        <div class="relative flex-1 px-6 py-6 sm:px-8 overflow-y-auto">
+          <div id="canvas-content" class="prose prose-lg text-gray-600 max-w-none prose-headings:font-serif prose-headings:text-gray-900 prose-strong:text-amber-800 prose-ul:list-disc prose-ul:pl-5">
+            <!-- Injected Content -->
+          </div>
+          
+          <div class="mt-12 mb-8 pt-6 border-t border-gray-100">
+            <a 
+              id="canvas-link" 
+              href="#" 
+              class="block w-full text-center px-6 py-4 border border-transparent rounded-xl shadow-sm text-base font-medium text-white bg-[#111] hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-all transform hover:scale-[1.02]"
+            >
+              Voir tous les produits
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</Layout>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script is:inline>
+  document.addEventListener('astro:page-load', () => {
+     initCanvas();
+     initChart();
+  });
+
+  // Fallback for standard load if ViewTransitions not used or first load
+  document.addEventListener('DOMContentLoaded', () => {
+    initCanvas();
+    initChart();
+  });
+
+  function initCanvas() {
+    const canvas = document.getElementById('family-canvas');
+    const overlay = document.getElementById('canvas-overlay');
+    const closeBtn = document.getElementById('close-canvas');
+    const openBtns = document.querySelectorAll('.open-canvas-btn');
+    
+    // Canvas Elements
+    const canvasTitle = document.getElementById('canvas-title');
+    const canvasImage = document.getElementById('canvas-image');
+    const canvasContent = document.getElementById('canvas-content');
+    const canvasLink = document.getElementById('canvas-link');
+
+    if (!canvas || !overlay) return;
+
+    function openCanvas(family) {
+        // Populate
+        if(canvasTitle) canvasTitle.textContent = family.name;
+        if(canvasImage) {
+            canvasImage.src = family.image;
+            canvasImage.onerror = function() {
+                this.src = 'https://placehold.co/600x400?text=Famille';
+            }
+        }
+        if(canvasContent) canvasContent.innerHTML = family.content;
+        if(canvasLink) {
+            canvasLink.href = family.link;
+            canvasLink.textContent = `Explorer ${family.name}`;
+        }
+
+        // Show (Elementor-style)
+        canvas.classList.remove('hidden');
+        canvas.setAttribute('aria-hidden', 'false');
+        canvas.classList.add('elementor-active');
+        document.body.classList.add('elementor-offcanvas-active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeCanvasFunc() {
+        canvas.classList.remove('elementor-active');
+        canvas.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('elementor-offcanvas-active');
+        
+        setTimeout(() => {
+            canvas.classList.add('hidden');
+            document.body.style.overflow = '';
+        }, 300);
+    }
+
+    openBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const familyData = JSON.parse(btn.getAttribute('data-family'));
+            openCanvas(familyData);
+        });
+    });
+
+    closeBtn?.addEventListener('click', closeCanvasFunc);
+    overlay?.addEventListener('click', closeCanvasFunc);
+    
+    // ESC key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !canvas.classList.contains('hidden')) {
+            closeCanvasFunc();
+        }
+    });
+  }
+
+  function initChart() {
+    const ctx = document.getElementById('beeChart');
+    if (!ctx) return;
+    
+    // Destroy existing chart if any (to prevent duplicates on navigation)
+    if (window.beeChartInstance) {
+        window.beeChartInstance.destroy();
+    }
+
+    // Colors
+    const colorAm = '#363748';
+    const colorBr = '#9D9EAF';
+
+    window.beeChartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: [
+          'Melipona', 'Scaptotrigona', 'Plebeia', 'Trigona', 'Paratrigona', 'Partamona',
+          'Trigonisca', 'Lestrimelitta', 'Geotrigona', 'Tetragona', 'Frieseomelitta', 'Nannotrigona',
+          'Oxytrigona', 'Dolichotrigona', 'Scaura', 'Nanoplebia', 'Nogueirapis', 'Cephalotrigona',
+          'Celetrigona', 'Schwarziana', 'Leurotrigona', 'Tetragonisca', 'Duckeola', 'Schwarzula',
+          'Trichotrigona', 'Aparatrigona', 'Friesella', 'Mourella'
+        ],
+        datasets: [
+          {
+            label: "Espèces d'Amérique",
+            data: [
+              75, 47, 39, 34, 32, 31, 26,
+              22, 21, 20, 14, 14, 11, 10,
+              7, 7, 6, 5, 4, 4, 4, 4, 2, 2, 2, 2, 2, 1
+            ],
+            backgroundColor: colorAm,
+            borderRadius: 4,
+          },
+          {
+            label: "Espèces du Brésil",
+            data: [
+              40, 16, 17, 22, 18, 21, 16,
+              13, 10, 15, 11, 8, 4, 6,
+              5, 2, 4, 2, 4, 4, 3, 3, 2, 2, 2, 1, 1, 1
+            ],
+            backgroundColor: colorBr,
+            borderRadius: 4,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { 
+            display: true,
+            position: 'top',
+            labels: {
+              usePointStyle: true,
+              font: { family: "'Helvetica', sans-serif", size: 12 },
+              padding: 20
+            }
+          },
+          tooltip: {
+            backgroundColor: '#111',
+            titleFont: { family: 'serif', size: 14 },
+            bodyFont: { family: 'sans-serif', size: 13 },
+            padding: 12,
+            cornerRadius: 8,
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 80,
+            grid: {
+                color: '#f3f4f6'
+            },
+            ticks: {
+              stepSize: 10,
+              font: { size: 11 }
+            }
+          },
+          x: {
+            grid: {
+                display: false
+            }
+          }
+        },
+        interaction: {
+            mode: 'index',
+            intersect: false,
+        },
+      }
+    });
+  }
+</script>
