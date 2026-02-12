@@ -72,8 +72,10 @@ const isActive = (path: string) => {
             data-astro-prefetch>Familles</a
         >
         <a
-            href="/secrets"
-            class={isActive("/secrets") ? "active" : ""}
+            href="/le-secret-des-miels-enzimatiques"
+            class={isActive("/le-secret-des-miels-enzimatiques")
+                ? "active"
+                : ""}
             data-astro-prefetch>Le Secret des miels enzymatiques</a
         >
 
@@ -126,8 +128,11 @@ const isActive = (path: string) => {
                 >
             </li>
             <li>
-                <a href="/secrets" class={isActive("/secrets") ? "active" : ""}
-                    >Le Secret des miels enzymatiques</a
+                <a
+                    href="/le-secret-des-miels-enzimatiques"
+                    class={isActive("/le-secret-des-miels-enzimatiques")
+                        ? "active"
+                        : ""}>Le Secret des miels enzymatiques</a
                 >
             </li>
         </ul>
