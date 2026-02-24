@@ -1,4 +1,5 @@
 ---
+/* src/components/Header.astro */
 /* COMPONENT : Header */
 const from = Astro.url.searchParams.get("from");
 const currentPath = Astro.url.pathname;
@@ -28,6 +29,11 @@ const isActive = (path: string) => {
 };
 ---
 
+<style is:global>
+    /* src/components/Header.astro */
+    @import "../styles/custom-mini-cart.css";
+</style>
+
 <!-- =========================
      HEADER FIXE
 ========================= -->
@@ -35,6 +41,16 @@ const isActive = (path: string) => {
     <div class="header-inner">
         <button class="burger" aria-label="Menu">☰</button>
         <a href="/" class="logo" data-astro-prefetch>MELIPONINI</a>
+        <button
+            class="custom-cart-icon"
+            id="cartButton"
+            aria-label="Voir le panier"
+        >
+            <img src="/images/cart-icon.svg" alt="Panier" />
+            <div class="custom-cart-compteur hidden" id="cartCompteur">
+                <span class="custom-cart-count" id="cart-count">0</span>
+            </div>
+        </button>
     </div>
 </header>
 
@@ -46,7 +62,7 @@ const isActive = (path: string) => {
 </a>
 
 <!-- =========================
-     OFF-CANVAS MOBILE
+     OFF-CANVAS MOBILE (MENU)
 ========================= -->
 <div class="offcanvas">
     <nav>
@@ -82,7 +98,7 @@ const isActive = (path: string) => {
         {
             from === "shop" && (
                 <a
-                    href="https://meliponini.remyparis.com/commander/"
+                    href="https://dev-shop.meliponini.fr/commander/"
                     class="shop-btn"
                 >
                     Retourner à la boutique
@@ -140,7 +156,7 @@ const isActive = (path: string) => {
         {
             from === "shop" && (
                 <a
-                    href="https://meliponini.remyparis.com/commander/"
+                    href="https://dev-shop.meliponini.fr/commander/"
                     class="shop-btn"
                 >
                     Retourner à la boutique
@@ -151,50 +167,345 @@ const isActive = (path: string) => {
 </div>
 
 <!-- =========================
+     OFF-CANVAS PANIER (GAUCHE)
+========================= -->
+<div
+    id="cartOffcanvas"
+    class="e-off-canvas from-right"
+    role="dialog"
+    aria-hidden="true"
+    aria-modal="true"
+>
+    <div class="e-off-canvas__overlay" id="cartOverlay"></div>
+    <div
+        class="e-off-canvas__main"
+        style="border-top-left-radius: 46px; overflow: hidden; background: #fff;"
+    >
+        <div
+            id="checkout-progress"
+            style="position: absolute; top: 0; left: 0; width: 0; height: 2px; background: #000; z-index: 10001; transition: width 3s linear;"
+        >
+        </div>
+        <div class="e-off-canvas__content">
+            <div
+                id="custom-mini-cart-container"
+                class="widget_shopping_cart"
+                style="height: 100%;"
+            >
+                <div class="custom-mini-cart" id="miniCartContent">
+                    <!-- Contenu injecté via JS par cartStore -->
+                    <div class="div-cart-empty">
+                        <p class="custom-empty-cart">Chargement du panier...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- =========================
      SCRIPT
 ========================= -->
 <script>
+    import { cartStore, refreshCart, toggleCart } from "../lib/cartStore.js";
+    import {
+        updateItem,
+        removeItem,
+        addToCart,
+        cartKey,
+    } from "../lib/cocart.js";
+
+    /* src/components/Header.astro */
     document.addEventListener("DOMContentLoaded", () => {
         const burger = document.querySelector(".burger");
-        const offcanvas = document.querySelector(".offcanvas");
-        const overlay = document.querySelector(".offcanvas-overlay");
+        const offcanvasMenu = document.querySelector(".offcanvas");
+        const menuOverlay = document.querySelector(".offcanvas-overlay");
 
-        if (!burger || !offcanvas || !overlay) return;
+        const cartButton = document.getElementById("cartButton");
+        const cartOffcanvas = document.getElementById("cartOffcanvas");
+        const cartOverlay = document.getElementById("cartOverlay");
+        const miniCartContent = document.getElementById("miniCartContent");
 
+        const cartCountEl = document.getElementById("cart-count");
+        const cartCompteurEl = document.getElementById("cartCompteur");
+
+        if (!burger || !offcanvasMenu || !menuOverlay) return;
+
+        // --- GESTION MENU MOBILE ---
         const openMenu = () => {
-            offcanvas.classList.add("open");
-            overlay.classList.add("open");
+            offcanvasMenu.classList.add("open");
+            menuOverlay.classList.add("open");
             document.body.style.overflow = "hidden";
         };
 
         const closeMenu = () => {
-            offcanvas.classList.remove("open");
-            overlay.classList.remove("open");
+            offcanvasMenu.classList.remove("open");
+            menuOverlay.classList.remove("open");
             document.body.style.overflow = "";
         };
 
         burger.addEventListener("click", (e) => {
             e.preventDefault();
-            offcanvas.classList.contains("open") ? closeMenu() : openMenu();
+            offcanvasMenu.classList.contains("open") ? closeMenu() : openMenu();
         });
 
-        overlay.addEventListener("click", closeMenu);
+        menuOverlay.addEventListener("click", closeMenu);
 
-        offcanvas.querySelectorAll("a").forEach((link) => {
-            link.addEventListener("click", closeMenu);
+        // --- GESTION PANIER (NANO STORES) ---
+
+        // Souscription au store pour mettre à jour l'UI
+        cartStore.subscribe((state: any) => {
+            // 1. Visibilité de l'off-canvas
+            if (state.isOpen) {
+                cartOffcanvas?.classList.add("elementor-active");
+                cartOffcanvas?.setAttribute("aria-hidden", "false");
+            } else {
+                cartOffcanvas?.classList.remove("elementor-active");
+                cartOffcanvas?.setAttribute("aria-hidden", "true");
+            }
+
+            // 2. Compteur Header
+            if (cartCountEl && cartCompteurEl) {
+                cartCountEl.textContent = String(state.totals.count);
+                if (state.totals.count > 0) {
+                    cartCompteurEl.classList.remove("hidden");
+                    cartCompteurEl.classList.add("visible");
+                } else {
+                    cartCompteurEl.classList.add("hidden");
+                    cartCompteurEl.classList.remove("visible");
+                }
+            }
+
+            // 3. Rendu du contenu du mini-cart
+            renderMiniCart(state);
         });
 
-        /* CTA COMMANDE (COOKIE) */
-        const btn = document.getElementById("resumeOrder");
-        if (btn && document.cookie.includes("has_active_cart=1")) {
-            window.addEventListener("scroll", () => {
-                btn.classList.toggle("is-visible", window.scrollY > 120);
+        function renderMiniCart(state: any) {
+            if (!miniCartContent) return;
+
+            if (state.loading && state.items.length === 0) {
+                miniCartContent.innerHTML =
+                    '<div class="cart-loading-overlay">Chargement...</div>';
+                return;
+            }
+
+            if (state.items.length === 0) {
+                miniCartContent.innerHTML = `
+                    <div class="div-cart-empty">
+                        <p class="custom-empty-cart">Votre panier est vide.</p>
+                        <div class="arrow-wrapper">
+                            <button class="button close-mini-cart">Commencer mes achats</button>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            let itemsHtml = '<ul class="custom-cart-items">';
+            state.items.forEach((item: any) => {
+                const price = (parseFloat(item.price) / 100).toFixed(2);
+                const regularPriceAttr = item.regular_price
+                    ? (parseFloat(item.regular_price) / 100).toFixed(2)
+                    : null;
+                const hasSavings =
+                    regularPriceAttr &&
+                    parseFloat(regularPriceAttr) > parseFloat(price);
+                const savings = hasSavings
+                    ? (
+                          parseFloat(regularPriceAttr) - parseFloat(price)
+                      ).toFixed(2)
+                    : 0;
+
+                // Hack URL image (comme demandé dans woocommerce.js)
+                const imgSrc =
+                    item.featured_image ||
+                    (item.images && item.images[0]
+                        ? item.images[0].src
+                        : "/images/placeholder.png");
+                const cleanImgSrc = imgSrc.replace(
+                    "meliponini.remyparis.com",
+                    "dev-shop.meliponini.fr",
+                );
+
+                itemsHtml += `
+                    <li class="custom-cart-item" data-key="${item.item_key}">
+                        <div class="custom-thumbnail">
+                            <img src="${cleanImgSrc}" alt="${item.name}">
+                        </div>
+                        <div class="custom-details">
+                            <a href="#" class="custom-title">${item.name}</a>
+                            <div class="product-tag">${item.sku || ""}</div>
+                            
+                            <div class="custom-price-qty">
+                                <div class="custom-qty-wrapper">
+                                    <button class="qty-minus" data-action="minus" data-key="${item.item_key}">-</button>
+                                    <input type="number" class="custom-qty-input" value="${item.quantity.value}" readOnly>
+                                    <button class="qty-plus" data-action="plus" data-key="${item.item_key}">+</button>
+                                </div>
+                                <div class="custom-line-price">${price} €</div>
+                            </div>
+                            ${hasSavings ? `<span class="custom-savings-tag">Gain : ${savings} €</span>` : ""}
+                        </div>
+                        <button class="custom-remove" data-action="remove" data-key="${item.item_key}" title="Supprimer">
+                            ✕
+                        </button>
+                    </li>
+                `;
+            });
+            itemsHtml += "</ul>";
+
+            miniCartContent.innerHTML = `
+                <div class="custom-mini-cart-header-wrapper">
+                    ${state.loading ? '<div class="cart-loading-overlay">Calcul...</div>' : ""}
+                    ${itemsHtml}
+                </div>
+                <div class="custom-mini-cart-footer">
+                    <div class="custom-mini-cart-total">
+                        <strong>Total</strong>
+                        <span class="total-amount">${state.totals.total}</span>
+                    </div>
+                    ${
+                        state.totals.savings > 0
+                            ? `
+                        <div class="total-savings">Économie totale : ${state.totals.savings.toFixed(2)} €</div>
+                    `
+                            : ""
+                    }
+                    <div class="custom-mini-cart-buttons">
+                        <button id="checkoutBtn" class="button custom-checkout-button">Procéder au paiement 🔒</button>
+                        <p class="secure-checkout-text">Connexion sécurisée vers notre passerelle de paiement certifiée.</p>
+                        <div class="payment-logos">
+                            <img src="https://cdn-icons-png.flaticon.com/512/349/349221.png" alt="Visa" />
+                            <img src="https://cdn-icons-png.flaticon.com/512/349/349226.png" alt="Mastercard" />
+                            <img src="https://cdn-icons-png.flaticon.com/512/5968/5968301.png" alt="Stripe" />
+                            <img src="https://cdn-icons-png.flaticon.com/512/5968/5968144.png" alt="Apple Pay" />
+                        </div>
+                        <button class="button close-mini-cart">Continuer les achats</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- EVENTS LISTENERS ---
+
+        if (cartButton) {
+            cartButton.addEventListener("click", (e) => {
+                e.preventDefault();
+                toggleCart(true);
             });
         }
 
-        /* GESTION OMBRE HEADER AU SCROLL (REPLI MENU) */
+        if (cartOverlay) {
+            cartOverlay.addEventListener("click", () => toggleCart(false));
+        }
+
+        // Délégation d'événements pour les actions du panier (plus/minus/remove/checkout)
+        miniCartContent?.addEventListener("click", async (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+            console.log("🛒 Click in miniCartContent on:", target);
+
+            // 1. Bouton "Fermer / Continuer les achats"
+            if (target?.closest(".close-mini-cart")) {
+                console.log("🛒 Closing cart from button");
+                toggleCart(false);
+                return;
+            }
+
+            // 2. Boutons de quantité ou suppression (plus/minus/remove)
+            const actionBtn = target?.closest("[data-action]") as HTMLElement;
+            if (actionBtn) {
+                const action = actionBtn.dataset.action;
+                const key = actionBtn.dataset.key;
+                console.log("🛒 Action clicked:", action, "Key:", key);
+
+                if (action === "remove") {
+                    console.log("🗑️ Removing item:", key);
+                    await removeItem(key);
+                    refreshCart();
+                } else if (action === "plus" || action === "minus") {
+                    console.log("➕/➖ Updating item:", key, action);
+                    const parent = actionBtn.parentElement;
+                    const input = parent?.querySelector(
+                        "input",
+                    ) as HTMLInputElement;
+                    if (!input) return;
+
+                    let newQty = parseInt(input.value);
+                    newQty = action === "plus" ? newQty + 1 : newQty - 1;
+
+                    if (newQty > 0) {
+                        await updateItem(key, newQty);
+                        refreshCart();
+                    } else {
+                        await removeItem(key);
+                        refreshCart();
+                    }
+                }
+                return;
+            }
+
+            // 3. Bouton "Procéder au paiement" (Dynamique avec cartKey)
+            const checkoutBtn = target?.closest(
+                "#checkoutBtn",
+            ) as HTMLButtonElement;
+            if (checkoutBtn) {
+                console.log("🚀 Checkout button clicked");
+                const currentCartKey = cartKey.get();
+                console.log("🔑 Current Cart Key:", currentCartKey);
+
+                if (!currentCartKey) {
+                    console.warn("⚠️ No cartKey found, checkout disabled.");
+                    return;
+                }
+
+                checkoutBtn.innerText = "Préparation du tunnel sécurisé...";
+                checkoutBtn.disabled = true;
+
+                // Effet fade-out sur le contenu du panier
+                miniCartContent?.classList.add("cart-fade-out");
+
+                const progress = document.getElementById("checkout-progress");
+                if (progress) {
+                    progress.style.transition = "width 2s ease-in-out";
+                    progress.style.width = "100%";
+                }
+
+                const url = new URL("https://dev-shop.meliponini.fr/index.php");
+                url.searchParams.set("page_id", "25024");
+                url.searchParams.set("cocart-load-cart", currentCartKey);
+
+                const checkoutUrl = url.toString();
+                console.log("🔗 Redirecting to:", checkoutUrl);
+
+                setTimeout(() => {
+                    window.location.href = checkoutUrl;
+                }, 800);
+            }
+        });
+
+        // Intercepter les clics sur les boutons "Ajouter au panier" (si présents avec data-add-to-cart)
+        document.body.addEventListener("click", async (e: MouseEvent) => {
+            const addBtn = (e.target as HTMLElement)?.closest(
+                "[data-add-to-cart]",
+            ) as HTMLElement;
+            if (addBtn) {
+                e.preventDefault();
+                const productId = addBtn.dataset.addToCart;
+                addBtn.classList.add("loading");
+                try {
+                    await addToCart(productId, 1);
+                    await refreshCart();
+                    toggleCart(true); // Ouvre le panier après ajout
+                } catch (err) {
+                    console.error("Add to cart failed", err);
+                } finally {
+                    addBtn.classList.remove("loading");
+                }
+            }
+        });
+
+        /* GESTION OMBRE HEADER AU SCROLL */
         const header = document.querySelector(".header-fixe");
-        /* On prend une valeur proche de la hauteur du menu sticky (~56px) */
         const SCROLL_THRESHOLD = 60;
 
         if (header) {
@@ -202,15 +513,18 @@ const isActive = (path: string) => {
                 const shouldHaveShadow = window.scrollY > SCROLL_THRESHOLD;
                 header.classList.toggle("is-scrolled", shouldHaveShadow);
             });
-            /* Init au chargement si on est déjà scrollé */
             if (window.scrollY > SCROLL_THRESHOLD) {
                 header.classList.add("is-scrolled");
             }
         }
+
+        // Initialisation du panier au chargement
+        refreshCart();
     });
 </script>
 
 <style>
+    /* src/components/Header.astro */
     /* =========================
    HEADER FIXE (LOGO UNIFORME)
 ========================= */
@@ -301,6 +615,61 @@ const isActive = (path: string) => {
     }
 
     /* =========================
+   PANIER (CUSTOM CART)
+========================= */
+    .custom-cart-icon {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        z-index: 10000;
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+    }
+
+    .custom-cart-icon img {
+        width: 20px;
+        height: auto;
+        vertical-align: middle;
+    }
+
+    .custom-cart-count {
+        display: block; /* obligatoire ici */
+        line-height: 1;
+        white-space: nowrap; /* éviter retour ligne */
+        max-width: 100%; /* reste dans la div */
+        text-align: center;
+        font-size: 8px;
+        color: white;
+    }
+    .custom-cart-compteur {
+        position: absolute;
+        top: -5px;
+        right: -15px;
+        width: 20px; /* taille fixe */
+        height: 20px; /* taille fixe */
+        background: black;
+        display: flex; /* centrer avec flexbox */
+        align-items: center;
+        justify-content: center;
+        padding: 4px 6px;
+        border-radius: 50%;
+        font-weight: bold;
+    }
+
+    .custom-cart-compteur.hidden {
+        display: none !important;
+    }
+    .custom-cart-compteur.visible {
+        display: flex !important; /* Et pas block */
+    }
+
+    /* =========================
    SUB HEADER (MENU DESKTOP)
 ========================= */
     .menu-sticky {
@@ -379,16 +748,16 @@ const isActive = (path: string) => {
         position: fixed;
         top: var(--header-height);
         left: 0;
-        width: 70vw;
+        width: 60vw;
         max-width: 320px;
         height: calc(100vh - var(--header-height));
         background: #fff;
-        padding: 2rem 1.5rem;
+        padding: 2.5rem 1.5rem;
         transform: translateX(-100%);
         transition: transform 0.4s ease;
         z-index: 1000;
 
-        border-top-right-radius: 10%;
+        border-top-right-radius: 46px;
         box-shadow: var(--shadow-subheader);
     }
 
@@ -415,7 +784,8 @@ const isActive = (path: string) => {
     .offcanvas-overlay {
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, 0.8);
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(2px);
         opacity: 0;
         pointer-events: none;
         transition: opacity 0.3s ease;

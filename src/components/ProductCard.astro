@@ -2,14 +2,23 @@
 /* src/components/ProductCard.astro */
 /* COMPONENT : ProductCard */
 const { product } = Astro.props;
+console.log(
+    `[ProductCard] Render: ${product.name} | Available: ${product.available}`,
+);
 ---
 
 <article class="product-card">
     <!-- Image -->
-    <img src={product.image} alt={product.name} loading="lazy" />
+    <a href={`/product/${product.slug}`} class="product-link">
+        <div class="product-image-container">
+            <img src={product.image} alt={product.name} loading="lazy" />
+        </div>
+    </a>
 
     <!-- Numéro (N° 27) -->
-    <h2 class="product-name">{product.name}</h2>
+    <a href={`/product/${product.slug}`} class="product-link-name">
+        <h2 class="product-name">{product.name}</h2>
+    </a>
 
     <!-- Nom du miel (miel de tubuna) -->
     <p class="product-display-name">{product.displayName}</p>
@@ -32,14 +41,275 @@ const { product } = Astro.props;
     }
 
     <!-- Bouton -->
-    <div class="product-actions">
-        <a
-            href={product.permalink}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="btn-discover"
-        >
-            Découvrir
-        </a>
+    <div class="product-actions-wrapper">
+        {
+            product.available ? (
+                <div class="product-actions">
+                    <a
+                        href={`/product/${product.slug}`}
+                        class="btn-discover"
+                        aria-label={`Découvrir ${product.name}`}
+                    >
+                        <span class="btn-text">Découvrir</span>
+                    </a>
+                    <button
+                        class="btn-add-icon add-to-cart-direct"
+                        data-product-id={product.id}
+                        aria-label={`Ajouter ${product.name} au panier`}
+                    >
+                        <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <circle cx="9" cy="21" r="1" />
+                            <circle cx="20" cy="21" r="1" />
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                        </svg>
+                        <span class="btn-loader" style="display: none;">
+                            ...
+                        </span>
+                    </button>
+                </div>
+            ) : (
+                <button
+                    class="btn-discover disabled"
+                    disabled
+                    aria-label="Produit non disponible"
+                >
+                    RUPTURE
+                </button>
+            )
+        }
     </div>
 </article>
+
+<script>
+    import { addToCart } from "../lib/cocart.js";
+    import { refreshCart, toggleCart } from "../lib/cartStore.js";
+
+    // Gestion de l'ajout au panier direct depuis la carte
+    const setupAddButtons = () => {
+        const addButtons = document.querySelectorAll(".add-to-cart-direct");
+        addButtons.forEach((btn) => {
+            // Éviter les doubles écouteurs
+            if (btn.getAttribute("data-listener")) return;
+            btn.setAttribute("data-listener", "true");
+
+            btn.addEventListener("click", async (e) => {
+                const target = e.currentTarget as HTMLButtonElement;
+                const productId = target.getAttribute("data-product-id");
+                const icon = target.querySelector("svg") as HTMLElement | null;
+                const loader = target.querySelector(
+                    ".btn-loader",
+                ) as HTMLElement | null;
+
+                if (!productId) return;
+
+                // UI loading
+                target.disabled = true;
+                if (icon) icon.style.display = "none";
+                if (loader) loader.style.display = "inline";
+
+                try {
+                    await addToCart(productId, 1);
+                    await refreshCart();
+                    toggleCart(true); // Ouvre le mini-panier
+                } catch (err) {
+                    console.error("Failed to add to cart", err);
+                } finally {
+                    target.disabled = false;
+                    if (icon) icon.style.display = "block";
+                    if (loader) loader.style.display = "none";
+                }
+            });
+        });
+    };
+
+    // Initialisation
+    setupAddButtons();
+
+    // Ré-initialiser si le contenu change (ex: filtres)
+    document.addEventListener("astro:after-swap", setupAddButtons);
+</script>
+
+<style>
+    .product-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+    }
+
+    .product-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        width: 100%;
+        order: 1;
+    }
+
+    /* Aligne les photos entre elles */
+    .product-image-container {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        aspect-ratio: 1 / 1;
+        margin-bottom: 0; /* ✅ Espace réduit au minimum */
+        overflow: hidden;
+    }
+
+    .product-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .product-link-name {
+        order: 2;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        width: 100%;
+    }
+
+    .product-name {
+        font-size: 1.4rem !important;
+        letter-spacing: -1.5px;
+        margin: 10px 0;
+        font-weight: 400;
+    }
+
+    .product-display-name {
+        order: 3;
+        margin: 0;
+    }
+
+    .product-excerpt {
+        order: 4;
+        margin: 5px 0;
+    }
+
+    .product-price,
+    .product-unavailable {
+        font-size: 0.95rem;
+        margin: 10px 0;
+        line-height: 1.2;
+        display: block;
+    }
+
+    .product-price {
+        order: 5;
+        font-weight: 700;
+    }
+
+    .product-unavailable {
+        order: 5;
+        color: #be1010;
+        font-weight: 500;
+    }
+
+    .product-actions-wrapper {
+        width: 100%;
+        margin-top: 0; /* ✅ Retrait du margin-top auto */
+        padding-top: 0; /* ✅ Retrait du padding-top */
+        display: flex;
+        justify-content: center;
+        order: 10;
+    }
+
+    .product-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        justify-content: center;
+        width: 100%;
+    }
+
+    /* Égalise la taille des boutons */
+    .btn-discover,
+    .btn-add-icon {
+        height: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 5px;
+        transition:
+            transform 0.2s,
+            background 0.2s,
+            box-shadow 0.2s;
+        border: 1px solid #000;
+        cursor: pointer;
+        box-sizing: border-box;
+    }
+
+    .btn-discover {
+        background: #fff;
+        color: #000;
+        padding: 0 20px;
+        text-decoration: none;
+        font-size: 0.95rem;
+        flex-grow: 1;
+        max-width: 160px;
+        font-weight: 500;
+    }
+
+    .btn-add-icon {
+        background: #000;
+        color: #fff;
+        width: 45px;
+        padding: 0;
+        flex-shrink: 0;
+    }
+
+    .btn-discover:hover {
+        background: #f9f9f9;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-add-icon:hover {
+        background: #333;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-discover:active,
+    .btn-add-icon:active {
+        transform: translateY(0);
+    }
+
+    .btn-discover.disabled {
+        background: #f0f0f0 !important;
+        color: #999 !important;
+        cursor: not-allowed !important;
+        border: none !important;
+        opacity: 0.7;
+        flex-grow: 0;
+        width: 100%;
+        max-width: 215px; /* ✅ Taille équilibrée (approx discover + add + gap) */
+        height: 45px; /* ✅ Force la hauteur identique */
+    }
+
+    @media (max-width: 768px) {
+        .btn-discover,
+        .btn-add-icon {
+            height: 40px;
+        }
+        .btn-add-icon {
+            width: 40px;
+        }
+        .product-name {
+            font-size: 1.1rem !important;
+        }
+    }
+</style>

@@ -17,5 +17,12 @@ export interface Product {
         name: string;
         options: string[];
     }[];
+    sku: string;
     permalink: string;
+    displayName?: string;
+    excerpt?: string;
+    available?: boolean;
+    image?: string;
+    tags?: { name: string }[];
+    stock_status: string;
 }

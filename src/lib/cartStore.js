@@ -1,0 +1,47 @@
+// src/lib/cartStore.js
+import { atom } from 'nanostores';
+import { getCart, calculateTotals } from './cocart.js';
+
+// État initial du panier
+export const cartStore = atom({
+    items: [],
+    totals: { total: 0, savings: 0, count: 0 },
+    loading: false,
+    isOpen: false
+});
+
+/**
+ * Charge les données du panier depuis l'API
+ */
+export async function refreshCart() {
+    const current = cartStore.get();
+    cartStore.set({ ...current, loading: true });
+
+    const data = await getCart();
+    if (data) {
+        cartStore.set({
+            ...current,
+            items: data.items || [],
+            totals: calculateTotals(data),
+            loading: false
+        });
+    } else {
+        cartStore.set({ ...current, loading: false });
+    }
+}
+
+/**
+ * Ouvre/Ferme l'off-canvas
+ */
+export function toggleCart(force) {
+    const current = cartStore.get();
+    const newState = typeof force === 'boolean' ? force : !current.isOpen;
+
+    cartStore.set({ ...current, isOpen: newState });
+
+    if (newState) {
+        document.body.classList.add('elementor-offcanvas-active');
+    } else {
+        document.body.classList.remove('elementor-offcanvas-active');
+    }
+}

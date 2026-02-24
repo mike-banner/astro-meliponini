@@ -18,7 +18,7 @@ export async function getStaticPaths() {
     }
 
     const url =
-        `${apiUrl}/wp-json/wc/v3/products` +
+        `${apiUrl.replace(/\/$/, "")}/wp-json/wc/v3/products` +
         `?consumer_key=${consumerKey}` +
         `&consumer_secret=${consumerSecret}` +
         `&per_page=100`;
@@ -42,6 +42,9 @@ interface Props {
 
 const { product } = Astro.props;
 
+// Extraction du nom d'affichage cohérent avec mapProduct
+const displayName = product.tags?.[0]?.name || "";
+
 const cleanDescription =
     product.short_description
         ?.replace(/<[^>]*>/g, "")
@@ -53,8 +56,6 @@ const canonicalUrl = product.permalink;
 
 <Layout title={`${product.name} | Meliponini`} description={cleanDescription}>
     <Fragment slot="head">
-        <meta name="robots" content="noindex, nofollow" />
-
         <link rel="canonical" href={canonicalUrl} />
 
         <meta property="og:type" content="product" />
@@ -75,7 +76,10 @@ const canonicalUrl = product.permalink;
                 name: product.name,
                 image: product.images?.[0]?.src,
                 description: cleanDescription,
-                sku: product.sku || product.id,
+                sku:
+                    typeof product.sku === "string"
+                        ? product.sku
+                        : product.id.toString(),
                 offers: {
                     "@type": "Offer",
                     priceCurrency: "EUR",
@@ -87,166 +91,404 @@ const canonicalUrl = product.permalink;
         />
     </Fragment>
 
-    <main class="product-container">
-        <div class="product-image">
-            {
-                product.images?.[0] && (
-                    <Image
-                        src={product.images[0].src}
-                        alt={product.images[0].alt || product.name}
-                        width={800}
-                        height={800}
-                        loading="eager"
-                        decoding="async"
-                        fetchpriority="high"
-                    />
-                )
-            }
-        </div>
-
-        <div class="product-details">
-            <h1>{product.name}</h1>
-
-            <div class="price">
+    <main class="product-page-main">
+        <div class="product-container">
+            <div class="product-image">
                 {
-                    product.sale_price ? (
-                        <>
-                            <span class="original-price">
-                                {product.regular_price}€
-                            </span>
-                            <span class="sale-price">
-                                {product.sale_price}€
-                            </span>
-                        </>
-                    ) : (
-                        <span>{product.price}€</span>
+                    product.images?.[0] && (
+                        <div class="product-image-wrapper">
+                            <Image
+                                src={product.images[0].src}
+                                alt={product.images[0].alt || product.name}
+                                width={800}
+                                height={800}
+                                loading="eager"
+                                decoding="async"
+                                fetchpriority="high"
+                            />
+                        </div>
                     )
                 }
             </div>
 
-            <div class="description" set:html={product.short_description} />
+            <div class="product-details">
+                <h1>{product.name}</h1>
+                <p class="product-display-name">{displayName}</p>
 
-            <div class="actions">
-                <a
-                    href={product.permalink}
-                    class="btn-primary"
-                    rel="nofollow noopener"
-                >
-                    Acheter
-                </a>
-            </div>
+                <div
+                    class="product-excerpt"
+                    set:html={product.short_description}
+                />
 
-            <div class="full-description">
-                <h2>Description détaillée</h2>
-                <div set:html={product.description} />
+                <div class="price">
+                    {
+                        (product.stock_status === "instock" ||
+                            product.stock_status === "onbackorder") &&
+                        !!product.price ? (
+                            product.sale_price ? (
+                                <>
+                                    <span class="original-price">
+                                        {product.regular_price}€
+                                    </span>
+                                    <span class="sale-price">
+                                        {product.sale_price}€
+                                    </span>
+                                </>
+                            ) : (
+                                <span>{product.price}€</span>
+                            )
+                        ) : (
+                            <p class="product-unavailable">
+                                Bientôt disponible
+                            </p>
+                        )
+                    }
+                </div>
+
+                <div class="actions">
+                    <button class="btn-secondary open-details-btn">
+                        Voir plus
+                    </button>
+                    {
+                        (product.stock_status === "instock" ||
+                            product.stock_status === "onbackorder") &&
+                            !!product.price && (
+                                <button
+                                    class="btn-add-icon add-to-cart-btn"
+                                    data-product-id={product.id}
+                                    aria-label="Ajouter au panier"
+                                >
+                                    <svg
+                                        width="20"
+                                        height="20"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <circle cx="9" cy="21" r="1" />
+                                        <circle cx="20" cy="21" r="1" />
+                                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                                    </svg>
+                                    <span
+                                        class="btn-loader"
+                                        style="display: none;"
+                                    >
+                                        ...
+                                    </span>
+                                </button>
+                            )
+                    }
+                </div>
             </div>
         </div>
     </main>
+
+    <!-- Off-Canvas pour la description détaillée -->
+    <div class="e-off-canvas from-right" id="product-details-canvas">
+        <div class="e-off-canvas__overlay"></div>
+        <div class="e-off-canvas__main">
+            <div class="e-off-canvas__content">
+                <button class="close-canvas" aria-label="Fermer">✕</button>
+                <div class="detailed-content">
+                    <h2>Description détaillée</h2>
+                    <div set:html={product.description} />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        import { addToCart } from "../../lib/cocart.js";
+        import { refreshCart, toggleCart } from "../../lib/cartStore.js";
+
+        const addBtn = document.querySelector(
+            ".add-to-cart-btn",
+        ) as HTMLButtonElement | null;
+        if (addBtn) {
+            addBtn.addEventListener("click", async () => {
+                const productId = addBtn.getAttribute("data-product-id");
+                const icon = addBtn.querySelector("svg") as HTMLElement | null;
+                const loader = addBtn.querySelector(
+                    ".btn-loader",
+                ) as HTMLElement | null;
+
+                if (!productId) return;
+
+                addBtn.disabled = true;
+                if (icon) icon.style.display = "none";
+                if (loader) loader.style.display = "inline";
+
+                try {
+                    await addToCart(productId, 1);
+                    await refreshCart();
+                    toggleCart(true);
+                } catch (err) {
+                    console.error("Failed to add to cart", err);
+                } finally {
+                    addBtn.disabled = false;
+                    if (icon) icon.style.display = "block";
+                    if (loader) loader.style.display = "none";
+                }
+            });
+        }
+
+        // 2. Gestion de l'Off-Canvas "Voir plus"
+        const openBtn = document.querySelector(".open-details-btn");
+        const canvas = document.querySelector("#product-details-canvas");
+        const overlay = document.querySelector(
+            "#product-details-canvas .e-off-canvas__overlay",
+        );
+        const closeBtn = document.querySelector(
+            "#product-details-canvas .close-canvas",
+        );
+
+        const toggleCanvas = (show: boolean) => {
+            if (show) {
+                canvas?.classList.add("elementor-active");
+                document.body.classList.add("elementor-offcanvas-active");
+            } else {
+                canvas?.classList.remove("elementor-active");
+                document.body.classList.remove("elementor-offcanvas-active");
+            }
+        };
+
+        openBtn?.addEventListener("click", () => toggleCanvas(true));
+        overlay?.addEventListener("click", () => toggleCanvas(false));
+        closeBtn?.addEventListener("click", () => toggleCanvas(false));
+    </script>
 </Layout>
 
 <style>
-    .product-container {
-        max-width: 1000px;
-        margin: 2rem auto;
-        padding: 1rem;
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 2rem;
+    .product-page-main {
+        padding-top: calc(var(--header-height) + 2rem);
+        min-height: 80vh;
     }
 
-    @media (min-width: 768px) {
+    .product-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+        display: flex;
+        flex-direction: column; /* ✅ Colonne par défaut pour Mobile & Tablette */
+        align-items: center;
+        text-align: center;
+        gap: 1.5rem;
+    }
+
+    @media (min-width: 1024px) {
         .product-container {
-            grid-template-columns: 1fr 1fr;
+            flex-direction: row; /* ✅ Row uniquement sur grand écran */
+            text-align: left;
+            align-items: center;
+            justify-content: center;
+            gap: 5rem;
+            padding-top: 3rem;
+        }
+
+        .product-details {
+            max-width: 450px;
+            align-items: flex-start; /* ✅ Alignement à gauche sur Desktop */
+        }
+
+        .price,
+        .product-unavailable {
+            text-align: left;
+        }
+
+        .actions {
+            justify-content: flex-start;
         }
     }
 
-    .product-image :global(img) {
+    .product-image {
         width: 100%;
-        height: auto;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        transition:
-            transform 220ms ease,
-            box-shadow 220ms ease;
-    }
-    .product-image:hover :global(img) {
-        transform: scale(1.01);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        max-width: 400px; /* ✅ Taille plus raisonnable pour mobile/tablette */
     }
 
+    @media (max-width: 1023px) {
+        .product-details {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+    }
+
+    .product-image-wrapper {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* ✅ Effet carte photo */
+        border: 1px solid #f0f0f0;
+    }
+
+    .product-image :global(img) {
+        width: 90%;
+        height: 90%;
+        object-fit: contain;
+        transition: transform 0.4s ease;
+    }
+
+    /* Tailles de texte réduites et proportionnelles */
     .product-details h1 {
-        font-size: 2.4rem;
-        margin-bottom: 1rem;
+        font-size: 1.6rem;
+        margin: 0 0 0.4rem 0;
+        font-weight: 400;
+        letter-spacing: -1.5px;
+        order: initial !important; /* ✅ Reset global conflict */
     }
 
-    .price {
-        font-size: 1.5rem;
-        font-weight: bold;
-        margin-bottom: 1.5rem;
+    .product-display-name {
+        font-size: 0.95rem;
+        color: #666;
+        margin-bottom: 1.2rem;
+        letter-spacing: -0.5px;
+        order: initial !important; /* ✅ Reset global conflict */
+    }
+
+    .product-excerpt {
+        font-size: 0.85rem;
+        font-style: italic;
+        font-family: Helvetica, Arial, sans-serif;
+        opacity: 0.8;
+        line-height: 1.4;
+        margin-bottom: 0.5rem;
+        order: initial !important; /* ✅ Reset global conflict */
+    }
+
+    /* Force les paragraphes WooCommerce à rester en bloc sur cette page */
+    .product-excerpt :global(p) {
+        display: block !important;
+        margin: 0.5rem 0 !important;
+    }
+
+    .price,
+    .product-unavailable {
+        font-size: 0.95rem;
+        margin: 10px 0;
+        line-height: 1.2;
+        display: block;
+        font-weight: 700;
+        text-align: center;
+        order: initial !important; /* ✅ Reset global conflict */
+    }
+
+    .product-unavailable {
+        color: #be1010;
+        font-weight: 500;
     }
 
     .original-price {
         text-decoration: line-through;
         color: #888;
-        margin-right: 1rem;
+        margin-right: 0.8rem;
+        font-weight: 400;
+        font-size: 0.9rem;
     }
 
-    .sale-price {
-        color: #e53e3e;
+    /* Centrage des contenus texte */
+    .product-details {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
     .actions {
-        margin: 2rem 0;
-    }
-
-    .btn-primary {
-        display: inline-flex;
+        display: flex;
+        gap: 10px;
         align-items: center;
-        gap: 0.6rem;
-        background-color: #000;
-        color: #fff;
-        padding: 1rem 2.2rem;
-        text-decoration: none;
+        justify-content: center;
+        margin-top: 15px;
+        margin-bottom: 6rem; /* ✅ Marge pour éviter de toucher le footer */
+        order: 10 !important;
+    }
+
+    @media (min-width: 768px) {
+        .product-details {
+            align-items: center;
+        }
+        .actions {
+            justify-content: center;
+        }
+    }
+
+    /* Style des boutons harmonisé */
+    .btn-secondary,
+    .btn-add-icon {
+        height: 45px;
         border-radius: 5px;
-        border: 1px solid transparent;
-        font-weight: 600;
-        letter-spacing: 0.2px;
-        transition:
-            transform 160ms ease,
-            box-shadow 160ms ease,
-            background-color 160ms ease;
+        transition: all 0.2s ease;
+        border: 1px solid #000;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
     }
 
-    .btn-primary:hover {
-        background-color: #111;
-        transform: translateY(-1px);
-        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+    .btn-secondary {
+        background: #fff;
+        color: #000;
+        padding: 0 25px;
+        font-weight: 500;
+        font-size: 0.9rem;
+        min-width: 140px;
     }
 
-    .description,
-    .full-description {
+    @media (max-width: 767px) {
+        .actions {
+            width: 90%; /* ✅ Plus proportionné à la page */
+            max-width: 280px;
+        }
+    }
+
+    .btn-secondary:hover {
+        background: #f9f9f9;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-add-icon {
+        background: #000;
+        color: #fff;
+        width: 45px;
+        padding: 0;
+    }
+
+    .btn-add-icon:hover {
+        background: #222;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Style Off-Canvas spécifique */
+    .close-canvas {
+        align-self: flex-end;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 10px;
+        margin-bottom: 1rem;
+    }
+
+    .detailed-content h2 {
+        border-bottom: 1px solid #eee;
+        padding-bottom: 1rem;
+        margin-bottom: 1.5rem;
+        font-size: 1.5rem;
+    }
+
+    .detailed-content :global(p) {
         line-height: 1.6;
-        color: #4a5568;
-    }
-
-    .full-description {
-        margin-top: 3rem;
-        border-top: 1px solid #e2e8f0;
-        padding-top: 2rem;
-    }
-
-    .product-container {
-        animation: fadeUp 420ms ease-out both;
-    }
-
-    @keyframes fadeUp {
-        from {
-            opacity: 0;
-            transform: translateY(6px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        margin-bottom: 1rem;
     }
 </style>
