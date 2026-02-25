@@ -1,13 +1,15 @@
-// src/lib/cartStore.js
-import { atom } from 'nanostores';
+import { persistentAtom } from '@nanostores/persistent';
 import { getCart, calculateTotals } from './cocart.js';
 
-// État initial du panier
-export const cartStore = atom({
+// État initial du panier avec persistance
+export const cartStore = persistentAtom('melipone_cart_state', {
     items: [],
     totals: { total: 0, savings: 0, count: 0 },
     loading: false,
     isOpen: false
+}, {
+    encode: JSON.stringify,
+    decode: JSON.parse
 });
 
 /**

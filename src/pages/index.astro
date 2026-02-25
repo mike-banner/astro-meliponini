@@ -22,8 +22,8 @@ import { Image } from "astro:assets";
             preload="metadata"
             class="design-video"
           >
-            <source src="/videos/abeille-design.webm" type="video/webm" />
             <source src="/videos/abeille-design.mp4" type="video/mp4" />
+            <source src="/videos/abeille-design.webm" type="video/webm" />
             Ton navigateur ne supporte pas la lecture de vidéos.
           </video>
         </div>
@@ -97,17 +97,26 @@ import { Image } from "astro:assets";
   document.addEventListener('DOMContentLoaded', () => {
     const video = document.querySelector('.design-video') as HTMLVideoElement;
     if (video) {
-      // Force le play au chargement car certains navigateurs mobiles 
-      // bloquent l'autoplay même avec 'muted'
-      const playVideo = () => {
+      const startVideo = () => {
         video.play().catch(err => {
-          console.log("Autoplay bloqué, nouvelle tentative au premier clic.", err);
-          // Optionnel : relancer au premier clic utilisateur si vraiment bloqué
+          console.warn("Autoplay initial bloqué, en attente d'interaction.", err);
+          document.addEventListener('touchstart', () => video.play(), { once: true });
           document.addEventListener('click', () => video.play(), { once: true });
         });
       };
+
+      // Supprime le poster dès que la vidéo commence vraiment à jouer
+      video.addEventListener('playing', () => {
+        video.removeAttribute('poster');
+      });
+
+      // Tente de jouer dès que les métadonnées sont là
+      video.addEventListener('loadedmetadata', startVideo);
       
-      playVideo();
+      // Sécurité si déjà chargé
+      if (video.readyState >= 2) {
+        startVideo();
+      }
     }
   });
 </script>

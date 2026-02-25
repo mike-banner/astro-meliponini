@@ -1,9 +1,12 @@
-// src/lib/cocart.js
 import { persistentAtom } from '@nanostores/persistent';
-import { nanoid } from 'nanoid';
 
 // Store persistant pour la cart key CoCart
-export const cartKey = persistentAtom('cocart_cart_key', nanoid());
+// On génère une clé alphanumérique simple (plus stable pour WP que nanoid)
+const generateSimpleId = () => {
+    return Array.from({ length: 32 }, () => Math.floor(Math.random() * 36).toString(36)).join('');
+};
+
+export const cartKey = persistentAtom('cocart_cart_key', generateSimpleId());
 
 const API_URL = import.meta.env.PUBLIC_WC_API_URL || import.meta.env.WC_API_URL || "https://dev-shop.meliponini.fr";
 const COCART_BASE = `${API_URL.replace(/\/$/, "")}/wp-json/cocart/v2`;
