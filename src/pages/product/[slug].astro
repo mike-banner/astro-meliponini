@@ -159,7 +159,7 @@ const canonicalUrl = product.permalink;
                                     aria-label="Ajouter au panier"
                                 >
                                     <iconify-icon
-                                        icon="material-symbols-light:shopping-cart-outline-sharp"
+                                        icon="carbon:shopping-cart-plus"
                                         style="font-size: 24px;"
                                     />
                                     <span
@@ -179,15 +179,44 @@ const canonicalUrl = product.permalink;
     <!-- Off-Canvas pour la description détaillée -->
     <div class="e-off-canvas from-right" id="product-details-canvas">
         <div class="e-off-canvas__overlay"></div>
-        <div class="e-off-canvas__main">
-            <div class="e-off-canvas__content">
-                <button class="close-canvas" aria-label="Fermer">
-                    <iconify-icon icon="material-symbols-light:close-rounded"
-                    ></iconify-icon>
-                </button>
-                <div class="detailed-content">
-                    <h2>Description détaillée</h2>
-                    <div set:html={product.description} />
+        <div class="e-off-canvas__main relative">
+            <div class="e-off-canvas__content relative !p-0">
+                <!-- 1. Galerie Image -->
+                <div
+                    class="relative bg-gray-100 flex-shrink-0 h-[250px] md:h-[400px] flex items-center justify-center overflow-visible canvas-padding"
+                >
+                    <div
+                        id="canvas-gallery"
+                        class="gallery-container w-full h-full"
+                    >
+                        <!-- Injected via JS -->
+                    </div>
+                </div>
+
+                <!-- 2. Bouton Fermer -->
+                <div class="close-btn-container">
+                    <button
+                        id="close-canvas"
+                        class="btn-reset"
+                        aria-label="Fermer"
+                    >
+                        <iconify-icon
+                            icon="ph:caret-left-light"
+                            style="font-size: 22px;"></iconify-icon>
+                    </button>
+                </div>
+
+                <!-- 3. Corps du texte -->
+                <div
+                    class="relative flex-1 overflow-y-auto canvas-padding !pt-4"
+                >
+                    <div class="detailed-content">
+                        <h2>Description détaillée</h2>
+                        <div
+                            class="prose prose-lg text-gray-600 max-w-none"
+                            set:html={product.description}
+                        />
+                    </div>
                 </div>
             </div>
         </div>
@@ -203,9 +232,7 @@ const canonicalUrl = product.permalink;
         if (addBtn) {
             addBtn.addEventListener("click", async () => {
                 const productId = addBtn.getAttribute("data-product-id");
-                const icon = addBtn.querySelector(
-                    "iconify-icon",
-                ) as HTMLElement | null;
+                const icon = addBtn.querySelector("iconify-icon") as any | null;
                 const loader = addBtn.querySelector(
                     ".btn-loader",
                 ) as HTMLElement | null;
@@ -220,11 +247,32 @@ const canonicalUrl = product.permalink;
                     await addToCart(productId, 1);
                     await refreshCart();
                     toggleCart(true);
+
+                    // --- État de SUCCÈS (3 secondes) ---
+                    if (icon) {
+                        icon.setAttribute(
+                            "icon",
+                            "streamline:shopping-cart-check",
+                        );
+                        icon.style.color = "#28a745"; // Vert
+                        icon.style.display = "block";
+                    }
+                    if (loader) loader.style.display = "none";
+
+                    setTimeout(() => {
+                        if (icon) {
+                            icon.setAttribute(
+                                "icon",
+                                "carbon:shopping-cart-plus",
+                            );
+                            icon.style.color = ""; // Retour normal
+                        }
+                    }, 3000);
                 } catch (err) {
                     console.error("Failed to add to cart", err);
+                    if (icon) icon.style.display = "block";
                 } finally {
                     addBtn.disabled = false;
-                    if (icon) icon.style.display = "block";
                     if (loader) loader.style.display = "none";
                 }
             });
@@ -233,28 +281,59 @@ const canonicalUrl = product.permalink;
         // 2. Gestion de l'Off-Canvas "Voir plus"
         const openBtn = document.querySelector(".open-details-btn");
         const canvas = document.querySelector("#product-details-canvas");
+        const closeBtn = document.querySelector("#close-canvas");
         const overlay = document.querySelector(
             "#product-details-canvas .e-off-canvas__overlay",
         );
-        const closeBtn = document.querySelector(
-            "#product-details-canvas .close-canvas",
-        );
+        const canvasGallery = document.getElementById("canvas-gallery");
 
-        const toggleCanvas = (show: boolean) => {
-            if (show) {
-                canvas?.classList.add("elementor-active");
-                document.body.classList.add("elementor-offcanvas-active");
-            } else {
-                canvas?.classList.remove("elementor-active");
-                document.body.classList.remove("elementor-offcanvas-active");
+        let currentVariant = 1;
+
+        const openCanvas = () => {
+            if (canvasGallery) {
+                // Reset gallery content
+                canvasGallery.innerHTML = "";
+                canvasGallery.className = `gallery-v${currentVariant}`;
+
+                // Cycle through variants 1 to 4
+                currentVariant = currentVariant >= 4 ? 1 : currentVariant + 1;
+
+                // Pick 5 unique random images from the bee collection
+                const imageIndices: number[] = [];
+                while (imageIndices.length < 5) {
+                    const r = Math.floor(Math.random() * 14) + 1;
+                    if (imageIndices.indexOf(r) === -1) imageIndices.push(r);
+                }
+
+                imageIndices.forEach((idx) => {
+                    const img = document.createElement("img");
+                    img.src = `/images/collections/bee-${idx}.webp`;
+                    img.alt = "Abeille Melipone";
+                    img.loading = "lazy";
+                    canvasGallery.appendChild(img);
+                });
             }
+
+            canvas?.classList.add("elementor-active");
+            document.body.classList.add("elementor-offcanvas-active");
+            document.body.style.overflow = "hidden";
         };
 
-        openBtn?.addEventListener("click", () => toggleCanvas(true));
-        overlay?.addEventListener("click", () => toggleCanvas(false));
-        closeBtn?.addEventListener("click", () => toggleCanvas(false));
+        const closeCanvasFunc = () => {
+            canvas?.classList.remove("elementor-active");
+            document.body.classList.remove("elementor-offcanvas-active");
+            document.body.style.overflow = "";
+        };
+
+        openBtn?.addEventListener("click", openCanvas);
+        overlay?.addEventListener("click", closeCanvasFunc);
+        closeBtn?.addEventListener("click", closeCanvasFunc);
     </script>
 </Layout>
+
+<style is:global>
+    @import "../../styles/galleries.css";
+</style>
 
 <style>
     .product-page-main {
@@ -503,5 +582,35 @@ const canonicalUrl = product.permalink;
     .detailed-content :global(p) {
         line-height: 1.6;
         margin-bottom: 1rem;
+    }
+
+    /* Styles Canvas Synchronisés */
+    .e-off-canvas__main {
+        border-top-left-radius: 25px;
+    }
+
+    .canvas-padding {
+        padding: 2rem 1.5rem;
+    }
+
+    .btn-reset {
+        background: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: inherit;
+        outline: none;
+        box-shadow: none !important;
+    }
+
+    .close-btn-container {
+        padding: 2px 0;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
     }
 </style>

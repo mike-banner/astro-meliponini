@@ -35,6 +35,15 @@ const { products, title } = Astro.props;
     {products.map((product: any) => <ProductCard product={product} />)}
 </section>
 
+<style is:global>
+    /* Ralentit la transition globale du navigateur */
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+        animation-duration: 0.8s;
+        animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+    }
+</style>
+
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const toggle = document.querySelector("[data-layout-toggle]");
@@ -43,8 +52,17 @@ const { products, title } = Astro.props;
         if (!toggle || !grid) return;
 
         toggle.addEventListener("click", () => {
-            grid.classList.toggle("row-layout");
-            toggle.classList.toggle("is-row");
+            const toggleLayout = () => {
+                grid.classList.toggle("row-layout");
+                toggle.classList.toggle("is-row");
+            };
+
+            // Utilise l'API View Transitions pour un mouvement fluide si supporté
+            if ((document as any).startViewTransition) {
+                (document as any).startViewTransition(() => toggleLayout());
+            } else {
+                toggleLayout();
+            }
         });
     });
 </script>

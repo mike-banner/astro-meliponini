@@ -55,13 +55,13 @@
 .e-off-canvas.from-right .e-off-canvas__main {
   right: 0;
   transform: translateX(100%);
-  border-top-left-radius: 10%;
+  border-top-left-radius: 25px;
 }
 
 .e-off-canvas.from-left .e-off-canvas__main {
   left: 0;
   transform: translateX(-100%);
-  border-top-right-radius: 10%;
+  border-top-right-radius: 25px;
 }
 
 .e-off-canvas.elementor-active .e-off-canvas__main {

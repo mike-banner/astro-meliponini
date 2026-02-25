@@ -58,20 +58,10 @@ console.log(
                         data-product-id={product.id}
                         aria-label={`Ajouter ${product.name} au panier`}
                     >
-                        <svg
-                            width="20"
-                            height="20"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        >
-                            <circle cx="9" cy="21" r="1" />
-                            <circle cx="20" cy="21" r="1" />
-                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-                        </svg>
+                        <iconify-icon
+                            icon="carbon:shopping-cart-plus"
+                            style="font-size: 20px;"
+                        />
                         <span class="btn-loader" style="display: none;">
                             ...
                         </span>
@@ -105,7 +95,7 @@ console.log(
             btn.addEventListener("click", async (e) => {
                 const target = e.currentTarget as HTMLButtonElement;
                 const productId = target.getAttribute("data-product-id");
-                const icon = target.querySelector("svg") as HTMLElement | null;
+                const icon = target.querySelector("iconify-icon") as any | null; // Casting any pour accéder aux props iconify
                 const loader = target.querySelector(
                     ".btn-loader",
                 ) as HTMLElement | null;
@@ -121,11 +111,32 @@ console.log(
                     await addToCart(productId, 1);
                     await refreshCart();
                     toggleCart(true); // Ouvre le mini-panier
+
+                    // --- État de SUCCÈS (3 secondes) ---
+                    if (icon) {
+                        icon.setAttribute(
+                            "icon",
+                            "streamline:shopping-cart-check",
+                        );
+                        icon.style.color = "#28a745"; // Vert
+                        icon.style.display = "block";
+                    }
+                    if (loader) loader.style.display = "none";
+
+                    setTimeout(() => {
+                        if (icon) {
+                            icon.setAttribute(
+                                "icon",
+                                "carbon:shopping-cart-plus",
+                            );
+                            icon.style.color = ""; // Retour normal
+                        }
+                    }, 3000);
                 } catch (err) {
                     console.error("Failed to add to cart", err);
+                    if (icon) icon.style.display = "block";
                 } finally {
                     target.disabled = false;
-                    if (icon) icon.style.display = "block";
                     if (loader) loader.style.display = "none";
                 }
             });
@@ -148,6 +159,8 @@ console.log(
         width: 100%;
         height: 100%;
         box-sizing: border-box;
+        /* Ralentissement et courbe plus souple */
+        transition: all 0.75s cubic-bezier(0.65, 0, 0.35, 1);
     }
 
     .product-link {
@@ -165,8 +178,9 @@ console.log(
         justify-content: center;
         align-items: center;
         aspect-ratio: 1 / 1;
-        margin-bottom: 0; /* ✅ Espace réduit au minimum */
+        margin-bottom: 0;
         overflow: hidden;
+        transition: transform 0.75s cubic-bezier(0.65, 0, 0.35, 1);
     }
 
     .product-card img {
@@ -189,6 +203,9 @@ console.log(
         letter-spacing: -1.5px;
         margin: 10px 0;
         font-weight: 600;
+        transition:
+            font-size 0.8s cubic-bezier(0.65, 0, 0.35, 1),
+            margin 0.8s cubic-bezier(0.65, 0, 0.35, 1);
     }
 
     .product-display-name {
@@ -212,7 +229,10 @@ console.log(
         margin: 10px 0;
         line-height: 1.2;
         display: block;
-        min-height: 1.2em; /* Réserve l'espace */
+        min-height: 1.2em;
+        transition:
+            font-size 0.8s cubic-bezier(0.65, 0, 0.35, 1),
+            margin 0.8s cubic-bezier(0.65, 0, 0.35, 1);
     }
 
     .product-price {
@@ -267,6 +287,7 @@ console.log(
         flex-grow: 1;
         max-width: 160px;
         font-weight: 500;
+        transition: all 0.4s ease;
     }
 
     .btn-add-icon {

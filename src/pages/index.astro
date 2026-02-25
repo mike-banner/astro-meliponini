@@ -18,6 +18,7 @@ import { Image } from "astro:assets";
             muted 
             loop 
             playsinline 
+            poster="/videos/abeille-poster.webp"
             preload="metadata"
             class="design-video"
           >
@@ -92,6 +93,24 @@ import { Image } from "astro:assets";
     </section>
   </main>
 </Layout>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const video = document.querySelector('.design-video') as HTMLVideoElement;
+    if (video) {
+      // Force le play au chargement car certains navigateurs mobiles 
+      // bloquent l'autoplay même avec 'muted'
+      const playVideo = () => {
+        video.play().catch(err => {
+          console.log("Autoplay bloqué, nouvelle tentative au premier clic.", err);
+          // Optionnel : relancer au premier clic utilisateur si vraiment bloqué
+          document.addEventListener('click', () => video.play(), { once: true });
+        });
+      };
+      
+      playVideo();
+    }
+  });
+</script>
 
 <style>
 /* =========================
@@ -275,7 +294,7 @@ import { Image } from "astro:assets";
   }
 
   .video-container {
-    width: 6s5%;
+    width: 85%;
     aspect-ratio: 18 / 9;
   }
 
