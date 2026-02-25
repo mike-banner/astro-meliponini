@@ -117,12 +117,31 @@ input[type="button"] {
 }
 
 /* ==================================================
-   OFFSET GLOBAL — DESKTOP
+   OFFSET GLOBAL
 ================================================== */
-/* .page-default,
+/* Pages avec filtre/sous-navigation (miel, bougies, etc) */
 .products-page {
-    padding-top: calc(var(--header-height) + var(--subnav-height));
-} */
+    padding-top: calc(var(--header-height) + var(--subnav-height) + 20px);
+}
+
+/* Pages standards sans sous-navigation */
+.page-default,
+.page-family,
+.page-contact,
+.secrets-page {
+    padding-top: calc(var(--header-height) + 30px);
+}
+
+@media (max-width: 600px) {
+
+    .products-page,
+    .page-default,
+    .page-family,
+    .page-contact,
+    .secrets-page {
+        padding-top: calc(var(--header-height) + 20px);
+    }
+}
 
 
 /* ==================================================

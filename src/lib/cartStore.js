@@ -21,9 +21,11 @@ export async function refreshCart() {
 
     const data = await getCart();
     if (data) {
+        // Normalisation : CoCart v2 renvoie souvent un objet, on veut un tableau
+        const itemsArray = Array.isArray(data.items) ? data.items : Object.values(data.items || {});
         cartStore.set({
             ...current,
-            items: data.items || [],
+            items: itemsArray,
             totals: calculateTotals(data),
             loading: false
         });

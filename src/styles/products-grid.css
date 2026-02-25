@@ -5,7 +5,6 @@
     padding-inline: 1.5rem;
     max-width: 1400px;
     margin: 0 auto;
-    padding-top: calc(var(--header-height) + var(--subnav-height));
 }
 
 /* =========================
@@ -110,10 +109,7 @@
         /* Pas de marge négative en 2 colonnes */
     }
 
-    /* ✅ CORRECTION : padding réduit car menu-sticky caché */
-    .products-page {
-        padding-top: calc(var(--header-height) - 10px);
-    }
+    /* ✅ Padding-top géré par global.css pour éviter les conflits */
 }
 
 /* =========================

@@ -1,166 +1,204 @@
+/* src/lib/cocart.js */
 import { persistentAtom } from '@nanostores/persistent';
 
-// Store persistant pour la cart key CoCart
-// On génère une clé alphanumérique simple (plus stable pour WP que nanoid)
-const generateSimpleId = () => {
-    return Array.from({ length: 32 }, () => Math.floor(Math.random() * 36).toString(36)).join('');
+/**
+ * STORE ET CONFIG
+ */
+const API_URL = "https://dev-shop.meliponini.fr/wp-json/cocart/v2";
+export const cartKey = persistentAtom('cocart_cart_key', '');
+
+export const cocartApi = {
+    /**
+     * Récupère la clé actuelle
+     */
+    getCartKey() {
+        const key = cartKey.get();
+        if (key === 'undefined' || key === 'null' || !key) return '';
+        return key;
+    },
+
+    /**
+     * Headers standardisés
+     */
+    getHeaders(isForm = false) {
+        const headers = {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        };
+        if (!isForm) {
+            headers['Content-Type'] = 'application/json';
+        } else {
+            headers['Content-Type'] = 'application/x-www-form-urlencoded';
+        }
+        return headers;
+    },
+
+    /**
+     * Récupère le contenu du panier
+     */
+    async getCart() {
+        const key = this.getCartKey();
+        const url = key ? `${API_URL}/cart?cart_key=${key}` : `${API_URL}/cart`;
+
+        try {
+            const response = await fetch(url, { headers: this.getHeaders() });
+            const data = await response.json();
+
+            // Si la clé est invalide/inexistante côté serveur (404/403)
+            if (response.status === 404 || response.status === 403) {
+                cartKey.set('');
+                return null;
+            }
+
+            if (data.cart_key) cartKey.set(data.cart_key);
+            return data;
+        } catch (error) {
+            console.error("❌ [CoCart] Error getCart:", error);
+            return null;
+        }
+    },
+
+    /**
+         * AJOUT AU PANIER - VERSION URL-PARAMS (FORCE)
+         */
+    async addItem(id, quantity = 1) {
+        const key = this.getCartKey();
+        const nonce = Date.now();
+
+        // 1. On construit l'URL avec TOUS les paramètres dedans
+        // C'est le seul moyen de garantir que WordPress voit la quantité comme un entier/valeur valide
+        let url = `${API_URL}/cart/add-item?id=${id}&quantity=${parseInt(quantity, 10)}&_=${nonce}`;
+
+        if (key && key !== "") {
+            url += `&cart_key=${key}`;
+        }
+
+        try {
+            const response = await fetch(url, {
+                method: "POST", // On garde POST pour CoCart
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+                // Pas de body, tout est dans l'URL
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                console.error("❌ [CoCart] Server Error Data:", data);
+
+                // Si la clé est corrompue, on nettoie pour le prochain essai
+                if (response.status === 400 || response.status === 403) {
+                    cartKey.set('');
+                }
+                throw new Error(data.message || "Erreur 400");
+            }
+
+            if (data.cart_key) cartKey.set(data.cart_key);
+            return data;
+        } catch (error) {
+            console.error("❌ [CoCart] Error addItem:", error);
+            throw error;
+        }
+    },
+    /**
+     * MISE À JOUR QUANTITÉ
+     */
+    async updateItem(item_key, quantity) {
+        const key = this.getCartKey();
+        const url = `${API_URL}/cart/item/${item_key}?cart_key=${key}`;
+
+        const params = new URLSearchParams();
+        params.append('quantity', String(quantity));
+
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: this.getHeaders(true),
+                body: params.toString()
+            });
+            return await response.json();
+        } catch (error) {
+            console.error("❌ [CoCart] Error updateItem:", error);
+            throw error;
+        }
+    },
+
+    /**
+     * SUPPRESSION ARTICLE
+     */
+    async deleteItem(item_key) {
+        const key = this.getCartKey();
+        const url = `${API_URL}/cart/item/${item_key}?cart_key=${key}`;
+
+        try {
+            const response = await fetch(url, {
+                method: "DELETE",
+                headers: this.getHeaders(),
+            });
+            return await response.json();
+        } catch (error) {
+            console.error("❌ [CoCart] Error deleteItem:", error);
+            throw error;
+        }
+    }
 };
 
-export const cartKey = persistentAtom('cocart_cart_key', generateSimpleId());
-
-const API_URL = import.meta.env.PUBLIC_WC_API_URL || import.meta.env.WC_API_URL || "https://dev-shop.meliponini.fr";
-const COCART_BASE = `${API_URL.replace(/\/$/, "")}/wp-json/cocart/v2`;
-
 /**
- * Headers pour CoCart (Public API)
+ * EXPORTS POUR COMPATIBILITÉ
  */
-function getHeaders() {
-    return {
-        'Content-Type': 'application/json'
-    };
-}
+export const getCart = () => cocartApi.getCart();
+export const addToCart = (id, q) => cocartApi.addItem(id, q);
+export const updateItem = (k, q) => cocartApi.updateItem(k, q);
+export const removeItem = (k) => cocartApi.deleteItem(k);
 
 /**
- * Construit l'URL avec la cart_key en paramètre pour éviter les erreurs CORS sur les headers
- */
-function getUrl(endpoint) {
-    const key = cartKey.get();
-    const separator = endpoint.includes('?') ? '&' : '?';
-    return `${COCART_BASE}${endpoint}${key ? separator + 'cart_key=' + key : ''}`;
-}
-
-/**
- * Met à jour la clé du panier si l'API en renvoie une nouvelle
- */
-function updateCartKey(data) {
-    if (data && data.cart_key && data.cart_key !== cartKey.get()) {
-        cartKey.set(data.cart_key);
-    }
-}
-
-/**
- * Récupère le panier
- */
-export async function getCart() {
-    try {
-        const url = getUrl('/cart');
-        console.log('🚀 CoCart Call:', url);
-        const res = await fetch(url, {
-            headers: getHeaders()
-        });
-        if (!res.ok) return null;
-        const data = await res.json();
-        console.log('✅ CoCart Response:', data);
-        updateCartKey(data);
-        return data;
-    } catch (e) {
-        console.error("CoCart GetCart Error:", e);
-        return null;
-    }
-}
-
-/**
- * Ajoute un produit au panier
- */
-export async function addToCart(id, quantity = 1) {
-    try {
-        const url = getUrl('/cart/add-item');
-        console.log('🚀 CoCart Call:', url);
-        const res = await fetch(url, {
-            method: 'POST',
-            headers: getHeaders(),
-            body: JSON.stringify({
-                id: String(id),
-                quantity: String(quantity)
-            })
-        });
-        const data = await res.json();
-        console.log('✅ CoCart Response:', data);
-        updateCartKey(data);
-        return data;
-    } catch (e) {
-        console.error("CoCart AddToCart Error:", e);
-        throw e;
-    }
-}
-
-/**
- * Met à jour la quantité d'un item
- */
-export async function updateItem(itemKey, quantity) {
-    try {
-        const url = getUrl(`/cart/item/${itemKey}`);
-        console.log('🚀 CoCart Call:', url);
-        const res = await fetch(url, {
-            method: 'POST',
-            headers: getHeaders(),
-            body: JSON.stringify({
-                quantity: String(quantity)
-            })
-        });
-        const data = await res.json();
-        console.log('✅ CoCart Response:', data);
-        updateCartKey(data);
-        return data;
-    } catch (e) {
-        console.error("CoCart UpdateItem Error:", e);
-        throw e;
-    }
-}
-
-/**
- * Supprime un item du panier
- */
-export async function removeItem(itemKey) {
-    try {
-        const url = getUrl(`/cart/item/${itemKey}`);
-        console.log('🚀 CoCart Call:', url);
-        const res = await fetch(url, {
-            method: 'DELETE',
-            headers: getHeaders()
-        });
-        const data = await res.json();
-        console.log('✅ CoCart Response:', data);
-        updateCartKey(data);
-        return data;
-    } catch (e) {
-        console.error("CoCart RemoveItem Error:", e);
-        throw e;
-    }
-}
-
-/**
- * Récupère le total et les économies
+ * CALCULS DES TOTAUX
  */
 export function calculateTotals(cartData) {
-    if (!cartData || !cartData.items) return { total: "0 €", savings: 0, count: 0 };
+    if (!cartData) return { total: "0 €", savings: 0, count: 0 };
 
-    let total = 0;
-    let regularTotal = 0;
-    let count = 0;
+    // 1. Calcul du compte d'articles
+    const items = cartData.items ?
+        (Array.isArray(cartData.items) ? cartData.items : Object.values(cartData.items)) :
+        [];
 
-    cartData.items.forEach(item => {
-        const itemPrice = String(item.price);
-        const price = parseFloat(itemPrice) / (itemPrice.length >= 3 ? 100 : 1);
+    let manualCount = 0;
+    let manualTotal = 0;
 
-        const regPriceStr = item.regular_price ? String(item.regular_price) : null;
-        const regularPrice = regPriceStr ? (parseFloat(regPriceStr) / (regPriceStr.length >= 3 ? 100 : 1)) : price;
+    items.forEach(item => {
+        const qty = parseInt(item.quantity?.value || item.quantity || 0, 10);
+        const itemPrice = parseFloat(String(item.price || 0));
 
-        const qty = parseInt(item.quantity.value);
+        // Si le prix semble être en centimes (ex: 4500 pour 45.00)
+        const normalizedPrice = (itemPrice > 1000 && !String(item.price).includes('.')) ? itemPrice / 100 : itemPrice;
 
-        total += price * qty;
-        regularTotal += regularPrice * qty;
-        count += qty;
+        manualCount += qty;
+        manualTotal += normalizedPrice * qty;
     });
 
-    let displayTotal = cartData.totals?.total;
-    if (!displayTotal || typeof displayTotal !== 'string' || !displayTotal.includes('€')) {
-        displayTotal = total.toFixed(2) + " €";
+    // 2. Formatage du total
+    let displayTotal = cartData.totals?.total || "";
+
+    // Si c'est un nombre brut sans symbole (ex: "16000" ou "160.00")
+    if (!displayTotal.includes('€') && displayTotal !== "") {
+        let val = parseFloat(displayTotal);
+        // Détection des centimes (si > 500 et pas de point, probabilité forte de centimes pour du miel/bougie)
+        if (val > 500 && !displayTotal.includes('.')) {
+            val = val / 100;
+        }
+        displayTotal = val.toFixed(2).replace('.', ',') + " €";
+    } else if (displayTotal === "") {
+        displayTotal = manualTotal.toFixed(2).replace('.', ',') + " €";
+    } else {
+        // Simple remplacement pour les totaux déjà fournis avec symbole
+        displayTotal = displayTotal.replace('.', ',');
     }
 
     return {
         total: displayTotal,
-        savings: Math.max(0, regularTotal - total),
-        count: cartData.item_count || cartData.items_count || count
+        count: parseInt(cartData.item_count || cartData.items_count || manualCount, 10),
+        savings: 0
     };
 }

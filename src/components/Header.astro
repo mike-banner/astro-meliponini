@@ -321,13 +321,11 @@ const isActive = (path: string) => {
                     const cartData = await getCart();
                     if (!cartData) throw new Error("Sync failed");
 
-                    const url = new URL(
-                        "https://dev-shop.meliponini.fr/checkout/",
-                    );
-                    url.searchParams.set("cocart-load-cart", currentCartKey);
+                    const key = cartKey.get();
+                    const checkoutUrl = `https://dev-shop.meliponini.fr/checkout/?cocart-load-cart=${key}`;
 
                     setTimeout(() => {
-                        window.location.href = url.toString();
+                        window.location.href = checkoutUrl;
                     }, 500);
                 } catch (err) {
                     resumeOrder.innerText = "Erreur";
@@ -540,11 +538,8 @@ const isActive = (path: string) => {
                         progress.style.width = "100%";
                     }
 
-                    const url = new URL(
-                        "https://dev-shop.meliponini.fr/checkout/",
-                    );
-                    url.searchParams.set("cocart-load-cart", currentCartKey);
-                    const checkoutUrl = url.toString();
+                    const key = cartKey.get();
+                    const checkoutUrl = `https://dev-shop.meliponini.fr/checkout/?cocart-load-cart=${key}`;
 
                     // 2. Délai de 500ms après réponse API (Laisse le temps à Docker/Base de données)
                     setTimeout(() => {

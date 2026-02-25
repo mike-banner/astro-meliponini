@@ -1,127 +1,110 @@
-// src/lib/woocommerce.js
+/* src/lib/woocommerce.js */
 
-/* =========================
-   CONFIG
-========================= */
-// On force l'usage du .env. Si c'est vide, l'app crash au build avec un message clair.
-const API_URL = import.meta.env.WC_API_URL;
+/**
+ * SERVICE WOOCOMMERCE - SÉCURISÉ (SERVEUR UNIQUEMENT)
+ */
 
-if (!API_URL) {
-    throw new Error("ERREUR CRITIQUE: WC_API_URL n'est pas définie dans ton environnement.");
-}
-
+const API_URL = import.meta.env.WC_API_URL || "https://dev-shop.meliponini.fr";
 const API_BASE = `${API_URL.replace(/\/$/, "")}/wp-json/wc/v3`;
-const CONSUMER_KEY = import.meta.env.WC_CONSUMER_KEY;
-const CONSUMER_SECRET = import.meta.env.WC_CONSUMER_SECRET;
 
-/* =========================
-   AUTH HEADER (Universal)
-========================= */
-function authHeader() {
-    // btoa est standard (Navigateur, Node 16+, Cloudflare Workers)
-    // Buffer.from est risqué sur Cloudflare Pages
-    const token = btoa(`${CONSUMER_KEY}:${CONSUMER_SECRET}`);
-    return {
-        'Authorization': `Basic ${token}`,
-        'Content-Type': 'application/json'
-    };
-}
+// On prépare le header d'authentification Basic (Secrets .env)
+const auth = btoa(`${import.meta.env.WC_CONSUMER_KEY}:${import.meta.env.WC_CONSUMER_SECRET}`);
 
-/* =========================
-   MAPPING PRODUIT
-========================= */
-function mapProduct(product) {
-    return {
-        id: product.id,
-        slug: product.slug,
-        name: product.name,
-        displayName: product.tags?.[0]?.name || "",
-        latin: product.attributes?.find(attr => attr.name === "Nom latin")?.options?.[0] || "",
-        number: product.sku || "",
-        price: product.price || "",
-        available: (product.stock_status === "instock" || product.stock_status === "onbackorder") && !!product.price,
-        // Hack de secours : si la DB WP contient encore d'anciennes URLs, on corrige à la volée
-        image: product.images?.[0]?.src.replace("meliponini.remyparis.com", "dev-shop.meliponini.fr") || "/images/placeholder.png",
-        excerpt: product.short_description || "",
-        category: product.categories?.[0]?.slug || "",
-        permalink: product.permalink || "",
-    };
-}
+export const woocommerceApi = {
+    /**
+     * Récupère les produits avec filtres
+     */
+    async getProducts(params = {}) {
+        const queryParams = new URLSearchParams({
+            status: 'publish',
+            per_page: 50,
+            ...params
+        }).toString();
+        const url = `${API_BASE}/products?${queryParams}`;
 
-/* =========================
-   TOUS LES PRODUITS
-========================= */
-export async function getProducts() {
-    const res = await fetch(
-        `${API_BASE}/products?per_page=50&status=publish`,
-        { headers: authHeader() }
-    );
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Basic ${auth}`,
+                    'Content-Type': 'application/json'
+                }
+            });
 
-    if (!res.ok) {
-        console.error(`WC Error (products): ${res.status}`);
-        return [];
+            if (!response.ok) throw new Error(`Erreur WC API: ${response.status}`);
+
+            const products = await response.json();
+            return products.map(product => this.mapProduct(product));
+        } catch (error) {
+            console.error("❌ [WC API] Error getProducts:", error);
+            return [];
+        }
+    },
+
+    /**
+     * Nettoie la donnée pour Astro (Mapping complet pour l'UI)
+     */
+    mapProduct(product) {
+        return {
+            id: product.id,
+            name: product.name,
+            slug: product.slug,
+            displayName: product.tags?.[0]?.name || "",
+            latin: product.attributes?.find(attr => attr.name === "Nom latin")?.options?.[0] || "",
+            price: product.price || "",
+            regular_price: product.regular_price,
+            sale_price: product.sale_price,
+            available: (product.stock_status === "instock" || product.stock_status === "onbackorder") && !!product.price,
+            image: product.images?.[0]?.src.replace("meliponini.remyparis.com", "dev-shop.meliponini.fr") || "/images/placeholder.png",
+            description: product.short_description,
+            excerpt: product.short_description || "",
+            categories: product.categories.map(c => c.name),
+            categorySlug: product.categories?.[0]?.slug || "",
+            permalink: product.permalink || ""
+        };
+    },
+    /**
+     * Récupère les catégories enfants par ID parent
+     */
+    async getProductCategoriesByParent(parentId) {
+        const url = `${API_BASE}/products/categories?parent=${parentId}&per_page=100`;
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Basic ${auth}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) return [];
+            const categories = await response.json();
+            return categories.filter((cat) => cat.count > 0);
+        } catch (error) {
+            console.error("❌ [WC API] Error getProductCategoriesByParent:", error);
+            return [];
+        }
     }
+};
 
-    const data = await res.json();
-    return data.map(mapProduct);
-}
+/**
+ * EXPORTS POUR COMPATIBILITÉ RÉTROACTIVE
+ */
+export const getProducts = (p) => woocommerceApi.getProducts(p);
+export const getProductCategoriesByParent = (id) => woocommerceApi.getProductCategoriesByParent(id);
 
-/* =========================
-   PRODUITS PAR CATÉGORIE
-========================= */
 export async function getProductsByCategory(slug) {
-    /* 1️⃣ Récupérer la catégorie parente */
-    const catRes = await fetch(
-        `${API_BASE}/products/categories?slug=${slug}`,
-        { headers: authHeader() }
-    );
-
-    if (!catRes.ok) {
-        console.error(`WC Error (cat slug ${slug}): ${catRes.status}`);
+    const url = `${API_BASE}/products/categories?slug=${slug}`;
+    try {
+        const res = await fetch(url, {
+            headers: { 'Authorization': `Basic ${auth}` }
+        });
+        const categories = await res.json();
+        if (categories && categories.length > 0) {
+            return await woocommerceApi.getProducts({ category: categories[0].id });
+        }
+        return [];
+    } catch (error) {
+        console.error("❌ [WC API] Error getProductsByCategory:", error);
         return [];
     }
-
-    const categories = await catRes.json();
-    if (!categories.length) return [];
-
-    const parentId = categories[0].id;
-
-    /* 2️⃣ Récupérer les sous-catégories */
-    const subRes = await fetch(
-        `${API_BASE}/products/categories?parent=${parentId}&per_page=50`,
-        { headers: authHeader() }
-    );
-
-    const subCategories = subRes.ok ? await subRes.json() : [];
-
-    const categoryIds = [
-        parentId,
-        ...subCategories.map((cat) => cat.id),
-    ];
-
-    /* 3️⃣ Fetch des produits */
-    const prodRes = await fetch(
-        `${API_BASE}/products?per_page=50&status=publish&category=${categoryIds.join(",")}`,
-        { headers: authHeader() }
-    );
-
-    if (!prodRes.ok) return [];
-
-    const products = await prodRes.json();
-    return products.map(mapProduct);
-}
-
-/* =========================
-   CATÉGORIES PAR PARENT
-========================= */
-export async function getProductCategoriesByParent(parentId) {
-    const res = await fetch(
-        `${API_BASE}/products/categories?parent=${parentId}&per_page=100`,
-        { headers: authHeader() }
-    );
-
-    if (!res.ok) return [];
-
-    const categories = await res.json();
-    return categories.filter((cat) => cat.count > 0);
 }
