@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import "../styles/galleries.css";
 ---
 
 <Layout title="Classification Scientifique — Meliponini">
@@ -168,7 +169,7 @@ import Layout from "../layouts/Layout.astro";
     <!-- Off-Canvas Modal (Elementor-style) -->
     <div
         id="family-canvas"
-        class="e-off-canvas hidden"
+        class="e-off-canvas from-right hidden"
         role="dialog"
         aria-hidden="true"
         aria-label="Famille Details"
@@ -178,53 +179,43 @@ import Layout from "../layouts/Layout.astro";
         <div id="canvas-overlay" class="e-off-canvas__overlay"></div>
 
         <!-- Main Container -->
-        <div class="e-off-canvas__main">
+        <div class="e-off-canvas__main relative">
             <!-- Content Wrapper -->
-            <div class="e-off-canvas__content">
-                <!-- Close Button (Top Right) -->
-                <div class="absolute top-4 right-4 z-50">
+            <div class="e-off-canvas__content relative !p-0">
+                <!-- 1. Galerie Image avec Classe de Padding -->
+                <div
+                    class="relative bg-gray-100 flex-shrink-0 h-[250px] md:h-[400px] flex items-center justify-center overflow-visible canvas-padding"
+                >
+                    <div
+                        id="canvas-gallery"
+                        class="gallery-container w-full h-full"
+                    >
+                        <!-- Injected via JS -->
+                    </div>
+                </div>
+
+                <!-- 2. Bouton Fermer 100% Transparent -->
+                <div class="close-btn-container">
                     <button
                         id="close-canvas"
-                        class="bg-white/90 hover:bg-white text-gray-800 rounded-full p-2 shadow-lg transition-all"
+                        class="btn-reset"
+                        aria-label="Fermer"
                     >
-                        <svg
-                            class="h-6 w-6"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
+                        <iconify-icon
+                            icon="ph:caret-left-light"
+                            style="font-size: 22px;"></iconify-icon>
                     </button>
                 </div>
 
-                <!-- Header with Image -->
-                <div class="relative h-64 bg-gray-100 flex-shrink-0">
-                    <img
-                        id="canvas-image"
-                        src=""
-                        alt=""
-                        class="w-full h-full object-cover"
-                    />
-                    <div
-                        class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"
+                <!-- 3. Corps du texte avec Classe de Padding -->
+                <div
+                    class="relative flex-1 overflow-y-auto canvas-padding !pt-4"
+                >
+                    <h2
+                        id="canvas-title"
+                        class="text-2xl font-bold text-gray-900 font-serif mb-6"
                     >
-                    </div>
-                    <div class="absolute bottom-6 left-6 right-6">
-                        <h2
-                            id="canvas-title"
-                            class="text-3xl font-bold text-white font-serif drop-shadow-lg"
-                        >
-                        </h2>
-                    </div>
-                </div>
-
-                <!-- Content Body -->
-                <div class="relative flex-1 px-6 py-6 sm:px-8 overflow-y-auto">
+                    </h2>
                     <div
                         id="canvas-content"
                         class="prose prose-lg text-gray-600 max-w-none prose-headings:font-serif prose-headings:text-gray-900 prose-strong:text-amber-800 prose-ul:list-disc prose-ul:pl-5"
@@ -236,9 +227,9 @@ import Layout from "../layouts/Layout.astro";
                         <a
                             id="canvas-link"
                             href="#"
-                            class="block w-full text-center px-6 py-4 border border-transparent rounded-xl shadow-sm text-base font-medium text-white bg-[#111] hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-all transform hover:scale-[1.02]"
+                            class="block w-full text-center px-6 py-4 border border-black rounded-sm text-xs font-bold uppercase tracking-widest text-white bg-black hover:bg-white hover:text-black transition-all duration-300"
                         >
-                            Voir tous les produits
+                            Explorer
                         </a>
                     </div>
                 </div>
@@ -441,9 +432,11 @@ import Layout from "../layouts/Layout.astro";
             const openBtns = document.querySelectorAll(".open-modal-famille");
 
             const canvasTitle = document.getElementById("canvas-title");
-            const canvasImage = document.getElementById("canvas-image");
+            const canvasGallery = document.getElementById("canvas-gallery");
             const canvasContent = document.getElementById("canvas-content");
             const canvasLink = document.getElementById("canvas-link");
+
+            let currentVariant = 1;
 
             if (!canvas || !overlay) return;
 
@@ -456,12 +449,33 @@ import Layout from "../layouts/Layout.astro";
                 }
 
                 if (canvasTitle) canvasTitle.textContent = family.name;
-                if (canvasImage) {
-                    canvasImage.src = family.image;
-                    canvasImage.onerror = function () {
-                        this.src = "https://placehold.co/600x400?text=Famille";
-                    };
+
+                if (canvasGallery) {
+                    // Reset gallery
+                    canvasGallery.innerHTML = "";
+                    canvasGallery.className = `gallery-v${currentVariant}`;
+
+                    // Increment and loop variant for next time
+                    currentVariant =
+                        currentVariant >= 4 ? 1 : currentVariant + 1;
+
+                    // Pick 5 unique random images between 1 and 14
+                    const imageIndices = [];
+                    while (imageIndices.length < 5) {
+                        const r = Math.floor(Math.random() * 14) + 1;
+                        if (imageIndices.indexOf(r) === -1)
+                            imageIndices.push(r);
+                    }
+
+                    imageIndices.forEach((idx) => {
+                        const img = document.createElement("img");
+                        img.src = `/images/collections/bee-${idx}.webp`;
+                        img.alt = family.name;
+                        img.loading = "lazy";
+                        canvasGallery.appendChild(img);
+                    });
                 }
+
                 if (canvasContent) canvasContent.innerHTML = family.content;
                 if (canvasLink) {
                     canvasLink.href = family.link;
@@ -1041,6 +1055,35 @@ import Layout from "../layouts/Layout.astro";
     .subtree {
         display: flex;
         flex-direction: column;
+        align-items: center;
+    }
+
+    .e-off-canvas__main {
+        border-top-left-radius: 46px;
+    }
+
+    .canvas-padding {
+        padding: 2rem 1.5rem;
+    }
+
+    .btn-reset {
+        background: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: inherit;
+        outline: none;
+        box-shadow: none !important;
+    }
+
+    .close-btn-container {
+        padding: 2px 0;
+        display: flex;
+        justify-content: flex-start;
         align-items: center;
     }
 

@@ -12,17 +12,20 @@ import { Image } from "astro:assets";
     ========================= -->
     <a href="/products/miel" data-astro-prefetch class="hero-link">
       <section class="hero hero-1">
-        <Image
-          src="/images/home-0.png"
-          alt="Miels enzymatiques des mélipones Meliponini"
-          width={1200}
-          height={1200}
-          sizes="(max-width: 768px) 90vw, 40vw"
-          loading="eager"
-          fetchpriority="high"
-          decoding="async"
-          class="hero-image"
-        />
+        <div class="video-container">
+          <video 
+            autoplay 
+            muted 
+            loop 
+            playsinline 
+            preload="metadata"
+            class="design-video"
+          >
+            <source src="/videos/abeille-design.webm" type="video/webm" />
+            <source src="/videos/abeille-design.mp4" type="video/mp4" />
+            Ton navigateur ne supporte pas la lecture de vidéos.
+          </video>
+        </div>
 
         <div class="hero-content">
           <h1>Les miels enzymatiques<br />des mélipones</h1>
@@ -130,10 +133,15 @@ import { Image } from "astro:assets";
    HERO 1 — LCP
 ========================= */
 .hero-1 {
-  min-height: 90vh;
-  padding-top: clamp(3rem, 6vh, 5rem);
-  background: #fff; /* ✅ Force le blanc */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding-top: 2rem;
+  background: #FAFAFA; /* ✅ Gris très clair */
   margin-top: 0;
+  gap: 2rem;
 }
 
 /* Lien global Hero 1 */
@@ -157,14 +165,37 @@ import { Image } from "astro:assets";
   color: #000;
 }
 
-.hero-image {
-  position: absolute;
-  inset: 0;
-  margin: auto;
-  width: 35%;
-  height: auto;
-  object-fit: contain;
-  top: -10%;
+.video-container {
+  position: relative;
+  width: 50%;
+  aspect-ratio: 19 / 9; /* Ratio standard pour limiter le rognage */
+  overflow: hidden;
+  background: #FAFAFA;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.design-video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover; /* On utilise cover pour masquer les lignes noires */
+  transform: scale(1.02); /* Petit zoom de sécurité pour les bordures */
+  background: #FAFAFA;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.hero-1 .hero-content {
+  position: relative;
+  color: #000;
+  margin-top: 0;
+  padding-bottom: 4rem;
 }
 
 /* =========================
@@ -229,22 +260,28 @@ import { Image } from "astro:assets";
 ========================= */
 @media (max-width: 768px) {
   .hero-1 {
-    min-height: 60vh;
+    min-height: 20vh;
     /* ✅ CORRECTION : restaurer le margin pour éviter que le contenu passe sous le header */
     margin-top: var(--header-height);
   }
 
   .hero-1 .hero-content {
-    padding-top: 35vh;
+    padding-top: 0vh;
   }
 
-  .hero-image {
-    width: 70%;
+  .hero-1 {
+    min-height: auto;
+    padding-bottom: 3rem;
+  }
+
+  .video-container {
+    width: 6s5%;
+    aspect-ratio: 18 / 9;
   }
 
   .hero-btn {
     font-size: 0.85rem;
-    padding: 14px 18px;
+    padding: 14px 8px;
   }
 }
 

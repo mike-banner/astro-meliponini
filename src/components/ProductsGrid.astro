@@ -17,8 +17,14 @@ const { products, title } = Astro.props;
         aria-label="Changer l’affichage"
         data-layout-toggle
     >
-        <span class="icon icon-one"></span>
-        <span class="icon icon-two"></span>
+        <span class="icon-one-wrapper">
+            <iconify-icon icon="ph:rows-light" style="font-size: 24px;"
+            ></iconify-icon>
+        </span>
+        <span class="icon-two-wrapper">
+            <iconify-icon icon="ph:squares-four-light" style="font-size: 24px;"
+            ></iconify-icon>
+        </span>
     </button>
 </div>
 
@@ -26,7 +32,7 @@ const { products, title } = Astro.props;
      GRID
 ========================= -->
 <section class="products-grid" data-products-grid>
-    {products.map((product) => <ProductCard product={product} />)}
+    {products.map((product: any) => <ProductCard product={product} />)}
 </section>
 
 <script>

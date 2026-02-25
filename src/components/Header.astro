@@ -39,14 +39,19 @@ const isActive = (path: string) => {
 ========================= -->
 <header class="header-fixe">
     <div class="header-inner">
-        <button class="burger" aria-label="Menu">☰</button>
+        <button class="burger" aria-label="Menu">
+            <iconify-icon icon="material-symbols-light:menu-rounded"
+            ></iconify-icon>
+        </button>
         <a href="/" class="logo" data-astro-prefetch>MELIPONINI</a>
         <button
             class="custom-cart-icon"
             id="cartButton"
             aria-label="Voir le panier"
         >
-            <img src="/images/cart-icon.svg" alt="Panier" />
+            <iconify-icon
+                icon="material-symbols-light:shopping-bag-outline-sharp"
+            ></iconify-icon>
             <div class="custom-cart-compteur hidden" id="cartCompteur">
                 <span class="custom-cart-count" id="cart-count">0</span>
             </div>
@@ -372,14 +377,11 @@ const isActive = (path: string) => {
                             : ""
                     }
                     <div class="custom-mini-cart-buttons">
-                        <button id="checkoutBtn" class="button custom-checkout-button">Procéder au paiement 🔒</button>
+                        <button id="checkoutBtn" class="button custom-checkout-button">
+                            Commander
+                            <iconify-icon icon="ph:lock-simple-fill" style="font-size: 16px; margin-left: 8px;"></iconify-icon>
+                        </button>
                         <p class="secure-checkout-text">Connexion sécurisée vers notre passerelle de paiement certifiée.</p>
-                        <div class="payment-logos">
-                            <img src="https://cdn-icons-png.flaticon.com/512/349/349221.png" alt="Visa" />
-                            <img src="https://cdn-icons-png.flaticon.com/512/349/349226.png" alt="Mastercard" />
-                            <img src="https://cdn-icons-png.flaticon.com/512/5968/5968301.png" alt="Stripe" />
-                            <img src="https://cdn-icons-png.flaticon.com/512/5968/5968144.png" alt="Apple Pay" />
-                        </div>
                         <button class="button close-mini-cart">Continuer les achats</button>
                     </div>
                 </div>
@@ -458,7 +460,7 @@ const isActive = (path: string) => {
                     return;
                 }
 
-                checkoutBtn.innerText = "Préparation du tunnel sécurisé...";
+                checkoutBtn.innerText = "Connexion sécurisée...";
                 checkoutBtn.disabled = true;
 
                 // Effet fade-out sur le contenu du panier
@@ -608,10 +610,16 @@ const isActive = (path: string) => {
         left: 20px;
         background: none;
         border: none;
-        font-size: 22px;
         cursor: pointer;
         display: none;
         color: #000;
+        padding: 0;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .burger iconify-icon {
+        font-size: 32px;
     }
 
     /* =========================
@@ -632,9 +640,8 @@ const isActive = (path: string) => {
         cursor: pointer;
     }
 
-    .custom-cart-icon img {
-        width: 20px;
-        height: auto;
+    .custom-cart-icon iconify-icon {
+        font-size: 24px;
         vertical-align: middle;
     }
 
@@ -825,7 +832,7 @@ const isActive = (path: string) => {
         }
 
         .burger {
-            display: block;
+            display: flex;
             top: 50%;
             transform: translateY(-50%);
         }

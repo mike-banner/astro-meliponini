@@ -10,7 +10,7 @@ const { filters = [], active = "" } = Astro.props;
 
 <nav class="products-filters" aria-label="Filtres produits">
     {
-        filters.map((filter) => (
+        filters.map((filter: any) => (
             <a
                 href={filter.href}
                 class={`products-filter ${filter.slug === active ? "is-active" : ""}`}
@@ -73,15 +73,7 @@ const { filters = [], active = "" } = Astro.props;
 ========================= */
     @media (max-width: 768px) {
         .products-filters {
-            gap: 1rem; /* Espace réduit en mobile */
-            margin: 2rem 0 2.5rem;
-
-            /* En mobile, on garde le centrage et le wrap */
-            justify-content: center;
-        }
-
-        .products-filter {
-            font-size: 0.7rem;
+            display: none !important;
         }
     }
 </style>

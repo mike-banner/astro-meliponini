@@ -40,42 +40,37 @@
 .layout-toggle {
     display: none;
     /* ❗ caché PAR DÉFAUT */
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     background: none;
     border: none;
     cursor: pointer;
     position: relative;
+    padding: 0;
+    align-items: center;
+    justify-content: center;
 }
 
-.layout-toggle .icon {
-    position: absolute;
-    inset: 8px;
+.icon-one-wrapper,
+.icon-two-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
 }
 
-/* 1 colonne */
-.icon-one {
-    background:
-        linear-gradient(#000 0 0) center 30% / 100% 22% no-repeat,
-        linear-gradient(#000 0 0) center 70% / 100% 22% no-repeat;
-}
-
-/* 2 colonnes */
-.icon-two {
-    display: none;
-    background:
-        linear-gradient(#000 0 0) left top / 45% 45% no-repeat,
-        linear-gradient(#000 0 0) right top / 45% 45% no-repeat,
-        linear-gradient(#000 0 0) left bottom / 45% 45% no-repeat,
-        linear-gradient(#000 0 0) right bottom / 45% 45% no-repeat;
-}
-
-.layout-toggle.is-row .icon-one {
+/* 2 colonnes (caché par défaut) */
+.icon-two-wrapper {
     display: none;
 }
 
-.layout-toggle.is-row .icon-two {
-    display: block;
+/* Toggle logic */
+.layout-toggle.is-row .icon-one-wrapper {
+    display: none;
+}
+
+.layout-toggle.is-row .icon-two-wrapper {
+    display: flex;
 }
 
 /* =========================
@@ -105,9 +100,19 @@
         /* ✅ visible SEULEMENT mobile */
     }
 
+    .products-grid:not(.row-layout) {
+        margin-top: -75px;
+        /* Ne s'applique qu'au mode 1 colonne */
+    }
+
+    .products-grid.row-layout {
+        margin-top: 0;
+        /* Pas de marge négative en 2 colonnes */
+    }
+
     /* ✅ CORRECTION : padding réduit car menu-sticky caché */
     .products-page {
-        padding-top: var(--header-height);
+        padding-top: calc(var(--header-height) - 10px);
     }
 }
 
