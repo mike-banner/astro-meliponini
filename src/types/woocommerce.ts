@@ -25,4 +25,5 @@ export interface Product {
     image?: string;
     tags?: { name: string }[];
     stock_status: string;
+    stock_quantity: number | null;
 }

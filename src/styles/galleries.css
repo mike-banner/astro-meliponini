@@ -3,20 +3,12 @@
 /* Configuration de base pour toutes les galeries */
 [class^="gallery-v"] {
     width: 100% !important;
-    max-width: 450px !important;
-    height: 250px !important;
+    height: 100% !important;
     /* Verrouillage MOBILE */
     margin: 0 auto !important;
     padding: 0 !important;
     overflow: hidden !important;
     box-sizing: border-box !important;
-}
-
-@media (min-width: 769px) {
-    [class^="gallery-v"] {
-        height: 400px !important;
-        /* Verrouillage DESKTOP */
-    }
 }
 
 [class^="gallery-v"] img {

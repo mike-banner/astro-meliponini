@@ -73,13 +73,17 @@ console.log(
                     </Button>
                 </div>
             ) : (
-                <Button
-                    variant="ghost"
-                    disabled
-                    className="w-full max-w-[215px] bg-[#f0f0f0] text-[#999] opacity-100 cursor-not-allowed border-none shadow-none"
+                <a
+                    href={`/product/${product.slug}`}
+                    class="w-full max-w-[215px] no-underline"
                 >
-                    RUPTURE
-                </Button>
+                    <Button
+                        variant="outline"
+                        className="w-full bg-zinc-50 text-zinc-400 border-zinc-200 shadow-sm hover:bg-zinc-100 hover:text-zinc-600 transition-all font-bold uppercase tracking-widest text-[10px]"
+                    >
+                        Découvrir
+                    </Button>
+                </a>
             )
         }
     </div>
