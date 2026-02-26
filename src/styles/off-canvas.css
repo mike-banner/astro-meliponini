@@ -12,13 +12,25 @@
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 }
 
-.e-off-canvas:not(.elementor-active) {
-  display: none;
+.e-off-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  pointer-events: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s 0.4s, opacity 0.4s ease;
 }
 
 .e-off-canvas.elementor-active {
-  display: block;
+  visibility: visible;
+  opacity: 1;
   pointer-events: auto;
+  transition: visibility 0s 0s, opacity 0.4s ease;
 }
 
 /* Overlay */
@@ -45,8 +57,8 @@
   width: 70vw;
   max-width: 380px;
   background: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  transition: transform 0.4s ease;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.45s cubic-bezier(0.25, 0.8, 0.25, 1);
   overflow: hidden;
   z-index: 1000;
 }
@@ -55,13 +67,13 @@
 .e-off-canvas.from-right .e-off-canvas__main {
   right: 0;
   transform: translateX(100%);
-  border-top-left-radius: 25px;
+  border-top-left-radius: 46px;
 }
 
 .e-off-canvas.from-left .e-off-canvas__main {
   left: 0;
   transform: translateX(-100%);
-  border-top-right-radius: 25px;
+  border-top-right-radius: 46px;
 }
 
 .e-off-canvas.elementor-active .e-off-canvas__main {

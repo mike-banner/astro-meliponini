@@ -169,7 +169,7 @@ import "../styles/galleries.css";
     <!-- Off-Canvas Modal (Elementor-style) -->
     <div
         id="family-canvas"
-        class="e-off-canvas from-right hidden"
+        class="e-off-canvas from-right"
         role="dialog"
         aria-hidden="true"
         aria-label="Famille Details"
@@ -482,7 +482,6 @@ import "../styles/galleries.css";
                     canvasLink.textContent = `Explorer ${family.name}`;
                 }
 
-                canvas.classList.remove("hidden");
                 canvas.setAttribute("aria-hidden", "false");
                 canvas.classList.add("elementor-active");
                 document.body.classList.add("elementor-offcanvas-active");
@@ -493,11 +492,7 @@ import "../styles/galleries.css";
                 canvas.classList.remove("elementor-active");
                 canvas.setAttribute("aria-hidden", "true");
                 document.body.classList.remove("elementor-offcanvas-active");
-
-                setTimeout(() => {
-                    canvas.classList.add("hidden");
-                    document.body.style.overflow = "";
-                }, 300);
+                document.body.style.overflow = "";
             }
 
             openBtns.forEach((btn) => {
@@ -516,7 +511,7 @@ import "../styles/galleries.css";
             document.addEventListener("keydown", (e) => {
                 if (
                     e.key === "Escape" &&
-                    !canvas.classList.contains("hidden")
+                    !canvas.classList.contains("elementor-active")
                 ) {
                     closeCanvasFunc();
                 }
