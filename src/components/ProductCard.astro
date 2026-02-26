@@ -1,6 +1,6 @@
 ---
-/* src/components/ProductCard.astro */
-/* COMPONENT : ProductCard */
+import { Button } from "@/components/ui/button";
+
 const { product } = Astro.props;
 console.log(
     `[ProductCard] Render: ${product.name} | Available: ${product.available}`,
@@ -48,33 +48,38 @@ console.log(
                 <div class="product-actions">
                     <a
                         href={`/product/${product.slug}`}
-                        class="btn-discover"
-                        aria-label={`Découvrir ${product.name}`}
+                        class="flex-grow max-w-[160px] no-underline"
                     >
-                        <span class="btn-text">Découvrir</span>
+                        <Button
+                            variant="outline"
+                            className="w-full bg-white text-black border border-black hover:bg-zinc-100 hover:text-black transition-all"
+                        >
+                            Découvrir
+                        </Button>
                     </a>
-                    <button
-                        class="btn-add-icon add-to-cart-direct"
+                    <Button
+                        size="icon"
+                        className="add-to-cart-direct h-12 w-12 bg-black text-white hover:bg-black/90 shadow-none border-none"
                         data-product-id={product.id}
                         aria-label={`Ajouter ${product.name} au panier`}
                     >
                         <iconify-icon
                             icon="carbon:shopping-cart-plus"
-                            style="font-size: 20px;"
+                            style="font-size: 16px;"
                         />
                         <span class="btn-loader" style="display: none;">
                             ...
                         </span>
-                    </button>
+                    </Button>
                 </div>
             ) : (
-                <button
-                    class="btn-discover disabled"
+                <Button
+                    variant="ghost"
                     disabled
-                    aria-label="Produit non disponible"
+                    className="w-full max-w-[215px] bg-[#f0f0f0] text-[#999] opacity-100 cursor-not-allowed border-none shadow-none"
                 >
                     RUPTURE
-                </button>
+                </Button>
             )
         }
     </div>
@@ -159,8 +164,8 @@ console.log(
         width: 100%;
         height: 100%;
         box-sizing: border-box;
-        /* Ralentissement et courbe plus souple */
         transition: all 0.75s cubic-bezier(0.65, 0, 0.35, 1);
+        margin-bottom: 2rem;
     }
 
     .product-link {
@@ -171,7 +176,6 @@ console.log(
         order: 1;
     }
 
-    /* Aligne les photos entre elles */
     .product-image-container {
         width: 100%;
         display: flex;
@@ -185,12 +189,14 @@ console.log(
 
     .product-card img {
         width: 100%;
+        max-width: 280px;
         height: 100%;
         object-fit: contain;
+        margin-bottom: 0 !important;
     }
 
     .product-link-name {
-        order: 2;
+        order: 1; /* Match name order */
         text-decoration: none;
         color: inherit;
         display: block;
@@ -199,27 +205,44 @@ console.log(
     }
 
     .product-name {
-        font-size: 1.6rem !important;
+        font-size: 1.4rem !important;
         letter-spacing: -1.5px;
-        margin: 10px 0;
-        font-weight: 600;
-        transition:
-            font-size 0.8s cubic-bezier(0.65, 0, 0.35, 1),
-            margin 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+        margin: 0 !important;
+        font-weight: 400;
+        transition: all 0.8s cubic-bezier(0.65, 0, 0.35, 1);
     }
 
     .product-display-name {
-        order: 3;
+        order: 2;
+        font-weight: 400;
+        font-size: 1rem;
+        letter-spacing: -1.5px;
+        color: black;
         margin: 0;
     }
 
     .product-excerpt {
-        order: 4;
+        order: 3;
         margin: 5px 0;
+        font-size: 0.85rem;
+        font-style: italic;
+        font-family: Helvetica, Arial, sans-serif;
+        opacity: 0.8;
+        line-height: 1.4;
+    }
+
+    .product-excerpt :global(p),
+    .product-excerpt :global(em) {
+        margin: 0;
+        display: inline;
+    }
+
+    .product-excerpt :global(strong:first-of-type) {
+        font-weight: 700;
     }
 
     .product-status-block {
-        order: 5;
+        order: 4;
         width: 100%;
     }
 
@@ -230,9 +253,7 @@ console.log(
         line-height: 1.2;
         display: block;
         min-height: 1.2em;
-        transition:
-            font-size 0.8s cubic-bezier(0.65, 0, 0.35, 1),
-            margin 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+        transition: all 0.8s cubic-bezier(0.65, 0, 0.35, 1);
     }
 
     .product-price {
@@ -246,8 +267,8 @@ console.log(
 
     .product-actions-wrapper {
         width: 100%;
-        margin-top: 0; /* ✅ Retrait du margin-top auto */
-        padding-top: 0; /* ✅ Retrait du padding-top */
+        margin-top: 0;
+        padding-top: 0;
         display: flex;
         justify-content: center;
         order: 10;
@@ -261,91 +282,21 @@ console.log(
         width: 100%;
     }
 
-    /* Égalise la taille des boutons */
-    .btn-discover,
-    .btn-add-icon {
-        height: 45px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 5px;
-        transition:
-            transform 0.2s,
-            background 0.2s,
-            box-shadow 0.2s;
-        border: 1px solid #000;
-        cursor: pointer;
-        box-sizing: border-box;
-    }
-
-    .btn-discover {
-        background: #fff;
-        color: #000;
-        padding: 0 20px;
-        text-decoration: none;
-        font-size: 0.95rem;
-        flex-grow: 1;
-        max-width: 160px;
-        font-weight: 500;
-        transition: all 0.4s ease;
-    }
-
-    .btn-add-icon {
-        background: #000;
-        color: #fff;
-        width: 45px;
-        padding: 0;
-        flex-shrink: 0;
-    }
-
-    .btn-discover:hover {
-        background: #f9f9f9;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .btn-add-icon:hover {
-        background: #333;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .btn-discover:active,
-    .btn-add-icon:active {
-        transform: translateY(0);
-    }
-
-    .btn-discover.disabled {
-        background: #f0f0f0 !important;
-        color: #999 !important;
-        cursor: not-allowed !important;
-        border: none !important;
-        opacity: 0.7;
-        flex-grow: 0;
-        width: 100%;
-        max-width: 215px; /* ✅ Taille équilibrée (approx discover + add + gap) */
-        height: 45px; /* ✅ Force la hauteur identique */
-    }
-
     @media (max-width: 768px) {
-        .btn-discover,
-        .btn-add-icon {
-            height: 40px;
+        .product-card img {
+            max-width: 220px;
         }
-        .btn-add-icon {
-            width: 40px;
-        }
+
         .product-name {
-            font-size: 1.5rem !important;
+            font-size: 0.9rem !important;
         }
 
         /* --- MODE 2 COLONNES (Toggle Mobile) --- */
         :global(.row-layout) .product-card {
             padding-inline: 8px;
             display: grid !important;
-            /* Image, Nom, (DisplayName + Excerpt groupés), Status, Actions */
             grid-template-rows: auto 40px auto 30px auto;
-            gap: 0px; /* On gère les espaces précisément par item */
+            gap: 0px;
             height: auto !important;
             align-items: start;
         }
@@ -365,6 +316,7 @@ console.log(
 
         :global(.row-layout) .product-image-container img {
             width: 100%;
+            max-width: none;
             height: 100%;
             object-fit: contain;
         }
@@ -388,24 +340,24 @@ console.log(
             overflow: hidden;
             text-overflow: ellipsis;
             margin: 0 !important;
-            height: 12px; /* Resserre */
+            height: 12px;
             line-height: 12px;
         }
 
         :global(.row-layout) .product-excerpt {
             font-size: 0.65rem;
-            margin: 2px 0 0 0 !important; /* Petit espace seulement au dessus */
+            margin: 2px 0 0 0 !important;
             line-height: 1.1;
             display: flex;
             align-items: center;
             justify-content: center;
             opacity: 0.7;
-            height: 34px; /* Resserre */
+            height: 34px;
             overflow: hidden;
         }
 
         :global(.row-layout) .product-status-block {
-            height: 30px; /* Fixe la hauteur du prix/statut */
+            height: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -418,34 +370,17 @@ console.log(
         }
 
         :global(.row-layout) .product-actions-wrapper {
-            margin-top: 8px; /* Un peu plus d'espace au dessus */
+            margin-top: 8px;
             padding-bottom: 12px;
             width: 100%;
         }
 
-        :global(.row-layout) .btn-discover,
-        :global(.row-layout) .btn-add-icon {
-            height: 38px; /* Plus grand et proportionnel */
-        }
-        :global(.row-layout) .btn-add-icon {
-            width: 38px;
-        }
         :global(.row-layout) .btn-add-icon svg {
             width: 16px;
             height: 16px;
         }
-        :global(.row-layout) .btn-discover {
-            font-size: 0.75rem;
-            padding: 0 8px;
-            max-width: 110px;
-        }
         :global(.row-layout) .product-actions {
-            gap: 8px; /* Espace équilibré */
-        }
-        :global(.row-layout) .btn-discover.disabled {
-            height: 38px;
-            font-size: 0.75rem;
-            max-width: 145px;
+            gap: 8px;
         }
     }
 </style>

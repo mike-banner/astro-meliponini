@@ -1,8 +1,36 @@
 ---
-/* ROUTE : / */
-
 import Layout from "../layouts/Layout.astro";
 import { Image } from "astro:assets";
+import { Button } from "@/components/ui/button";
+import { FaqSection } from "../components/FaqSection";
+
+const homeFaqItems = [
+  {
+    question: "Qu'est-ce que le miel de Mélipone ?",
+    answer:
+      "Le miel de Mélipone est produit par des abeilles sans dard (méliponines) originaires des régions tropicales. Contrairement au miel classique, il est plus liquide, possède une acidité unique et une concentration en enzymes et antioxydants beaucoup plus élevée.",
+  },
+  {
+    question: "Pourquoi est-il considéré comme un miel médicinal ?",
+    answer:
+      "Grâce à sa teneur exceptionnelle en tréhalulose (un sucre à faible indice glycémique) et à ses propriétés antibactériennes naturelles, il est utilisé depuis des millénaires pour traiter les infections oculaires, respiratoires et renforcer le système immunitaire.",
+  },
+  {
+    question: "Quel goût a le miel de Mélipone ?",
+    answer:
+      "C'est une expérience sensorielle rare : un équilibre parfait entre une douceur florale subtile et une acidité citronnée rafraîchissante. Sa texture fluide permet aux arômes de se libérer instantanément en bouche.",
+  },
+  {
+    question: "Comment doit-on le conserver ?",
+    answer:
+      "En raison de son taux d'humidité naturel élevé (environ 25-30%), il est recommandé de le conserver au frais après ouverture pour préserver ses propriétés enzymatiques vivantes et éviter la fermentation.",
+  },
+  {
+    question: "Pourquoi ce miel est-il si rare et précieux ?",
+    answer:
+      "Une ruche de Mélipones ne produit que 1 à 2 litres de miel par an, contre 30 à 50 litres pour une ruche classique (Apis Mellifera). Chaque goutte est le résultat d'un travail d'orfèvre de la part des abeilles et des producteurs.",
+  },
+];
 ---
 
 <Layout title="Meliponini — Miels rares">
@@ -30,7 +58,12 @@ import { Image } from "astro:assets";
 
         <div class="hero-content">
           <h1>Les miels enzymatiques<br />des mélipones</h1>
-          <span class="hero-btn">VOIR PLUS</span>
+          <Button
+            variant="outline"
+            className="bg-white text-black border-black hover:bg-black hover:text-white transition-all"
+          >
+            VOIR PLUS
+          </Button>
         </div>
       </section>
     </a>
@@ -42,7 +75,12 @@ import { Image } from "astro:assets";
       <section class="hero hero-2">
         <div class="hero-content">
           <h2>L’univers<br />des mélipones</h2>
-          <span class="hero-btn">VOIR PLUS</span>
+          <Button
+            variant="outline"
+            className="bg-white text-black border-black hover:bg-black hover:text-white transition-all"
+          >
+            VOIR PLUS
+          </Button>
         </div>
       </section>
     </a>
@@ -54,7 +92,12 @@ import { Image } from "astro:assets";
       <section class="hero hero-3">
         <div class="hero-content">
           <h2>Les secrets<br />des miels enzymatiques</h2>
-          <span class="hero-btn">VOIR PLUS</span>
+          <Button
+            variant="outline"
+            className="bg-white text-black border-black hover:bg-black hover:text-white transition-all"
+          >
+            VOIR PLUS
+          </Button>
         </div>
       </section>
     </a>
@@ -66,7 +109,12 @@ import { Image } from "astro:assets";
       <section class="hero hero-4">
         <div class="hero-content">
           <h2>Les bougies<br />des mélipones</h2>
-          <span class="hero-btn">VOIR PLUS</span>
+          <Button
+            variant="outline"
+            className="bg-white text-black border-black hover:bg-black hover:text-white transition-all"
+          >
+            VOIR PLUS
+          </Button>
         </div>
       </section>
     </a>
@@ -78,19 +126,20 @@ import { Image } from "astro:assets";
       <section class="hero hero-5">
         <div class="hero-content">
           <h2>Suivez-nous</h2>
-          <span class="hero-btn">VOIR PLUS</span>
+          <Button
+            variant="outline"
+            className="bg-white text-black border-black hover:bg-black hover:text-white transition-all"
+          >
+            VOIR PLUS
+          </Button>
         </div>
       </section>
     </a>
 
     <!-- =========================
-         HERO 6
+         FAQ
     ========================= -->
-    <section class="hero hero-6">
-      <div class="hero-content">
-        <h2>Meliponini</h2>
-      </div>
-    </section>
+    <FaqSection title="Questions Fréquentes" items={homeFaqItems} client:load />
   </main>
 </Layout>
 <script>
@@ -187,11 +236,6 @@ import { Image } from "astro:assets";
     background: #fff; /* ✅ Force le blanc aussi ici */
   }
 
-  .hero-link:hover .hero-btn {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
-  }
-
   .hero-1::before {
     display: none;
   }
@@ -274,29 +318,6 @@ import { Image } from "astro:assets";
   }
 
   /* =========================
-   BOUTON
-========================= */
-  .hero-btn {
-    display: inline-block;
-    background: #fff;
-    color: #000;
-    padding: 16px 22px;
-    text-decoration: none;
-    font-weight: 400;
-    font-size: 0.95rem;
-    border: 1px solid #000;
-    border-radius: 5%; /* ✅ Border radius */
-    transition:
-      transform 160ms ease,
-      box-shadow 160ms ease;
-  }
-
-  .hero-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
-  }
-
-  /* =========================
    TABLETTE
 ========================= */
   @media (max-width: 768px) {
@@ -318,11 +339,6 @@ import { Image } from "astro:assets";
     .video-container {
       width: 85%;
       aspect-ratio: 18 / 9;
-    }
-
-    .hero-btn {
-      font-size: 0.85rem;
-      padding: 14px 8px;
     }
   }
 

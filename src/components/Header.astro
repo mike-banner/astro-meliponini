@@ -1,30 +1,19 @@
 ---
-/* src/components/Header.astro */
-/* COMPONENT : Header */
 const from = Astro.url.searchParams.get("from");
 const currentPath = Astro.url.pathname;
 const isActive = (path: string) => {
-    // Exact match or match for products sub-pages if generic products link?
-    // Let's stick to simple strict or startsWith logic depending on needs.
-    // For specific pages like /secretsVS/le-secret... allow multiple variants if needed.
-
-    // Normalize trailing slash
     const normCurrent =
         currentPath.endsWith("/") && currentPath.length > 1
             ? currentPath.slice(0, -1)
             : currentPath;
     const normPath =
         path.endsWith("/") && path.length > 1 ? path.slice(0, -1) : path;
-
     if (normCurrent === normPath) return true;
-
-    // Handle the secrets alias
     if (
         normPath === "/secrets" &&
         normCurrent === "/le-secret-des-miels-enzimatiques"
     )
         return true;
-
     return false;
 };
 ---
@@ -39,7 +28,7 @@ const isActive = (path: string) => {
 ========================= -->
 <header class="header-fixe">
     <div class="header-inner">
-        <button class="burger" aria-label="Menu">
+        <button class="burger" aria-label="Menu" id="menuButton">
             <iconify-icon icon="material-symbols-light:menu-rounded"
             ></iconify-icon>
         </button>
@@ -49,9 +38,7 @@ const isActive = (path: string) => {
             id="cartButton"
             aria-label="Voir le panier"
         >
-            <iconify-icon
-                icon="material-symbols-light:shopping-bag-outline-sharp"
-            ></iconify-icon>
+            <iconify-icon icon="ph:shopping-bag-light"></iconify-icon>
             <div class="custom-cart-compteur hidden" id="cartCompteur">
                 <span class="custom-cart-count" id="cart-count">0</span>
             </div>
@@ -182,10 +169,7 @@ const isActive = (path: string) => {
     aria-modal="true"
 >
     <div class="e-off-canvas__overlay" id="cartOverlay"></div>
-    <div
-        class="e-off-canvas__main"
-        style="border-top-left-radius: 46px; overflow: hidden; background: #fff;"
-    >
+    <div class="e-off-canvas__main" style="overflow: hidden; background: #fff;">
         <div
             id="checkout-progress"
             style="position: absolute; top: 0; left: 0; width: 0; height: 2px; background: #000; z-index: 10001; transition: width 3s linear;"
@@ -221,12 +205,7 @@ const isActive = (path: string) => {
         getCart,
     } from "../lib/cocart.js";
 
-    /* src/components/Header.astro */
     document.addEventListener("DOMContentLoaded", () => {
-        const burger = document.querySelector(".burger");
-        const offcanvasMenu = document.querySelector(".offcanvas");
-        const menuOverlay = document.querySelector(".offcanvas-overlay");
-
         const cartButton = document.getElementById("cartButton");
         const cartOffcanvas = document.getElementById("cartOffcanvas");
         const cartOverlay = document.getElementById("cartOverlay");
@@ -238,27 +217,29 @@ const isActive = (path: string) => {
             "resumeOrder",
         ) as HTMLAnchorElement;
 
-        if (!burger || !offcanvasMenu || !menuOverlay) return;
-
         // --- GESTION MENU MOBILE ---
-        const openMenu = () => {
-            offcanvasMenu.classList.add("open");
-            menuOverlay.classList.add("open");
-            document.body.style.overflow = "hidden";
-        };
+        const menuButton = document.getElementById("menuButton");
+        const menuOffcanvas = document.querySelector(".offcanvas");
+        const menuOverlay = document.querySelector(".offcanvas-overlay");
 
-        const closeMenu = () => {
-            offcanvasMenu.classList.remove("open");
-            menuOverlay.classList.remove("open");
-            document.body.style.overflow = "";
-        };
+        if (menuButton && menuOffcanvas && menuOverlay) {
+            menuButton.addEventListener("click", () => {
+                menuOffcanvas.classList.toggle("open");
+                menuOverlay.classList.toggle("open");
+                document.body.classList.toggle("elementor-offcanvas-active");
+            });
 
-        burger.addEventListener("click", (e) => {
-            e.preventDefault();
-            offcanvasMenu.classList.contains("open") ? closeMenu() : openMenu();
-        });
+            const closeMenu = () => {
+                menuOffcanvas.classList.remove("open");
+                menuOverlay.classList.remove("open");
+                document.body.classList.remove("elementor-offcanvas-active");
+            };
 
-        menuOverlay.addEventListener("click", closeMenu);
+            menuOverlay.addEventListener("click", closeMenu);
+            menuOffcanvas.querySelectorAll("nav a").forEach((link) => {
+                link.addEventListener("click", closeMenu);
+            });
+        }
 
         // --- GESTION PANIER (NANO STORES) ---
 
@@ -674,31 +655,11 @@ const isActive = (path: string) => {
     }
 
     /* =========================
-   BURGER
-========================= */
-    .burger {
-        position: absolute;
-        left: 20px;
-        background: none;
-        border: none;
-        cursor: pointer;
-        display: none;
-        color: #000;
-        padding: 0;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .burger iconify-icon {
-        font-size: 32px;
-    }
-
-    /* =========================
    PANIER (CUSTOM CART)
 ========================= */
     .custom-cart-icon {
         position: absolute;
-        right: 20px;
+        right: 60px;
         top: 50%;
         transform: translateY(-50%);
         text-decoration: none;
@@ -735,7 +696,7 @@ const isActive = (path: string) => {
     }
     .custom-cart-compteur {
         position: absolute;
-        top: -5px;
+        top: -10px;
         right: -15px;
         width: 20px; /* taille fixe */
         height: 20px; /* taille fixe */
@@ -843,7 +804,6 @@ const isActive = (path: string) => {
         transition: transform 0.45s cubic-bezier(0.25, 0.8, 0.25, 1);
         z-index: 1000;
 
-        border-top-right-radius: 46px;
         box-shadow: var(--shadow-subheader);
     }
 
@@ -910,12 +870,6 @@ const isActive = (path: string) => {
             display: none !important;
         }
 
-        .burger {
-            display: flex;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
         .menu-wrapper {
             display: none;
         }
@@ -927,6 +881,10 @@ const isActive = (path: string) => {
 
         .header-fixe .logo {
             font-size: 20px;
+        }
+
+        .custom-cart-icon {
+            right: 40px;
         }
 
         .offcanvas,

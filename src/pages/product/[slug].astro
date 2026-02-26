@@ -4,6 +4,7 @@
 import Layout from "../../layouts/Layout.astro";
 import type { Product } from "../../types/woocommerce";
 import { Image } from "astro:assets";
+import { Button } from "@/components/ui/button";
 
 export async function getStaticPaths() {
     const apiUrl = import.meta.env.WC_API_URL;
@@ -146,21 +147,25 @@ const canonicalUrl = product.permalink;
                 </div>
 
                 <div class="actions">
-                    <button class="btn-secondary open-details-btn">
+                    <Button
+                        variant="outline"
+                        className="open-details-btn min-w-[140px] bg-white text-black !border-black hover:bg-zinc-100 transition-all"
+                    >
                         Voir plus
-                    </button>
+                    </Button>
                     {
                         (product.stock_status === "instock" ||
                             product.stock_status === "onbackorder") &&
                             !!product.price && (
-                                <button
-                                    class="btn-add-icon add-to-cart-btn"
+                                <Button
+                                    size="icon"
+                                    className="add-to-cart-btn h-12 w-12 bg-black text-white hover:bg-black/90 shadow-none border-none"
                                     data-product-id={product.id}
                                     aria-label="Ajouter au panier"
                                 >
                                     <iconify-icon
                                         icon="carbon:shopping-cart-plus"
-                                        style="font-size: 24px;"
+                                        style="font-size: 16px;"
                                     />
                                     <span
                                         class="btn-loader"
@@ -168,7 +173,7 @@ const canonicalUrl = product.permalink;
                                     >
                                         ...
                                     </span>
-                                </button>
+                                </Button>
                             )
                     }
                 </div>
@@ -183,11 +188,11 @@ const canonicalUrl = product.permalink;
             <div class="e-off-canvas__content relative !p-0">
                 <!-- 1. Galerie Image -->
                 <div
-                    class="relative bg-gray-100 flex-shrink-0 h-[250px] md:h-[400px] flex items-center justify-center overflow-visible canvas-padding"
+                    class="relative bg-gray-100 flex-shrink-0 h-[180px] md:h-[280px] flex items-center justify-center overflow-visible canvas-padding"
                 >
                     <div
                         id="canvas-gallery"
-                        class="gallery-container w-full h-full"
+                        class="gallery-container w-full h-full p-[25px]"
                     >
                         <!-- Injected via JS -->
                     </div>
@@ -505,55 +510,6 @@ const canonicalUrl = product.permalink;
         }
     }
 
-    /* Style des boutons harmonisé */
-    .btn-secondary,
-    .btn-add-icon {
-        height: 45px;
-        border-radius: 5px;
-        transition: all 0.2s ease;
-        border: 1px solid #000;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-sizing: border-box;
-    }
-
-    .btn-secondary {
-        background: #fff;
-        color: #000;
-        padding: 0 25px;
-        font-weight: 500;
-        font-size: 0.9rem;
-        min-width: 140px;
-    }
-
-    @media (max-width: 767px) {
-        .actions {
-            width: 90%; /* ✅ Plus proportionné à la page */
-            max-width: 280px;
-        }
-    }
-
-    .btn-secondary:hover {
-        background: #f9f9f9;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .btn-add-icon {
-        background: #000;
-        color: #fff;
-        width: 45px;
-        padding: 0;
-    }
-
-    .btn-add-icon:hover {
-        background: #222;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
     /* Style Off-Canvas spécifique */
     .close-canvas {
         align-self: flex-end;
@@ -586,11 +542,11 @@ const canonicalUrl = product.permalink;
 
     /* Styles Canvas Synchronisés */
     .e-off-canvas__main {
-        border-top-left-radius: 25px;
+        border-top-left-radius: 0;
     }
 
     .canvas-padding {
-        padding: 2rem 1.5rem;
+        padding: 10rem 1.5rem;
     }
 
     .btn-reset {
