@@ -103,7 +103,7 @@ export const ProductTabs: React.FC<ProductTabsProps> = ({ description, shortDesc
 
                         {/* Gallery Wrapper */}
                         <div className="lg:col-span-5 flex items-center justify-center">
-                            <div className="gallery-v1 rounded-2xl overflow-hidden shadow-sm bg-[#F9F9F9] p-4 w-full">
+                            <div className="gallery-v1 rounded-2xl overflow-hidden shadow-sm bg-[#F9F9F9] p-4 w-full h-[300px] lg:h-[450px]">
                                 {beeImages.map((idx, i) => (
                                     <img
                                         key={i}
