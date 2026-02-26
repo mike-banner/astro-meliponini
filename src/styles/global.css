@@ -1,5 +1,82 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --background: 0 0% 100%;
+        --foreground: 0 0% 0%;
+
+        --card: 0 0% 100%;
+        --card-foreground: 0 0% 0%;
+
+        --popover: 0 0% 100%;
+        --popover-foreground: 0 0% 0%;
+
+        --primary: 0 0% 0%;
+        --primary-foreground: 0 0% 100%;
+
+        --secondary: 0 0% 96%;
+        --secondary-foreground: 0 0% 0%;
+
+        --muted: 0 0% 96%;
+        --muted-foreground: 0 0% 45%;
+
+        --accent: 0 0% 96%;
+        --accent-foreground: 0 0% 0%;
+
+        --destructive: 0 84% 60%;
+        --destructive-foreground: 0 0% 98%;
+
+        --border: 0 0% 90%;
+        --input: 0 0% 90%;
+        --ring: 0 0% 0%;
+
+        --radius: 0px;
+        --letter-spacing-premium: 0.22em;
+    }
+
+    .dark {
+        --background: 0 0% 3.9%;
+        --foreground: 0 0% 98%;
+        --card: 0 0% 3.9%;
+        --card-foreground: 0 0% 98%;
+        --popover: 0 0% 3.9%;
+        --popover-foreground: 0 0% 98%;
+        --primary: 0 0% 98%;
+        --primary-foreground: 0 0% 9%;
+        --secondary: 0 0% 14.9%;
+        --secondary-foreground: 0 0% 98%;
+        --muted: 0 0% 14.9%;
+        --muted-foreground: 0 0% 63.9%;
+        --accent: 0 0% 14.9%;
+        --accent-foreground: 0 0% 98%;
+        --destructive: 0 62.8% 30.6%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 0 0% 14.9%;
+        --input: 0 0% 14.9%;
+        --ring: 0 0% 83.1%;
+        --chart-1: 220 70% 50%;
+        --chart-2: 160 60% 45%;
+        --chart-3: 30 80% 55%;
+        --chart-4: 280 65% 60%;
+        --chart-5: 340 75% 55%;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+        font-feature-settings: "rlig" 1, "calt" 1;
+    }
+}
+
 /* ==================================================
-   VARIABLES GLOBALES
+   V1 - VARIABLES COMPLÉMENTAIRES (MELIPONINI)
 ================================================== */
 :root {
     --header-height: 72px;
@@ -33,8 +110,6 @@ body {
 ================================================== */
 body {
     font-family: "abchannel", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-    background: #fff;
-    color: #111;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     overflow-x: hidden;
@@ -71,60 +146,15 @@ input[type="submit"],
 input[type="button"] {
     border-radius: 5% !important;
     font-weight: 600 !important;
-    /* ✅ Poids uniforme sur tous les boutons */
-}
-
-/* ==================================================
-   HEADER FIXE
-================================================== */
-.header-fixe,
-.header-fixe * {
-    font-size: inherit;
-}
-
-.header-fixe {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    font-size: 16px;
-    /* base figée */
-    height: var(--header-height);
-    background: #fff;
-    z-index: 1000;
-    contain: layout paint;
-    /* empêche toute influence externe */
-
-}
-
-/* ==================================================
-   LOGO — Styles définis dans Header.astro
-================================================== */
-/* Styles déplacés vers src/components/Header.astro pour éviter les conflits */
-
-
-/* ==================================================
-   SUB-MENU DESKTOP (NAV SITE)
-================================================== */
-.menu-sticky {
-    position: fixed;
-    top: var(--header-height);
-    left: 0;
-    right: 0;
-    background: #fff;
-    z-index: 900;
-    box-shadow: var(--shadow-subheader);
 }
 
 /* ==================================================
    OFFSET GLOBAL
 ================================================== */
-/* Pages avec filtre/sous-navigation (miel, bougies, etc) */
 .products-page {
     padding-top: calc(var(--header-height) + var(--subnav-height) + 20px);
 }
 
-/* Pages standards sans sous-navigation */
 .page-default,
 .page-family,
 .page-contact,
@@ -143,38 +173,10 @@ input[type="button"] {
     }
 }
 
-
-/* ==================================================
-   ZONE PRODUITS
-   (jamais sur la home)
-================================================== */
-.page-default .products-filters,
-.page-default .products-toolbar {
-    display: none;
-}
-
 /* ==================================================
    LIENS
 ================================================== */
 a {
     color: inherit;
     text-decoration: none;
-}
-
-/* ==================================================
-   MOBILE
-================================================== */
-@media (max-width: 600px) {
-
-    .menu-sticky {
-        display: none !important;
-    }
-
-    .header-fixe {
-        box-shadow: var(--shadow-subheader);
-    }
-
-    .header-fixe .logo {
-        font-size: 20px;
-    }
 }

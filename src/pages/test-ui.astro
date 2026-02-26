@@ -1,0 +1,60 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { Button } from "@/components/ui/button";
+---
+
+<Layout title="Test UI Components">
+    <main
+        class="min-h-screen bg-background p-20 flex flex-col items-center gap-12"
+    >
+        <div class="text-center space-y-4">
+            <h1 class="text-4xl font-black uppercase tracking-premium">
+                Library Test
+            </h1>
+            <p class="text-muted-foreground uppercase text-xs tracking-widest">
+                Shadcn UI + Tailwind v4 + Astro
+            </p>
+        </div>
+
+        <div
+            class="flex flex-col gap-6 w-full max-w-md border border-border p-10"
+        >
+            <div class="flex flex-col gap-4">
+                <span class="text-[10px] font-bold uppercase opacity-50"
+                    >Default Variant</span
+                >
+                <Button client:load> Ajouter au panier </Button>
+            </div>
+
+            <div class="flex flex-col gap-4">
+                <span class="text-[10px] font-bold uppercase opacity-50"
+                    >Outline Variant</span
+                >
+                <Button variant="outline" client:load>
+                    Voir les détails
+                </Button>
+            </div>
+
+            <div class="flex flex-col gap-4">
+                <span class="text-[10px] font-bold uppercase opacity-50"
+                    >Ghost Variant</span
+                >
+                <Button variant="ghost" client:load>
+                    Continuer mes achats
+                </Button>
+            </div>
+
+            <div class="flex flex-col gap-4">
+                <span class="text-[10px] font-bold uppercase opacity-50"
+                    >Large Button</span
+                >
+                <Button size="lg" client:load> Passer la commande </Button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div class="h-20 w-20 bg-primary"></div>
+            <div class="h-20 w-20 border border-primary"></div>
+        </div>
+    </main>
+</Layout>
