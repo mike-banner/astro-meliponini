@@ -22,3 +22,13 @@ pnpm-debug.log*
 # OS
 .DS_Store
 Thumbs.db
+
+# IDEs & Editor configs
+.vscode/
+.idea/
+
+# AI Agents & Assistants
+.gemini/
+.agent/
+.antigravity/
+.antigravityignore
