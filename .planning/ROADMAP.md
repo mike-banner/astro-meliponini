@@ -6,6 +6,12 @@
 **Status:** Complete
 
 ## Phase 02: Luxury UI Refactor
-**Goal:** Apply the 6-pillar UI fixes (typography, color, micro-copy).
+**Goal:** Extend the landing-page 6-pillar luxury treatment (typography, color, micro-copy, spacing, animation) to the product, family, contact, footer, and cart surfaces not yet covered.
 **Requirements:** 3
 **Status:** Pending
+**Plans:** 3 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — Product listing, cards, filters, and detail pages to the luxury type/gold/fade-up system
+- [ ] 02-02-PLAN.md — Family pages, contact page, and footer rebuilt on the luxury system (remove serif/amber/rounded)
+- [ ] 02-03-PLAN.md — Cart drawer gold accents and luxury empty-state micro-copy
