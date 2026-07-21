@@ -166,7 +166,7 @@ const canonicalUrl = product.permalink;
                             )
                         ) : (
                             <p class="product-unavailable">
-                                Bientôt disponible
+                                Édition à venir
                             </p>
                         )
                     }
@@ -459,7 +459,8 @@ const canonicalUrl = product.permalink;
         font-size: 1.6rem;
         margin: 0 0 0.4rem 0;
         font-weight: 400;
-        letter-spacing: -1.5px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
         order: initial !important; /* ✅ Reset global conflict */
     }
 
@@ -467,7 +468,8 @@ const canonicalUrl = product.permalink;
         font-size: 0.95rem;
         color: #666;
         margin-bottom: 1.2rem;
-        letter-spacing: -0.5px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
         order: initial !important; /* ✅ Reset global conflict */
     }
 
@@ -499,7 +501,9 @@ const canonicalUrl = product.permalink;
     }
 
     .product-unavailable {
-        color: #be1010;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: hsl(var(--muted-foreground));
         font-weight: 500;
     }
 
@@ -509,6 +513,10 @@ const canonicalUrl = product.permalink;
         margin-right: 0.8rem;
         font-weight: 400;
         font-size: 0.9rem;
+    }
+
+    .sale-price {
+        color: hsl(var(--accent-gold));
     }
 
     /* Centrage des contenus texte */

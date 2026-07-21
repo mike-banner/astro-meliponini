@@ -7,7 +7,7 @@ console.log(
 );
 ---
 
-<article class="product-card">
+<article class="product-card fade-up">
     <!-- Image -->
     <a href={`/product/${product.slug}`} class="product-link">
         <div class="product-image-container">
@@ -36,7 +36,7 @@ console.log(
             product.available ? (
                 <p class="product-price">{product.price} €</p>
             ) : (
-                <p class="product-unavailable">Bientôt disponible</p>
+                <p class="product-unavailable">Édition à venir</p>
             )
         }
     </div>
@@ -209,8 +209,9 @@ console.log(
     }
 
     .product-name {
-        font-size: 1.4rem !important;
-        letter-spacing: -1.5px;
+        font-size: clamp(0.95rem, 2.5vw, 1.15rem) !important;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
         margin: 0 !important;
         font-weight: 400;
         transition: all 0.8s cubic-bezier(0.65, 0, 0.35, 1);
@@ -219,9 +220,10 @@ console.log(
     .product-display-name {
         order: 2;
         font-weight: 400;
-        font-size: 1rem;
-        letter-spacing: -1.5px;
-        color: black;
+        font-size: 0.7rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: hsl(var(--muted-foreground));
         margin: 0;
     }
 
@@ -262,10 +264,14 @@ console.log(
 
     .product-price {
         font-weight: 700;
+        letter-spacing: 0.1em;
+        color: hsl(var(--accent-gold));
     }
 
     .product-unavailable {
-        color: #be1010;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: hsl(var(--muted-foreground));
         font-weight: 500;
     }
 

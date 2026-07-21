@@ -44,6 +44,24 @@ const { products, title } = Astro.props;
     }
 </style>
 
+<style>
+    .products-toolbar h1 {
+        letter-spacing: var(--letter-spacing-premium);
+        text-transform: uppercase;
+        font-weight: 400;
+        font-size: clamp(1.4rem, 4vw, 2.4rem);
+    }
+
+    .products-toolbar h1:not(.visually-hidden)::after {
+        content: "";
+        display: block;
+        width: 48px;
+        height: 2px;
+        background: hsl(var(--accent-gold));
+        margin: 0.75rem auto 0;
+    }
+</style>
+
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const toggle = document.querySelector("[data-layout-toggle]");
