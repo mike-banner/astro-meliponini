@@ -181,7 +181,7 @@ const canonicalUrl = product.permalink;
                                     <Button
                                         size="lg"
                                         className="add-to-cart-btn w-full"
-                                        data-product-id={product.id}
+                                        data-add-to-cart={product.id}
                                     >
                                         AJOUTER AU PANIER
                                         <iconify-icon
@@ -259,109 +259,79 @@ const canonicalUrl = product.permalink;
     </div>
 
     <script>
-        import { addToCart } from "../../lib/cocart.js";
-        import { refreshCart, toggleCart } from "../../lib/cartStore.js";
-
-        const addToCartFunc = async (btn: HTMLButtonElement) => {
-            const productId = btn.getAttribute("data-product-id");
-            const icon = btn.querySelector("iconify-icon") as any | null;
-            const loader = btn.querySelector(
-                ".btn-loader",
-            ) as HTMLElement | null;
-
-            if (!productId) return;
-
-            btn.disabled = true;
-            if (icon) icon.style.display = "none";
-            if (loader) loader.style.display = "inline";
-
-            try {
-                await addToCart(productId, 1);
-                await refreshCart();
-                toggleCart(true);
-
-                // --- État de SUCCÈS (3 secondes) ---
-                if (icon) {
-                    icon.setAttribute("icon", "streamline:shopping-cart-check");
-                    icon.style.color = "#28a745"; // Vert
-                    icon.style.display = "block";
-                }
-                if (loader) loader.style.display = "none";
-
-                setTimeout(() => {
-                    if (icon) {
-                        icon.setAttribute("icon", "carbon:shopping-cart-plus");
-                        icon.style.color = ""; // Retour normal
-                    }
-                }, 3000);
-            } catch (err) {
-                console.error("Failed to add to cart", err);
-                if (icon) icon.style.display = "block";
-            } finally {
-                btn.disabled = false;
-                if (loader) loader.style.display = "none";
-            }
-        };
-
-        const addBtns = document.querySelectorAll(
-            ".add-to-cart-btn, .add-to-cart-btn-hero",
-        );
-        addBtns.forEach((btn) => {
-            btn.addEventListener("click", () =>
-                addToCartFunc(btn as HTMLButtonElement),
+        const initProductPage = () => {
+            // 2. Gestion de l'Off-Canvas "Voir plus" (Fiche technique Mobile)
+            const openBtn = document.querySelector(".open-details-btn");
+            const canvas = document.querySelector("#product-details-canvas");
+            const closeBtn = document.querySelector("#close-canvas");
+            const overlay = document.querySelector(
+                "#product-details-canvas .e-off-canvas__overlay",
             );
-        });
+            const canvasGallery = document.getElementById("canvas-gallery");
 
-        // 2. Gestion de l'Off-Canvas "Voir plus"
-        const openBtn = document.querySelector(".open-details-btn");
-        const canvas = document.querySelector("#product-details-canvas");
-        const closeBtn = document.querySelector("#close-canvas");
-        const overlay = document.querySelector(
-            "#product-details-canvas .e-off-canvas__overlay",
-        );
-        const canvasGallery = document.getElementById("canvas-gallery");
+            let currentVariant = 1;
 
-        let currentVariant = 1;
+            const openCanvas = () => {
+                if (canvasGallery) {
+                    // Reset gallery content
+                    canvasGallery.innerHTML = "";
+                    canvasGallery.className = `gallery-v${currentVariant}`;
 
-        const openCanvas = () => {
-            if (canvasGallery) {
-                // Reset gallery content
-                canvasGallery.innerHTML = "";
-                canvasGallery.className = `gallery-v${currentVariant}`;
+                    // Cycle through variants 1 to 4
+                    currentVariant = currentVariant >= 4 ? 1 : currentVariant + 1;
 
-                // Cycle through variants 1 to 4
-                currentVariant = currentVariant >= 4 ? 1 : currentVariant + 1;
+                    // Pick 5 unique random images from the bee collection
+                    const imageIndices: number[] = [];
+                    while (imageIndices.length < 5) {
+                        const r = Math.floor(Math.random() * 14) + 1;
+                        if (imageIndices.indexOf(r) === -1) imageIndices.push(r);
+                    }
 
-                // Pick 5 unique random images from the bee collection
-                const imageIndices: number[] = [];
-                while (imageIndices.length < 5) {
-                    const r = Math.floor(Math.random() * 14) + 1;
-                    if (imageIndices.indexOf(r) === -1) imageIndices.push(r);
+                    imageIndices.forEach((idx) => {
+                        const img = document.createElement("img");
+                        img.src = `/images/collections/bee-${idx}.webp`;
+                        img.alt = "Abeille Melipone";
+                        img.loading = "lazy";
+                        canvasGallery.appendChild(img);
+                    });
                 }
 
-                imageIndices.forEach((idx) => {
-                    const img = document.createElement("img");
-                    img.src = `/images/collections/bee-${idx}.webp`;
-                    img.alt = "Abeille Melipone";
-                    img.loading = "lazy";
-                    canvasGallery.appendChild(img);
-                });
+                canvas?.classList.add("elementor-active");
+                document.body.classList.add("elementor-offcanvas-active");
+                document.body.style.overflow = "hidden";
+            };
+
+            const closeCanvasFunc = () => {
+                canvas?.classList.remove("elementor-active");
+                document.body.classList.remove("elementor-offcanvas-active");
+                document.body.style.overflow = "";
+            };
+
+            // Safely attach event listener without destroying React DOM
+            if (openBtn && !openBtn.hasAttribute("data-listener")) {
+                openBtn.setAttribute("data-listener", "true");
+                openBtn.addEventListener("click", openCanvas);
+            }
+            
+            if (overlay && !overlay.hasAttribute("data-listener")) {
+                overlay.setAttribute("data-listener", "true");
+                overlay.addEventListener("click", closeCanvasFunc);
             }
 
-            canvas?.classList.add("elementor-active");
-            document.body.classList.add("elementor-offcanvas-active");
-            document.body.style.overflow = "hidden";
+            if (closeBtn && !closeBtn.hasAttribute("data-listener")) {
+                closeBtn.setAttribute("data-listener", "true");
+                closeBtn.addEventListener("click", closeCanvasFunc);
+            }
         };
 
-        const closeCanvasFunc = () => {
-            canvas?.classList.remove("elementor-active");
-            document.body.classList.remove("elementor-offcanvas-active");
-            document.body.style.overflow = "";
-        };
-
-        openBtn?.addEventListener("click", openCanvas);
-        overlay?.addEventListener("click", closeCanvasFunc);
-        closeBtn?.addEventListener("click", closeCanvasFunc);
+        // Initialize on load and on view transition
+        document.addEventListener("astro:page-load", initProductPage);
+        // Fallback for direct loads if page-load is missed
+        if (document.readyState === "complete" || document.readyState === "interactive") {
+            setTimeout(initProductPage, 0);
+        } else {
+            document.addEventListener("DOMContentLoaded", initProductPage);
+        }
     </script>
 </Layout>
 
