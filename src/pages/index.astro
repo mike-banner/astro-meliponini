@@ -68,6 +68,13 @@ const homeFaqItems = [
     </a>
 
     <!-- =========================
+         SCARCITY PROOF
+    ========================= -->
+    <div class="scarcity-banner fade-up">
+      <p>RÉCOLTE ANNUELLE LIMITÉE — SAISON 2026 RESTREINTE.</p>
+    </div>
+
+    <!-- =========================
          HERO 2
     ========================= -->
     <a href="/famille" data-astro-prefetch class="hero-link">
@@ -82,15 +89,21 @@ const homeFaqItems = [
     </a>
 
     <!-- =========================
-         HERO 3
+         HERO 3 (LE SECRET)
     ========================= -->
     <a href="/secrets" data-astro-prefetch class="hero-link">
-      <section class="hero hero-3">
-        <div class="hero-content fade-up">
-          <h2>Les secrets<br />des miels enzymatiques</h2>
-          <Button variant="invert" className="max-w-[260px]">
-            PERCER LE MYSTÈRE
-          </Button>
+      <section class="hero hero-3 editorial-section">
+        <div class="editorial-grid">
+          <div class="editorial-image fade-up">
+            <img src="/images/miel_secret.png" alt="Le secret du miel enzymatique" />
+          </div>
+          <div class="editorial-text fade-up">
+            <h2>Les secrets<br />des miels enzymatiques</h2>
+            <p class="editorial-desc">Un nectar médicinal pur, issu de l'héritage ancestral maya. Une rareté précieuse, fluide et naturellement acide.</p>
+            <Button variant="invert" className="max-w-[260px]">
+              PERCER LE MYSTÈRE
+            </Button>
+          </div>
         </div>
       </section>
     </a>
@@ -322,6 +335,72 @@ const homeFaqItems = [
   }
 
   /* =========================
+   SCARCITY BANNER
+========================= */
+  .scarcity-banner {
+    width: 100%;
+    padding: 2rem 1rem;
+    text-align: center;
+    background-color: #000;
+    color: #fff;
+    font-size: 0.85rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    border-top: 1px solid #333;
+    border-bottom: 1px solid #333;
+  }
+
+  /* =========================
+   EDITORIAL SECTION (HERO 3)
+========================= */
+  .editorial-section {
+    min-height: auto;
+    padding: 8vh 5%;
+    background: #fafafa;
+    align-items: center;
+    justify-content: center;
+  }
+  .editorial-section::before {
+    display: none;
+  }
+  
+  .editorial-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    max-width: 1200px;
+    width: 100%;
+    align-items: center;
+  }
+
+  .editorial-image img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    aspect-ratio: 4/5;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  }
+
+  .editorial-text {
+    text-align: left;
+    color: #000;
+  }
+  
+  .editorial-text h2 {
+    color: #000;
+    margin-bottom: 1rem;
+  }
+
+  .editorial-desc {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    color: #333;
+    letter-spacing: 0.02em;
+  }
+
+
+  /* =========================
    TYPO
 ========================= */
   .hero-content h1 {
@@ -362,6 +441,15 @@ const homeFaqItems = [
     .video-container {
       width: 85%;
       aspect-ratio: 18 / 9;
+    }
+    
+    .editorial-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    
+    .editorial-text {
+      text-align: center;
     }
   }
 

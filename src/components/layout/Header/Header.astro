@@ -40,22 +40,33 @@ const isActive = (path: string) => {
 <CartDrawer client:load />
 
 <script>
-    import { cartStore, refreshCart } from "@/lib/cartStore.js";
+    import { cartStore, refreshCart, toggleCart } from "@/lib/cartStore.js";
     import { addToCart } from "@/lib/cocart.js";
-    import { toggleCart } from "@/lib/cartStore.js";
 
-    // Ferme le panier par défaut au chargement (état persistant côté client)
-    const initialState = cartStore.get();
-    cartStore.set({ ...initialState, isOpen: false, loading: false });
+    // Initialize cart state (une seule fois par chargement de page réel :
+    // "astro:page-load" ET le fallback readyState peuvent tous les deux se
+    // déclencher sur le même chargement, et forcer isOpen:false une seconde
+    // fois écrasait un panier tout juste ouvert par un clic "ajouter au panier")
+    let cartStateInitialized = false;
+    const initCartState = () => {
+        if (cartStateInitialized) return;
+        cartStateInitialized = true;
+        const initialState = cartStore.get();
+        cartStore.set({ ...initialState, isOpen: false, loading: false });
+        refreshCart();
+    };
 
-    // Intercepte les boutons "Ajouter au panier" génériques (data-add-to-cart)
-    document.body.addEventListener("click", async (e: MouseEvent) => {
+    // Global click listener for generic "Add to cart" buttons
+    const handleCartClick = async (e: MouseEvent) => {
         const addBtn = (e.target as HTMLElement)?.closest(
             "[data-add-to-cart]",
         ) as HTMLElement;
+        
         if (addBtn) {
             e.preventDefault();
             const productId = addBtn.dataset.addToCart;
+            if (!productId) return;
+            
             addBtn.classList.add("loading");
             try {
                 await addToCart(productId, 1);
@@ -67,23 +78,43 @@ const isActive = (path: string) => {
                 addBtn.classList.remove("loading");
             }
         }
-    });
+    };
 
-    // Ombre du header au scroll
-    const header = document.querySelector(".header-fixe");
-    const SCROLL_THRESHOLD = 60;
-
-    if (header) {
-        window.addEventListener("scroll", () => {
-            const shouldHaveShadow = window.scrollY > SCROLL_THRESHOLD;
-            header.classList.toggle("is-scrolled", shouldHaveShadow);
-        });
-        if (window.scrollY > SCROLL_THRESHOLD) {
-            header.classList.add("is-scrolled");
-        }
+    // Attach listener to document safely (survives body replacements)
+    // Use a flag to avoid multiple bindings if script re-executes
+    if (!(window as any)._cartListenerAttached) {
+        document.addEventListener("click", handleCartClick);
+        (window as any)._cartListenerAttached = true;
     }
 
-    refreshCart();
+    // Scroll listener for header shadow
+    const initHeaderScroll = () => {
+        const header = document.querySelector(".header-fixe");
+        const SCROLL_THRESHOLD = 60;
+
+        if (header) {
+            // Remove old listener if exists to prevent duplicates
+            window.onscroll = () => {
+                const shouldHaveShadow = window.scrollY > SCROLL_THRESHOLD;
+                header.classList.toggle("is-scrolled", shouldHaveShadow);
+            };
+            if (window.scrollY > SCROLL_THRESHOLD) {
+                header.classList.add("is-scrolled");
+            }
+        }
+    };
+
+    // Execute initializations
+    document.addEventListener("astro:page-load", () => {
+        initCartState();
+        initHeaderScroll();
+    });
+    
+    // Fallback if already loaded
+    if (document.readyState === "complete" || document.readyState === "interactive") {
+        initCartState();
+        initHeaderScroll();
+    }
 </script>
 
 <style>
