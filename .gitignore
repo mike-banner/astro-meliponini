@@ -32,3 +32,5 @@ Thumbs.db
 .agent/
 .antigravity/
 .antigravityignore
+.claude/
+graphify-out/

@@ -1,0 +1,57 @@
+---
+---
+
+<a href="/checkout" class="resume-order" id="resumeOrder" aria-hidden="true">
+    Commander
+</a>
+
+<script>
+    import { cartStore } from "../../lib/cartStore.js";
+    import { cartKey, getCart } from "../../lib/cocart.js";
+
+    const resumeOrder = document.getElementById(
+        "resumeOrder",
+    ) as HTMLAnchorElement;
+
+    if (resumeOrder) {
+        cartStore.subscribe((state: any) => {
+            const count = state.totals.count || 0;
+            if (count > 0) {
+                const currentCartKey = cartKey.get();
+                resumeOrder.href = `https://dev-shop.meliponini.fr/checkout/?cocart-load-cart=${currentCartKey}`;
+                resumeOrder.style.display = "flex";
+                resumeOrder.setAttribute("aria-hidden", "false");
+            } else {
+                resumeOrder.style.display = "none";
+                resumeOrder.setAttribute("aria-hidden", "true");
+            }
+        });
+
+        resumeOrder.addEventListener("click", async (e) => {
+            const currentCartKey = cartKey.get();
+            if (!currentCartKey) return;
+
+            e.preventDefault();
+            resumeOrder.innerText = "Sync...";
+            resumeOrder.style.pointerEvents = "none";
+
+            try {
+                const cartData = await getCart();
+                if (!cartData) throw new Error("Sync failed");
+
+                const key = cartKey.get();
+                const checkoutUrl = `https://dev-shop.meliponini.fr/checkout/?cocart-load-cart=${key}`;
+
+                setTimeout(() => {
+                    window.location.href = checkoutUrl;
+                }, 500);
+            } catch (err) {
+                resumeOrder.innerText = "Erreur";
+                setTimeout(() => {
+                    resumeOrder.innerText = "Commander";
+                    resumeOrder.style.pointerEvents = "auto";
+                }, 2000);
+            }
+        });
+    }
+</script>

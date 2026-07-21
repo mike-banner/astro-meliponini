@@ -1,0 +1,141 @@
+---
+interface Props {
+    isActive: (path: string) => boolean;
+    from: string | null;
+}
+
+const { isActive, from } = Astro.props;
+---
+
+<div class="menu-sticky">
+    <nav>
+        <ul>
+            <li>
+                <a
+                    href="/products"
+                    class={isActive("/products") ? "active" : ""}
+                    >Tous les produits</a
+                >
+            </li>
+            <li>
+                <a
+                    href="/products/miel"
+                    class={isActive("/products/miel") ? "active" : ""}>Miel</a
+                >
+            </li>
+            <li>
+                <a
+                    href="/products/bougie"
+                    class={isActive("/products/bougie") ? "active" : ""}
+                    >Bougie</a
+                >
+            </li>
+            <li>
+                <a href="/famille" class={isActive("/famille") ? "active" : ""}
+                    >Familles</a
+                >
+            </li>
+            <li>
+                <a
+                    href="/le-secret-des-miels-enzimatiques"
+                    class={isActive("/le-secret-des-miels-enzimatiques")
+                        ? "active"
+                        : ""}>Le Secret des miels enzymatiques</a
+                >
+            </li>
+        </ul>
+
+        {
+            from === "shop" && (
+                <a
+                    href="https://dev-shop.meliponini.fr/checkout/"
+                    class="shop-btn"
+                >
+                    Retourner à la boutique
+                </a>
+            )
+        }
+    </nav>
+</div>
+
+<style>
+    .menu-sticky {
+        position: absolute;
+        top: var(--header-height);
+        left: 0;
+        right: 0;
+        background: #fff;
+        z-index: 900;
+        box-shadow: var(--shadow-subheader);
+    }
+
+    .menu-sticky nav {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 2.5rem;
+    }
+
+    .menu-sticky ul {
+        display: flex;
+        gap: 1.8rem;
+        list-style: none;
+        margin: 0;
+        padding: 1.4rem 0;
+    }
+
+    .menu-sticky ul li a {
+        position: relative;
+        text-decoration: none;
+        color: #000;
+        font-size: 0.85rem;
+    }
+
+    .menu-sticky ul li a::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -4px;
+        width: 100%;
+        height: 1px;
+        background: currentColor;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.25s ease;
+    }
+
+    .menu-sticky ul li a.active {
+        color: #999;
+    }
+
+    .menu-sticky ul li a:hover::after,
+    .menu-sticky ul li a.active::after {
+        transform: scaleX(1);
+    }
+
+    .shop-btn {
+        border-radius: var(--radius);
+        font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+        .menu-sticky nav {
+            gap: 1.5rem;
+        }
+
+        .menu-sticky ul {
+            gap: 1.2rem;
+            padding: 1.2rem 1rem;
+        }
+
+        .menu-sticky ul li a {
+            font-size: 0.6rem;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .menu-sticky {
+            display: none !important;
+        }
+    }
+</style>
