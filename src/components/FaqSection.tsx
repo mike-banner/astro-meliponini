@@ -28,7 +28,7 @@ export function FaqSection({ title = "Questions Fréquentes", items }: FaqProps)
             <Accordion type="single" collapsible className="w-full space-y-6">
                 {items.map((item, index) => (
                     <AccordionItem key={index} value={`item-${index}`} className="border-b border-black/10">
-                        <AccordionTrigger className="text-sm font-black uppercase tracking-[0.2em] text-left py-8 hover:no-underline hover:opacity-70 transition-opacity">
+                        <AccordionTrigger className="flex-col items-start justify-start gap-3 text-sm font-medium uppercase tracking-[0.2em] text-left py-8 hover:no-underline hover:opacity-70 transition-opacity">
                             {item.question}
                         </AccordionTrigger>
                         <AccordionContent className="text-sm leading-relaxed text-gray-600 pb-8 pr-12">
