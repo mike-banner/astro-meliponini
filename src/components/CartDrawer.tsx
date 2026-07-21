@@ -84,7 +84,7 @@ export function CartDrawer() {
 
           {!$cart.loading && $cart.items.length === 0 && (
             <div className="flex-1 flex flex-col items-center justify-center gap-4 text-center">
-              <p className="text-muted-foreground text-sm uppercase tracking-widest">Votre panier est vide.</p>
+              <p className="text-muted-foreground text-sm uppercase tracking-widest">Votre écrin est encore vide.</p>
               <Button 
                 variant="outline" 
                 onClick={() => toggleCart(false)}
@@ -128,7 +128,7 @@ export function CartDrawer() {
                         +
                       </button>
                     </div>
-                    <span className="font-semibold">{price} €</span>
+                    <span className="font-semibold text-[hsl(var(--accent-gold))]">{price} €</span>
                   </div>
                 </div>
 
@@ -148,7 +148,7 @@ export function CartDrawer() {
           <SheetFooter className="p-6 border-t border-border bg-zinc-50 flex-col gap-4">
             <div className="flex justify-between items-center w-full uppercase tracking-widest text-sm font-semibold">
               <span>Total</span>
-              <span>{$cart.totals.total}</span>
+              <span className="text-[hsl(var(--accent-gold))]">{$cart.totals.total}</span>
             </div>
             
             <div className="flex flex-col gap-2 w-full mt-4">
