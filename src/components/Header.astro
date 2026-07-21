@@ -1,4 +1,5 @@
 ---
+import { CartDrawer } from "./CartDrawer.tsx";
 const from = Astro.url.searchParams.get("from");
 const currentPath = Astro.url.pathname;
 const isActive = (path: string) => {
@@ -19,8 +20,7 @@ const isActive = (path: string) => {
 ---
 
 <style is:global>
-    /* src/components/Header.astro */
-    @import "../styles/custom-mini-cart.css";
+    /* header */
 </style>
 
 <!-- =========================
@@ -159,38 +159,9 @@ const isActive = (path: string) => {
 </div>
 
 <!-- =========================
-     OFF-CANVAS PANIER (GAUCHE)
+     OFF-CANVAS PANIER (REACT)
 ========================= -->
-<div
-    id="cartOffcanvas"
-    class="e-off-canvas from-right"
-    role="dialog"
-    aria-hidden="true"
-    aria-modal="true"
->
-    <div class="e-off-canvas__overlay" id="cartOverlay"></div>
-    <div class="e-off-canvas__main" style="overflow: hidden; background: #fff;">
-        <div
-            id="checkout-progress"
-            style="position: absolute; top: 0; left: 0; width: 0; height: 2px; background: #000; z-index: 10001; transition: width 3s linear;"
-        >
-        </div>
-        <div class="e-off-canvas__content">
-            <div
-                id="custom-mini-cart-container"
-                class="widget_shopping_cart"
-                style="height: 100%;"
-            >
-                <div class="custom-mini-cart" id="miniCartContent">
-                    <!-- Contenu injecté via JS par cartStore -->
-                    <div class="div-cart-empty">
-                        <p class="custom-empty-cart">Chargement du panier...</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<CartDrawer client:load />
 
 <!-- =========================
      SCRIPT
@@ -247,18 +218,9 @@ const isActive = (path: string) => {
         const initialState = cartStore.get();
         cartStore.set({ ...initialState, isOpen: false, loading: false });
 
-        // Souscription au store pour mettre à jour l'UI
+        // Souscription au store pour mettre à jour l'UI (badge et bouton flottant)
         cartStore.subscribe((state: any) => {
-            // 1. Visibilité de l'off-canvas
-            if (state.isOpen) {
-                cartOffcanvas?.classList.add("elementor-active");
-                cartOffcanvas?.setAttribute("aria-hidden", "false");
-            } else {
-                cartOffcanvas?.classList.remove("elementor-active");
-                cartOffcanvas?.setAttribute("aria-hidden", "true");
-            }
-
-            // 2. Compteur Header
+            // Compteur Header
             if (cartCountEl && cartCompteurEl) {
                 cartCountEl.textContent = String(state.totals.count);
                 if (state.totals.count > 0) {
@@ -270,7 +232,7 @@ const isActive = (path: string) => {
                 }
             }
 
-            // 3. Bouton "Commander" flottant (mobile)
+            // Bouton "Commander" flottant (mobile)
             if (resumeOrder) {
                 const count = state.totals.count || 0;
                 if (count > 0) {
@@ -283,9 +245,6 @@ const isActive = (path: string) => {
                     resumeOrder.setAttribute("aria-hidden", "true");
                 }
             }
-
-            // 4. Rendu du contenu du mini-cart
-            renderMiniCart(state);
         });
 
         // --- GESTION DU BOUTON FLOTTANT COMMANDER (MOBILE) ---
@@ -318,224 +277,13 @@ const isActive = (path: string) => {
             });
         }
 
-        function renderMiniCart(state: any) {
-            if (!miniCartContent) return;
-
-            if (state.loading && state.items.length === 0) {
-                miniCartContent.innerHTML =
-                    '<div class="cart-loading-overlay">Chargement...</div>';
-                return;
-            }
-
-            if (state.items.length === 0) {
-                miniCartContent.innerHTML = `
-                    <div class="div-cart-empty">
-                        <p class="custom-empty-cart">Votre panier est vide.</p>
-                        <div class="arrow-wrapper">
-                            <button class="button close-mini-cart">Commencer mes achats</button>
-                        </div>
-                    </div>
-                `;
-                return;
-            }
-
-            let itemsHtml = '<ul class="custom-cart-items">';
-            state.items.forEach((item: any) => {
-                const price = (parseFloat(item.price) / 100).toFixed(2);
-                const regularPriceAttr = item.regular_price
-                    ? (parseFloat(item.regular_price) / 100).toFixed(2)
-                    : null;
-                const hasSavings =
-                    regularPriceAttr &&
-                    parseFloat(regularPriceAttr) > parseFloat(price);
-                const savings = hasSavings
-                    ? (
-                          parseFloat(regularPriceAttr) - parseFloat(price)
-                      ).toFixed(2)
-                    : 0;
-
-                // Hack URL image (comme demandé dans woocommerce.js)
-                const imgSrc =
-                    item.featured_image ||
-                    (item.images && item.images[0]
-                        ? item.images[0].src
-                        : "/images/placeholder.png");
-                const cleanImgSrc = imgSrc.replace(
-                    "meliponini.remyparis.com",
-                    "dev-shop.meliponini.fr",
-                );
-
-                itemsHtml += `
-                    <li class="custom-cart-item" data-key="${item.item_key}">
-                        <div class="custom-thumbnail">
-                            <img src="${cleanImgSrc}" alt="${item.name}">
-                        </div>
-                        <div class="custom-details">
-                            <a href="#" class="custom-title">${item.name}</a>
-                            <div class="product-tag">${item.sku || ""}</div>
-                            
-                            <div class="custom-price-qty">
-                                <div class="custom-qty-wrapper">
-                                    <button class="qty-minus" data-action="minus" data-key="${item.item_key}">-</button>
-                                    <input type="number" class="custom-qty-input" value="${item.quantity.value}" readOnly>
-                                    <button class="qty-plus" data-action="plus" data-key="${item.item_key}">+</button>
-                                </div>
-                                <div class="custom-line-price">${price} €</div>
-                            </div>
-                            ${hasSavings ? `<span class="custom-savings-tag">Gain : ${savings} €</span>` : ""}
-                        </div>
-                        <button class="custom-remove" data-action="remove" data-key="${item.item_key}" title="Supprimer">
-                            ✕
-                        </button>
-                    </li>
-                `;
-            });
-            itemsHtml += "</ul>";
-
-            miniCartContent.innerHTML = `
-                <div class="custom-mini-cart-header-wrapper">
-                    ${state.loading ? '<div class="cart-loading-overlay">Calcul...</div>' : ""}
-                    ${itemsHtml}
-                </div>
-                <div class="custom-mini-cart-footer">
-                    <div class="custom-mini-cart-total">
-                        <strong>Total</strong>
-                        <span class="total-amount">${state.totals.total}</span>
-                    </div>
-                    ${
-                        state.totals.savings > 0
-                            ? `
-                        <div class="total-savings">Économie totale : ${state.totals.savings.toFixed(2)} €</div>
-                    `
-                            : ""
-                    }
-                    <div class="custom-mini-cart-buttons">
-                        <button id="checkoutBtn" class="button custom-checkout-button">
-                            Commander
-                            <iconify-icon icon="ph:lock-simple-fill" style="font-size: 16px; margin-left: 8px;"></iconify-icon>
-                        </button>
-                        <p class="secure-checkout-text">Connexion sécurisée vers notre passerelle de paiement certifiée.</p>
-                        <button class="button close-mini-cart">Continuer les achats</button>
-                    </div>
-                </div>
-            `;
-        }
-
         // --- EVENTS LISTENERS ---
-
         if (cartButton) {
             cartButton.addEventListener("click", (e) => {
                 e.preventDefault();
                 toggleCart(true);
             });
         }
-
-        if (cartOverlay) {
-            cartOverlay.addEventListener("click", () => toggleCart(false));
-        }
-
-        // Délégation d'événements pour les actions du panier (plus/minus/remove/checkout)
-        miniCartContent?.addEventListener("click", async (e: MouseEvent) => {
-            const target = e.target as HTMLElement;
-            console.log("🛒 Click in miniCartContent on:", target);
-
-            // 1. Bouton "Fermer / Continuer les achats"
-            if (target?.closest(".close-mini-cart")) {
-                console.log("🛒 Closing cart from button");
-                toggleCart(false);
-                return;
-            }
-
-            // 2. Boutons de quantité ou suppression (plus/minus/remove)
-            const actionBtn = target?.closest("[data-action]") as HTMLElement;
-            if (actionBtn) {
-                const action = actionBtn.dataset.action;
-                const key = actionBtn.dataset.key;
-                console.log("🛒 Action clicked:", action, "Key:", key);
-
-                if (action === "remove") {
-                    console.log("🗑️ Removing item:", key);
-                    await removeItem(key);
-                    refreshCart();
-                } else if (action === "plus" || action === "minus") {
-                    console.log("➕/➖ Updating item:", key, action);
-                    const parent = actionBtn.parentElement;
-                    const input = parent?.querySelector(
-                        "input",
-                    ) as HTMLInputElement;
-                    if (!input) return;
-
-                    let newQty = parseInt(input.value);
-                    newQty = action === "plus" ? newQty + 1 : newQty - 1;
-
-                    if (newQty > 0) {
-                        await updateItem(key, newQty);
-                        refreshCart();
-                    } else {
-                        await removeItem(key);
-                        refreshCart();
-                    }
-                }
-                return;
-            }
-
-            // 3. Bouton "Procéder au paiement" (Dynamique avec cartKey)
-            const checkoutBtn = target?.closest(
-                "#checkoutBtn",
-            ) as HTMLButtonElement;
-            if (checkoutBtn) {
-                console.log("🚀 [CHECKOUT] Click détecté");
-                const currentCartKey = cartKey.get();
-
-                if (!currentCartKey) {
-                    console.warn("⚠️ No cartKey found, checkout disabled.");
-                    return;
-                }
-
-                // UI Loading State
-                checkoutBtn.innerText = "Synchronisation...";
-                checkoutBtn.disabled = true;
-
-                try {
-                    // 1. Attendre confirmation succès CoCart (200 OK)
-                    console.log(
-                        "🔄 [API] Validation du panier avant redirection...",
-                    );
-                    const cartData = await getCart();
-
-                    if (!cartData) {
-                        throw new Error("Échec de la synchronisation");
-                    }
-
-                    console.log("✅ [API] Panier validé.");
-                    checkoutBtn.innerText = "Connexion sécurisée...";
-
-                    // Effet visuel
-                    miniCartContent?.classList.add("cart-fade-out");
-                    const progress =
-                        document.getElementById("checkout-progress");
-                    if (progress) {
-                        progress.style.transition = "width 1.5s ease-in-out";
-                        progress.style.width = "100%";
-                    }
-
-                    const key = cartKey.get();
-                    const checkoutUrl = `https://dev-shop.meliponini.fr/checkout/?cocart-load-cart=${key}`;
-
-                    // 2. Délai de 500ms après réponse API (Laisse le temps à Docker/Base de données)
-                    setTimeout(() => {
-                        window.location.href = checkoutUrl;
-                    }, 500);
-                } catch (error) {
-                    console.error("❌ [CHECKOUT ERROR]:", error);
-                    checkoutBtn.innerText = "Erreur de session";
-                    setTimeout(() => {
-                        checkoutBtn.innerText = "Commander";
-                        checkoutBtn.disabled = false;
-                    }, 2000);
-                }
-            }
-        });
 
         // Intercepter les clics sur les boutons "Ajouter au panier" (si présents avec data-add-to-cart)
         document.body.addEventListener("click", async (e: MouseEvent) => {

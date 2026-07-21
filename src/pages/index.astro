@@ -56,13 +56,13 @@ const homeFaqItems = [
           </video>
         </div>
 
-        <div class="hero-content">
+        <div class="hero-content fade-up">
           <h1>Les miels enzymatiques<br />des mélipones</h1>
           <Button
             variant="outline"
             className="bg-white text-black border-black hover:bg-black hover:text-white transition-all"
           >
-            VOIR PLUS
+            DÉCOUVRIR NOS ÉLIXIRS
           </Button>
         </div>
       </section>
@@ -73,13 +73,13 @@ const homeFaqItems = [
     ========================= -->
     <a href="/famille" data-astro-prefetch class="hero-link">
       <section class="hero hero-2">
-        <div class="hero-content">
+        <div class="hero-content fade-up">
           <h2>L’univers<br />des mélipones</h2>
           <Button
             variant="outline"
             className="bg-white text-black border-black hover:bg-black hover:text-white transition-all"
           >
-            VOIR PLUS
+            EXPLORER L'UNIVERS
           </Button>
         </div>
       </section>
@@ -90,13 +90,13 @@ const homeFaqItems = [
     ========================= -->
     <a href="/secrets" data-astro-prefetch class="hero-link">
       <section class="hero hero-3">
-        <div class="hero-content">
+        <div class="hero-content fade-up">
           <h2>Les secrets<br />des miels enzymatiques</h2>
           <Button
             variant="outline"
             className="bg-white text-black border-black hover:bg-black hover:text-white transition-all"
           >
-            VOIR PLUS
+            PERCER LE MYSTÈRE
           </Button>
         </div>
       </section>
@@ -107,13 +107,13 @@ const homeFaqItems = [
     ========================= -->
     <a href="/products/bougie" data-astro-prefetch class="hero-link">
       <section class="hero hero-4">
-        <div class="hero-content">
+        <div class="hero-content fade-up">
           <h2>Les bougies<br />des mélipones</h2>
           <Button
             variant="outline"
             className="bg-white text-black border-black hover:bg-black hover:text-white transition-all"
           >
-            VOIR PLUS
+            VOIR LA COLLECTION
           </Button>
         </div>
       </section>
@@ -124,13 +124,13 @@ const homeFaqItems = [
     ========================= -->
     <a href="/contact" data-astro-prefetch class="hero-link">
       <section class="hero hero-5">
-        <div class="hero-content">
+        <div class="hero-content fade-up">
           <h2>Suivez-nous</h2>
           <Button
             variant="outline"
             className="bg-white text-black border-black hover:bg-black hover:text-white transition-all"
           >
-            VOIR PLUS
+            REJOINDRE L'AVENTURE
           </Button>
         </div>
       </section>
@@ -174,6 +174,26 @@ const homeFaqItems = [
         startVideo();
       }
     }
+
+    // --- INTERSECTION OBSERVER POUR ANIMATIONS ---
+    const observerOptions = {
+      root: null,
+      rootMargin: "0px",
+      threshold: 0.15
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll(".fade-up").forEach(el => {
+      observer.observe(el);
+    });
   });
 </script>
 
@@ -306,14 +326,18 @@ const homeFaqItems = [
    TYPO
 ========================= */
   .hero-content h1 {
-    font-size: clamp(1rem, 3.5vw, 1.8rem);
+    font-size: clamp(1.2rem, 4.5vw, 2.5rem);
     font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
     margin-bottom: 1.5rem;
   }
 
   .hero-content h2 {
-    font-size: clamp(1.1rem, 3.5vw, 2rem);
+    font-size: clamp(1.1rem, 4vw, 2.2rem);
     font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     margin-bottom: 1.5rem;
   }
 

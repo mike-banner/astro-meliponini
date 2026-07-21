@@ -39,6 +39,11 @@
         --chart-3: 197 37% 24%;
         --chart-4: 43 74% 66%;
         --chart-5: 27 87% 67%;
+        
+        /* Luxury Accents */
+        --accent-gold: 43 74% 50%; /* #d4af37 equivalent in HSL */
+        --accent-gold-foreground: 0 0% 0%;
+        --accent-gold-light: 43 74% 90%;
     }
 
     .dark {
@@ -123,7 +128,12 @@ body {
 
 h1,
 h2,
-h3,
+h3 {
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
 strong,
 b {
     font-weight: 400;
@@ -214,4 +224,18 @@ a {
     .burger {
         display: flex;
     }
+}
+
+/* ==================================================
+   ANIMATIONS LUXURY
+================================================== */
+.fade-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
 }
