@@ -166,7 +166,7 @@ const canonicalUrl = product.permalink;
                             )
                         ) : (
                             <p class="product-unavailable">
-                                Bientôt disponible
+                                Rupture de stock
                             </p>
                         )
                     }
@@ -179,7 +179,8 @@ const canonicalUrl = product.permalink;
                                 product.stock_status === "onbackorder") &&
                                 !!product.price && (
                                     <Button
-                                        className="add-to-cart-btn h-14 w-full bg-black text-white hover:bg-black/90 shadow-none border-none text-xs font-black tracking-[0.2em]"
+                                        size="lg"
+                                        className="add-to-cart-btn w-full"
                                         data-product-id={product.id}
                                     >
                                         AJOUTER AU PANIER
@@ -200,7 +201,8 @@ const canonicalUrl = product.permalink;
 
                         <Button
                             variant="outline"
-                            className="open-details-btn h-14 w-full bg-white text-black !border-black hover:bg-zinc-100 transition-all text-xs font-black tracking-[0.2em]"
+                            size="lg"
+                            className="open-details-btn w-full"
                         >
                             FICHE TECHNIQUE
                         </Button>
@@ -459,7 +461,8 @@ const canonicalUrl = product.permalink;
         font-size: 1.6rem;
         margin: 0 0 0.4rem 0;
         font-weight: 400;
-        letter-spacing: -1.5px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
         order: initial !important; /* ✅ Reset global conflict */
     }
 
@@ -467,7 +470,8 @@ const canonicalUrl = product.permalink;
         font-size: 0.95rem;
         color: #666;
         margin-bottom: 1.2rem;
-        letter-spacing: -0.5px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
         order: initial !important; /* ✅ Reset global conflict */
     }
 
@@ -499,6 +503,8 @@ const canonicalUrl = product.permalink;
     }
 
     .product-unavailable {
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
         color: #be1010;
         font-weight: 500;
     }
@@ -509,6 +515,10 @@ const canonicalUrl = product.permalink;
         margin-right: 0.8rem;
         font-weight: 400;
         font-size: 0.9rem;
+    }
+
+    .sale-price {
+        color: hsl(var(--accent-gold));
     }
 
     /* Centrage des contenus texte */

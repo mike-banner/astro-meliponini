@@ -38,17 +38,19 @@ const { filters = [], active = "" } = Astro.props;
     .products-filter {
         position: relative;
         font-size: 0.75rem;
-        letter-spacing: 0.08em;
+        letter-spacing: 0.14em;
         text-transform: uppercase;
         text-decoration: none;
         color: #000;
         opacity: 0.45;
-        transition: opacity 0.3s ease;
+        transition: opacity 0.3s ease, color 0.3s ease;
     }
 
     /* actif */
     .products-filter.is-active {
         opacity: 1;
+        color: hsl(var(--accent-gold));
+        border-bottom: 1px solid hsl(var(--accent-gold));
     }
 
     /* underline discret (hover + actif) */
@@ -59,7 +61,7 @@ const { filters = [], active = "" } = Astro.props;
         bottom: -6px;
         width: 0%;
         height: 1px;
-        background: #000;
+        background: hsl(var(--accent-gold));
         transition: width 0.35s ease;
     }
 

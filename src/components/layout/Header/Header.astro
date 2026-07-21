@@ -1,0 +1,121 @@
+---
+import Logo from "@/components/ui/Logo.astro";
+import MobileMenu from "./MobileMenu.astro";
+import DesktopNav from "./DesktopNav.astro";
+import CartButton from "@/components/cart/CartButton.astro";
+import FloatingCheckoutBtn from "@/components/cart/FloatingCheckoutBtn.astro";
+import { CartDrawer } from "@/components/cart/CartDrawer.tsx";
+
+const from = Astro.url.searchParams.get("from");
+const currentPath = Astro.url.pathname;
+const isActive = (path: string) => {
+    const normCurrent =
+        currentPath.endsWith("/") && currentPath.length > 1
+            ? currentPath.slice(0, -1)
+            : currentPath;
+    const normPath =
+        path.endsWith("/") && path.length > 1 ? path.slice(0, -1) : path;
+    if (normCurrent === normPath) return true;
+    if (
+        normPath === "/secrets" &&
+        normCurrent === "/le-secret-des-miels-enzimatiques"
+    )
+        return true;
+    return false;
+};
+---
+
+<header class="header-fixe" id="main-header">
+    <div class="header-inner">
+        <MobileMenu isActive={isActive} from={from} />
+        <Logo />
+        <CartButton />
+    </div>
+</header>
+
+<FloatingCheckoutBtn />
+
+<DesktopNav isActive={isActive} from={from} />
+
+<CartDrawer client:load />
+
+<script>
+    import { cartStore, refreshCart } from "@/lib/cartStore.js";
+    import { addToCart } from "@/lib/cocart.js";
+    import { toggleCart } from "@/lib/cartStore.js";
+
+    // Ferme le panier par défaut au chargement (état persistant côté client)
+    const initialState = cartStore.get();
+    cartStore.set({ ...initialState, isOpen: false, loading: false });
+
+    // Intercepte les boutons "Ajouter au panier" génériques (data-add-to-cart)
+    document.body.addEventListener("click", async (e: MouseEvent) => {
+        const addBtn = (e.target as HTMLElement)?.closest(
+            "[data-add-to-cart]",
+        ) as HTMLElement;
+        if (addBtn) {
+            e.preventDefault();
+            const productId = addBtn.dataset.addToCart;
+            addBtn.classList.add("loading");
+            try {
+                await addToCart(productId, 1);
+                await refreshCart();
+                toggleCart(true);
+            } catch (err) {
+                console.error("Add to cart failed", err);
+            } finally {
+                addBtn.classList.remove("loading");
+            }
+        }
+    });
+
+    // Ombre du header au scroll
+    const header = document.querySelector(".header-fixe");
+    const SCROLL_THRESHOLD = 60;
+
+    if (header) {
+        window.addEventListener("scroll", () => {
+            const shouldHaveShadow = window.scrollY > SCROLL_THRESHOLD;
+            header.classList.toggle("is-scrolled", shouldHaveShadow);
+        });
+        if (window.scrollY > SCROLL_THRESHOLD) {
+            header.classList.add("is-scrolled");
+        }
+    }
+
+    refreshCart();
+</script>
+
+<style>
+    .header-fixe {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        border-top: 8px solid #000;
+        height: var(--header-height);
+        font-size: 16px;
+        background: #fff;
+        z-index: 1000;
+        box-shadow: none;
+        transition: box-shadow 0.3s ease;
+    }
+
+    .header-fixe.is-scrolled {
+        box-shadow: var(--shadow-subheader);
+    }
+
+    @media (max-width: 600px) {
+        .header-fixe {
+            box-shadow: var(--shadow-subheader);
+        }
+    }
+
+    .header-inner {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+</style>
