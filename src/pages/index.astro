@@ -58,10 +58,7 @@ const homeFaqItems = [
 
         <div class="hero-content fade-up">
           <h1>Les miels enzymatiques<br />des mélipones</h1>
-          <Button
-            variant="outline"
-            className="bg-white text-black border-black hover:bg-black hover:text-white transition-all"
-          >
+          <Button variant="invert" className="max-w-[260px]">
             DÉCOUVRIR NOS ÉLIXIRS
           </Button>
         </div>
@@ -75,10 +72,7 @@ const homeFaqItems = [
       <section class="hero hero-2">
         <div class="hero-content fade-up">
           <h2>L’univers<br />des mélipones</h2>
-          <Button
-            variant="outline"
-            className="bg-white text-black border-black hover:bg-black hover:text-white transition-all"
-          >
+          <Button variant="invert" className="max-w-[260px]">
             EXPLORER L'UNIVERS
           </Button>
         </div>
@@ -92,10 +86,7 @@ const homeFaqItems = [
       <section class="hero hero-3">
         <div class="hero-content fade-up">
           <h2>Les secrets<br />des miels enzymatiques</h2>
-          <Button
-            variant="outline"
-            className="bg-white text-black border-black hover:bg-black hover:text-white transition-all"
-          >
+          <Button variant="invert" className="max-w-[260px]">
             PERCER LE MYSTÈRE
           </Button>
         </div>
@@ -109,10 +100,7 @@ const homeFaqItems = [
       <section class="hero hero-4">
         <div class="hero-content fade-up">
           <h2>Les bougies<br />des mélipones</h2>
-          <Button
-            variant="outline"
-            className="bg-white text-black border-black hover:bg-black hover:text-white transition-all"
-          >
+          <Button variant="invert" className="max-w-[260px]">
             VOIR LA COLLECTION
           </Button>
         </div>
@@ -126,10 +114,7 @@ const homeFaqItems = [
       <section class="hero hero-5">
         <div class="hero-content fade-up">
           <h2>Suivez-nous</h2>
-          <Button
-            variant="outline"
-            className="bg-white text-black border-black hover:bg-black hover:text-white transition-all"
-          >
+          <Button variant="invert" className="max-w-[260px]">
             REJOINDRE L'AVENTURE
           </Button>
         </div>
@@ -346,9 +331,10 @@ const homeFaqItems = [
 ========================= */
   @media (max-width: 768px) {
     .hero-1 {
-      min-height: 20vh;
-      /* ✅ CORRECTION : restaurer le margin pour éviter que le contenu passe sous le header */
-      margin-top: var(--header-height);
+      min-height: calc(100vh - var(--header-height));
+      justify-content: center;
+      padding-top: 0;
+      margin-top: calc(-1 * var(--header-height) - 20px);
     }
 
     .hero-1 .hero-content {
@@ -356,7 +342,6 @@ const homeFaqItems = [
     }
 
     .hero-1 {
-      min-height: auto;
       padding-bottom: 3rem;
     }
 
