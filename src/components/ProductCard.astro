@@ -36,7 +36,7 @@ console.log(
             product.available ? (
                 <p class="product-price">{product.price} €</p>
             ) : (
-                <p class="product-unavailable">Édition à venir</p>
+                <p class="product-unavailable">Rupture de stock</p>
             )
         }
     </div>
@@ -48,18 +48,18 @@ console.log(
                 <div class="product-actions">
                     <a
                         href={`/product/${product.slug}`}
-                        class="flex-grow max-w-[160px] no-underline"
+                        class="product-discover-link flex-grow max-w-[160px] no-underline"
                     >
                         <Button
                             variant="outline"
-                            className="w-full bg-white text-black border border-black hover:bg-zinc-100 hover:text-black transition-all"
+                            className="product-discover-btn w-full"
                         >
                             Découvrir
                         </Button>
                     </a>
                     <Button
                         size="icon"
-                        className="add-to-cart-direct h-12 w-12 bg-black text-white hover:bg-black/90 shadow-none border-none"
+                        className="add-to-cart-direct h-12 w-12"
                         data-product-id={product.id}
                         aria-label={`Ajouter ${product.name} au panier`}
                     >
@@ -73,17 +73,19 @@ console.log(
                     </Button>
                 </div>
             ) : (
-                <a
-                    href={`/product/${product.slug}`}
-                    class="w-full max-w-[215px] no-underline"
-                >
-                    <Button
-                        variant="outline"
-                        className="w-full bg-zinc-50 text-zinc-400 border-zinc-200 shadow-sm hover:bg-zinc-100 hover:text-zinc-600 transition-all font-bold uppercase tracking-widest text-[10px]"
+                <div class="product-actions">
+                    <a
+                        href={`/product/${product.slug}`}
+                        class="product-discover-link product-discover-link-solo flex-grow max-w-[160px] no-underline"
                     >
-                        Découvrir
-                    </Button>
-                </a>
+                        <Button
+                            variant="outline"
+                            className="product-discover-btn w-full bg-zinc-50 text-zinc-400 border-zinc-200 shadow-sm hover:bg-zinc-100 hover:text-zinc-600 transition-all font-bold uppercase tracking-widest text-[10px]"
+                        >
+                            Découvrir
+                        </Button>
+                    </a>
+                </div>
             )
         }
     </div>
@@ -164,6 +166,7 @@ console.log(
         display: flex;
         flex-direction: column;
         align-items: center;
+        min-width: 0;
         text-align: center;
         width: 100%;
         height: 100%;
@@ -265,13 +268,12 @@ console.log(
     .product-price {
         font-weight: 700;
         letter-spacing: 0.1em;
-        color: hsl(var(--accent-gold));
     }
 
     .product-unavailable {
         letter-spacing: 0.18em;
         text-transform: uppercase;
-        color: hsl(var(--muted-foreground));
+        color: #be1010;
         font-weight: 500;
     }
 
@@ -292,6 +294,12 @@ console.log(
         width: 100%;
     }
 
+    .product-discover-link-solo {
+        flex-grow: 0;
+        width: calc(100% - 58px);
+        margin: 0 auto;
+    }
+
     @media (max-width: 768px) {
         .product-card img {
             max-width: 220px;
@@ -305,6 +313,7 @@ console.log(
         :global(.row-layout) .product-card {
             padding-inline: 8px;
             display: grid !important;
+            grid-template-columns: minmax(0, 1fr);
             grid-template-rows: auto 40px auto 30px auto;
             gap: 0px;
             height: auto !important;
@@ -373,9 +382,14 @@ console.log(
             justify-content: center;
         }
 
-        :global(.row-layout) .product-price,
-        :global(.row-layout) .product-unavailable {
+        :global(.row-layout) .product-price {
             font-size: 0.8rem;
+            margin: 0 !important;
+        }
+
+        :global(.row-layout) .product-unavailable {
+            font-size: 0.6rem;
+            letter-spacing: 0.08em;
             margin: 0 !important;
         }
 
@@ -385,12 +399,38 @@ console.log(
             width: 100%;
         }
 
-        :global(.row-layout) .btn-add-icon svg {
-            width: 16px;
-            height: 16px;
-        }
         :global(.row-layout) .product-actions {
             gap: 8px;
+        }
+
+        :global(.row-layout) .product-discover-link {
+            flex: 1 1 0%;
+            max-width: none;
+            min-width: 0;
+        }
+
+        :global(.row-layout) .product-discover-btn {
+            height: 42px !important;
+            padding: 0 8px !important;
+            font-size: 0.5rem !important;
+            letter-spacing: 0.02em !important;
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        :global(.row-layout) .add-to-cart-direct {
+            height: 42px !important;
+            width: 42px !important;
+            padding: 0 !important;
+            flex-shrink: 0;
+        }
+
+        :global(.row-layout) .product-discover-link-solo {
+            flex: 0 0 auto;
+            width: calc(100% - 50px);
+            margin: 0 auto;
         }
     }
 </style>

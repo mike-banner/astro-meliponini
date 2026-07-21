@@ -166,7 +166,7 @@ const canonicalUrl = product.permalink;
                             )
                         ) : (
                             <p class="product-unavailable">
-                                Édition à venir
+                                Rupture de stock
                             </p>
                         )
                     }
@@ -179,7 +179,8 @@ const canonicalUrl = product.permalink;
                                 product.stock_status === "onbackorder") &&
                                 !!product.price && (
                                     <Button
-                                        className="add-to-cart-btn h-14 w-full bg-black text-white hover:bg-black/90 shadow-none border-none text-xs font-black tracking-[0.2em]"
+                                        size="lg"
+                                        className="add-to-cart-btn w-full"
                                         data-product-id={product.id}
                                     >
                                         AJOUTER AU PANIER
@@ -200,7 +201,8 @@ const canonicalUrl = product.permalink;
 
                         <Button
                             variant="outline"
-                            className="open-details-btn h-14 w-full bg-white text-black !border-black hover:bg-zinc-100 transition-all text-xs font-black tracking-[0.2em]"
+                            size="lg"
+                            className="open-details-btn w-full"
                         >
                             FICHE TECHNIQUE
                         </Button>
@@ -503,7 +505,7 @@ const canonicalUrl = product.permalink;
     .product-unavailable {
         letter-spacing: 0.18em;
         text-transform: uppercase;
-        color: hsl(var(--muted-foreground));
+        color: #be1010;
         font-weight: 500;
     }
 

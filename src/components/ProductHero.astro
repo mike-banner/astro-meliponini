@@ -108,12 +108,10 @@ const availabilityLabel = isOutOfStock
                     <div class="flex">
                         <Button
                             client:load
+                            variant={isOutOfStock ? "destructive" : "default"}
                             disabled={isOutOfStock}
-                            className={`add-to-cart-btn-hero w-fit px-10 h-14 text-[9px] font-black tracking-[0.3em] transition-all ${
-                                isOutOfStock
-                                    ? "bg-[#be1010] text-white opacity-100 cursor-not-allowed border-none hover:bg-[#be1010]"
-                                    : ""
-                            }`}
+                            size="lg"
+                            className="add-to-cart-btn-hero w-fit px-10 text-[9px] tracking-[0.3em] disabled:opacity-100"
                             data-product-id={product_id}
                         >
                             {
