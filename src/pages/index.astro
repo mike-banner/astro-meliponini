@@ -46,8 +46,10 @@ const homeFaqItems = [
             muted
             loop
             playsinline
+            webkit-playsinline="true"
+            disableRemotePlayback
             poster="/videos/abeille-poster.webp"
-            preload="metadata"
+            preload="auto"
             class="design-video"
           >
             <source src="/videos/abeille-design.mp4" type="video/mp4" />
@@ -151,10 +153,22 @@ const homeFaqItems = [
         video.removeAttribute("poster");
       });
 
-      // Tente de jouer dès que les métadonnées sont là
+      // Retente à chaque étape de chargement disponible (couvre les cas où
+      // "loadedmetadata" ne suffit pas sur certains Android/iOS lents)
       video.addEventListener("loadedmetadata", startVideo);
+      video.addEventListener("canplay", startVideo, { once: true });
+      video.addEventListener("canplaythrough", startVideo, { once: true });
 
-      // Sécurité si déjà chargé
+      // Reprend la lecture si l'onglet revient au premier plan
+      // (Safari iOS suspend parfois la vidéo en arrière-plan)
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible" && video.paused) {
+          startVideo();
+        }
+      });
+
+      // Tentative immédiate + sécurité si déjà chargé
+      startVideo();
       if (video.readyState >= 2) {
         startVideo();
       }
